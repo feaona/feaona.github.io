@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目概述 (1920x1080)</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box; margin: 0; padding: 0;
+            font-weight: 400;
+        }
+
+        html, body {
+            width: 100%; height: 100%;
+            background-color: #374151;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            font-family: 'DIN Alternate', 'DIN Condensed', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+        }
+
+        .canvas-1920 {
+            width: 1920px; height: 1080px;
+            background-color: #fcfdfa;
+            position: relative; overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+
+        .bg-bottom-shape {
+            position: absolute; bottom: 0; right: 0;
+            width: 85%; height: 480px;
+            background-color: #ABCC58; opacity: 0.85;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%, 15% 0);
+            z-index: 1;
+        }
+
+        .bg-top-shape {
+            position: absolute; top: -50px; left: -50px;
+            width: 300px; height: 300px;
+            background-color: #edf3d9; border-radius: 50%;
+            filter: blur(60px); z-index: 1;
+        }
+
+        .watermark {
+            position: absolute; top: 100px; left: 100px;
+            display: flex; align-items: baseline;
+            pointer-events: none; user-select: none;
+            z-index: 10; opacity: 0.7;
+        }
+        .watermark-num {
+            font-size: 100px; font-weight: 900;
+            color: #ABCC58; letter-spacing: -4px; line-height: 1;
+        }
+        .watermark-text {
+            font-size: 80px; font-weight: 900;
+            color: #dce2c6; letter-spacing: 8px;
+            margin-left: 16px; text-transform: uppercase;
+            line-height: 1; mix-blend-mode: multiply;
+        }
+
+        .main-title {
+            position: absolute; top: 240px; left: 120px; z-index: 20;
+            font-size: 48px; font-weight: 900;
+            color: #111827; letter-spacing: 2px;
+        }
+
+        .cards-row {
+            position: absolute; top: 340px; left: 100px;
+            width: 1720px; z-index: 30;
+            display: flex; gap: 32px; align-items: stretch;
+        }
+
+        .glass-card {
+            flex: 1;
+            background: rgba(255,255,255,0.88);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+            border-radius: 24px;
+            padding: 32px 28px;
+            display: flex; flex-direction: column;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 32px 64px -10px rgba(0,0,0,0.14);
+        }
+
+        .card-header {
+            display: flex; align-items: center;
+            font-size: 36px; font-weight: 900; color: #111827;
+            margin-bottom: 24px;
+        }
+        .card-num {
+            background: #F8D560; color: white;
+            font-size: 20px; font-weight: 700;
+            padding: 4px 16px; border-radius: 8px;
+            margin-right: 14px; flex-shrink: 0;
+        }
+
+        .card-list { list-style: none; }
+        .card-item {
+            display: flex; align-items: flex-start;
+            margin-bottom: 18px;
+        }
+        .card-item:last-child { margin-bottom: 0; }
+        .bullet {
+            color: #F8D560; font-size: 24px;
+            margin-right: 10px; flex-shrink: 0; margin-top: 2px;
+        }
+        .item-body {
+            font-size: 24px; color: #4b5563;
+            line-height: 1.65; text-align: justify;
+        }
+        .item-body strong {
+            display: block; color: #1f2937; font-weight: 700;
+            font-size: 24px; margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas-1920" id="main-canvas">
+
+        <div class="bg-bottom-shape"></div>
+        <div class="bg-top-shape"></div>
+
+        <!-- 水印 -->
+        <div class="watermark">
+            <span class="watermark-num">03<span style="color:#F8D560">.</span></span>
+            <span class="watermark-text">Overview</span>
+        </div>
+
+        <!-- 主标题 -->
+        <h1 class="main-title">项-目-概-述</h1>
+
+        <!-- 三列卡片 -->
+        <div class="cards-row">
+
+            <!-- 卡片1：设计方法 -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <span class="card-num">01</span>设计方法
+                </div>
+                <ul class="card-list">
+                    <li class="card-item">
+                        <span class="bullet">✦</span>
+                        <div class="item-body">
+                            <strong>以清新色彩为主，营造氛围：</strong>
+                            整体色调以生机勃勃的"自然绿"、"清新蓝"及温馨的紫粉色为主。通过蓝天白云、鲜花等元素，营造春意盎然的出游氛围。
+                        </div>
+                    </li>
+                    <li class="card-item">
+                        <span class="bullet">✦</span>
+                        <div class="item-body">
+                            <strong>运用3D/2.5D插画搭建场景：</strong>
+                            核心视觉采用高质量3D建模，打造身穿蓝色雨衣的可爱IP。配备行李箱、相机等3D道具，搭建出沉浸感的游戏场景。
+                        </div>
+                    </li>
+                    <li class="card-item">
+                        <span class="bullet">✦</span>
+                        <div class="item-body">
+                            <strong>提升动作互动性：</strong>
+                            IP表情生动、动作夸张（如挥手、呼喊），配合大字报主标题与气泡元素，增强了画面的感染力与用户点击欲。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 卡片2：页面设计 -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <span class="card-num">02</span>页面设计
+                </div>
+                <ul class="card-list">
+                    <li class="card-item">
+                        <span class="bullet">✦</span>
+                        <div class="item-body">
+                            <strong>以游戏场景页面为主基调：</strong>
+                            主会场采用"大标题+核心IP+强引导按钮"布局。画面层次分明，利益点通过高清标签设计，第一时间抓住焦点。
+                        </div>
+                    </li>
+                    <li class="card-item">
+                        <span class="bullet">✦</span>
+                        <div class="item-body">
+                            <strong>扩散设计其他页面：</strong>
+                            子页面（如抽奖、商城等）延用了主会场的IP宣传（更换道具区分场景），利用旋转式UI布局承载具体信息，清晰易读。
+                        </div>
+                    </li>
+                    <li class="card-item">
+                        <span class="bullet">✦</span>
+                        <div class="item-body">
+                            <strong>色调风格保持统一性：</strong>
+                            所有界面的UI组件均保持一致设计语言。光影效果、字体风格及整体的年轻化调性在各子模块中高度统一。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 卡片3：项目成果 -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <span class="card-num">03</span>项目成果
+                </div>
+                <ul class="card-list">
+                    <li class="card-item">
+                        <span class="bullet">●</span>
+                        <div class="item-body">
+                            <strong>业务伙伴高度认可：</strong>
+                            精美的3D视觉与清晰的UI完美融合，不仅生动传播了活动，还高效承载了海量业务信息，获运营与产品高度评价。
+                        </div>
+                    </li>
+                    <li class="card-item">
+                        <span class="bullet">●</span>
+                        <div class="item-body">
+                            <strong>活动效果超预期：</strong>
+                            通过视觉包装和趣味引导，提升了点击率和停留时长。丰富玩法促进转化与裂变，实现流量与销量的双丰收。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function fitToScreen() {
+            const canvas = document.getElementById('main-canvas');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            canvas.style.transform = `scale(${Math.min(scaleX, scaleY)})`;
+        }
+        fitToScreen();
+        window.addEventListener('resize', fitToScreen);
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+node_modules/
+backups/
+CRM系统相关资料/
+_next/
+crm/
+start.sh
+.DS_Store
+**/.DS_Store
+Thumbs.db
+.aider*
+package.json
+package-lock.json

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竞品功能分析 - 智聚行</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #dceaff 0%, #edf4ff 50%, #dceaff 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        #scale-wrapper {
+            width: 100%;
+            background: linear-gradient(135deg, #dceaff 0%, #edf4ff 50%, #dceaff 100%);
+        }
+
+        .presentation-slide {
+            width: 1920px;
+            margin: 0 auto;
+            padding: 100px 160px 150px 160px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #dceaff 0%, #edf4ff 50%, #dceaff 100%);
+            transform-origin: top left;
+        }
+
+        /* ── 头部 ── */
+        .header {
+            display: block;
+            margin-bottom: 70px;
+        }
+
+        .blue-slash {
+            width: 16px;
+            height: 54px;
+            background-color: #2563eb;
+            transform: skewX(-15deg);
+            margin-right: 24px;
+            margin-top: 6px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .title-group h1 {
+            margin: 0;
+            font-size: 75px;
+            color: #111111;
+            font-weight: 300;
+            letter-spacing: -1.2px;
+            line-height: 1.15;
+        }
+
+        .title-group h2 {
+            margin: 0 0 18px 0;
+            font-size: 20px;
+            color: rgba(26,100,180,0.7);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3.5px;
+        }
+
+        /* ── 表格容器 ── */
+        .table-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── 行布局：第1列产品区固定 180px，其余 8 列平分 ── */
+        .table-row {
+            display: grid;
+            grid-template-columns: 180px repeat(8, 1fr);
+            align-items: center;
+            padding: 36px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table-row:last-child { border-bottom: none; }
+
+        /* ── 表头 ── */
+        .table-header {
+            border-bottom: 2px solid #2563eb;
+            padding-top: 0;
+            padding-bottom: 28px;
+        }
+
+        .th {
+            color: #2563eb;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .th:first-child { text-align: center; }
+
+        /* ── 产品名称列 ── */
+        .col-product {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            object-fit: cover;
+            margin-bottom: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            background-color: #e2e8f0;
+            display: block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .app-logo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-name {
+            font-size: 22px;
+            color: #1e293b;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* ── 功能列 ── */
+        .col-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ── SVG 对勾 / 横线 ── */
+        .svg-check, .svg-dash {
+            width: 42px;
+            height: 42px;
+        }
+
+        .svg-check path {
+            fill: none;
+            stroke: #2563eb;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .svg-dash path {
+            fill: none;
+            stroke: #cbd5e1;
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+    </style>
+</head>
+<body>
+    <div id="scale-wrapper">
+        <div class="presentation-slide" id="slide">
+
+            <div class="header">
+                <div class="title-group">
+                    <h2>03b · Feature Comparison</h2>
+                    <h1>竞品<strong style="color:#111111">功能分析</strong></h1>
+                </div>
+            </div>
+
+            <div class="table-container">
+
+                <!-- 表头 -->
+                <div class="table-row table-header">
+                    <div class="th">产品名称</div>
+                    <div class="th">机酒预订</div>
+                    <div class="th">非标定制</div>
+                    <div class="th">审批风控</div>
+                    <div class="th">发票归集</div>
+                    <div class="th">AI 定制</div>
+                    <div class="th">C端互动</div>
+                    <div class="th">敏捷部署</div>
+                    <div class="th">ESG足迹</div>
+                </div>
+
+                <!-- 携程商旅 -->
+                <div class="table-row">
+                    <div class="col-product">
+                        <img class="app-logo" src="../image/携程商旅.webp" alt="携程商旅">
+                        <span class="product-name">携程商旅</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                </div>
+
+                <!-- 携程旅行 -->
+                <div class="table-row">
+                    <div class="col-product">
+                        <img class="app-logo" src="../image/携程旅行.webp" alt="携程旅行">
+                        <span class="product-name">携程旅行</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                </div>
+
+                <!-- 飞猪旅行 -->
+                <div class="table-row">
+                    <div class="col-product">
+                        <img class="app-logo" src="../image/飞猪旅行.webp" alt="飞猪旅行">
+                        <span class="product-name">飞猪旅行</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                </div>
+
+                <!-- 传统旅行社 -->
+                <div class="table-row">
+                    <div class="col-product">
+                        <img class="app-logo" src="../image/传统旅行社.webp" alt="传统旅行社">
+                        <span class="product-name">线下传统旅行社</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                </div>
+
+                <!-- 去哪儿旅行 -->
+                <div class="table-row">
+                    <div class="col-product">
+                        <img class="app-logo" src="../image/去哪儿旅行.webp" alt="去哪儿旅行">
+                        <span class="product-name">去哪儿旅行</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                </div>
+
+                <!-- 同程旅行 -->
+                <div class="table-row">
+                    <div class="col-product">
+                        <img class="app-logo" src="../image/同程旅行.webp" alt="同程旅行">
+                        <span class="product-name">同程旅行</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                </div>
+
+                <!-- 智聚行 -->
+                <div class="table-row" style="background:rgba(26,159,218,0.09);">
+                    <div class="col-product">
+                        <div style="width:72px;height:72px;border-radius:18px;background:#1A9FDA;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 10px 25px rgba(0,0,0,0.06);flex-shrink:0;"><svg xmlns="http://www.w3.org/2000/svg" width="54" height="49" viewBox="0 0 915 834" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M774.034 661.721C774.034 670.607 770.324 680.675 764.273 691.014C758.217 701.361 749.788 712.025 740.29 722.114C721.298 742.285 697.97 760.217 680.628 768.758L680.627 768.759C663.711 777.011 638.217 781.059 613.312 782.782C588.397 784.505 563.997 783.905 549.205 782.82C546.967 782.718 541.796 781.986 534.924 780.871C528.037 779.755 519.405 778.249 510.223 776.595C491.858 773.288 471.277 769.385 458.008 766.799L457.995 766.796L457.981 766.793C424.214 758.298 348.918 749.793 313.9 749.293C259.515 748.517 197.485 760.971 141.216 777.901C84.9502 794.83 34.4804 816.223 3.22336 833.301L1.94525 834L2.52318 832.664C11.5902 811.72 34.3805 789.594 59.1287 770.502C83.8861 751.404 110.686 735.28 127.9 726.342C153.793 709.495 188.803 696.098 221.989 686.225C255.177 676.352 286.581 669.992 305.299 667.234C335.298 659.712 381.758 660.556 427.947 664.851C472.724 669.013 517.316 676.426 546.553 682.651L549.334 683.251L549.357 683.255L549.378 683.262C574.844 691.247 631.865 697.751 674.404 698.251C691.322 698.45 711.315 692.353 729.466 684.618C747.605 676.887 763.85 667.543 773.257 661.304L774.034 660.789V661.721Z" fill="white"/><path fill-rule="evenodd" clip-rule="evenodd" d="M913.72 1.60582C915.312 12.7482 915.913 31.889 912.555 53.1591C909.197 74.4293 901.874 97.8647 887.594 117.565C869.806 142.104 850.14 165.265 833.23 183.355C816.337 201.428 802.151 214.485 795.33 218.778C784.903 225.34 731.95 262.59 704.115 282.274C720.852 276.414 745.491 267.161 768.93 257.066C794.008 246.265 817.635 234.531 828.784 224.981C842.809 212.965 861.215 198.073 876.299 186C883.84 179.964 890.554 174.631 895.474 170.714C897.934 168.756 899.946 167.151 901.389 165.99C902.849 164.815 903.694 164.12 903.858 163.957L903.916 163.905C903.982 163.852 904.074 163.798 904.19 163.777C904.36 163.745 904.514 163.793 904.627 163.869C904.81 163.991 904.898 164.191 904.941 164.304C905.045 164.572 905.119 164.976 905.173 165.462C905.284 166.455 905.329 167.968 905.272 169.896C905.157 173.76 904.629 179.346 903.357 185.893C900.813 198.981 895.282 215.95 884.083 230.668C857.025 266.225 858.619 261.763 834.48 287.256C827.792 294.319 814.403 303.483 797.523 313.435C780.627 323.396 760.181 334.177 739.333 344.47C699.679 364.048 658.53 381.88 637.556 388.967C673.504 388.341 718.255 377.418 757.077 364.451C777.065 357.776 795.47 350.563 810.274 343.946C825.091 337.323 836.266 331.313 841.823 327.048L842.842 326.266L842.621 327.531C838.916 348.737 812.818 399.403 738.193 433.488C691.586 454.775 658.124 462.668 633.996 467.053C621.911 469.249 612.242 470.553 604.384 472.226C597.176 473.76 591.596 475.585 587.217 478.63C605.458 479.421 633.584 479.793 660.479 478.396C674.279 477.679 687.748 476.498 699.386 474.673C711.037 472.846 720.809 470.38 727.245 467.114L728.05 466.706L727.969 467.605C726.448 484.711 714.819 498.59 698.186 509.715C681.546 520.843 659.819 529.274 637.923 535.473C616.021 541.674 593.918 545.65 576.508 547.858C567.803 548.961 560.265 549.623 554.508 549.899C552.287 550.006 550.327 550.055 548.666 550.05C558.806 553.665 573.667 558.015 589.268 560.72C606.948 563.786 625.496 564.725 639.192 560.163L639.893 559.929L639.85 560.667C639.715 563.014 638.214 565.948 634.925 569.117C631.625 572.296 626.479 575.757 618.941 579.159C604.083 585.863 579.863 592.363 541.953 596.002C553.211 604.843 569.682 617.893 583.677 629.23C590.869 635.057 597.41 640.434 602.254 644.555C604.675 646.614 606.677 648.364 608.124 649.7C608.848 650.368 609.438 650.938 609.875 651.393C610.293 651.83 610.619 652.211 610.759 652.49C610.858 652.687 610.932 652.978 610.775 653.263C610.632 653.523 610.371 653.632 610.18 653.682C609.79 653.785 609.22 653.766 608.566 653.689C607.222 653.53 605.209 653.081 602.753 652.431C597.828 651.129 591.016 648.999 583.958 646.684C576.897 644.369 569.577 641.865 563.636 639.816C557.689 637.766 553.133 636.175 551.578 635.676C551.016 635.496 547.782 634.795 542.315 633.765C536.868 632.74 529.242 631.394 519.935 629.924C501.319 626.984 475.978 623.547 447.879 621.173C391.654 616.424 324.477 615.943 278.023 632.168C231.404 648.451 177.652 662.563 128.669 684.197C79.7084 705.82 35.6319 734.915 8.42087 781.074L7.91823 781.927L7.52903 781.016C-3.54767 755.05 -1.10658 728.895 6.51495 706.746C14.13 684.615 26.9278 666.446 36.6517 656.387L173.839 499.258L173.843 499.255L298.506 359.146L381.913 261.891H186.233C140.2 261.891 102.602 289.019 85.0723 306.656C85.0791 306.732 85.0859 306.807 85.0928 306.882L84.0954 306.974C82.0866 285.141 84.8698 252.431 99.7769 225.258C114.705 198.047 141.782 176.419 188.24 176.821C280.765 177.621 326.586 177.154 337.925 176.821H491.187L491.225 176.827C504.389 178.838 521.02 185.791 527.814 200.228C534.629 214.71 531.426 236.443 505.554 267.714C453.889 330.158 408.596 382.131 392.396 400.327L392.397 400.328L294.763 515.923L294.755 515.934L212.168 608.478C210.357 611.322 208.594 614.763 207.456 618.213C206.311 621.685 205.819 625.112 206.497 627.939C207.165 630.725 208.976 632.978 212.579 634.147C216.222 635.328 221.712 635.403 229.688 633.709C261.681 626.914 329.731 600.879 359.782 588.698L359.804 588.688L359.828 588.681C386.251 580.875 438.771 548.52 437.575 481.581C436.823 439.459 447.359 401.226 461.531 371.267C475.695 341.326 493.52 319.591 507.397 310.513C521.138 301.524 525.495 297.291 530.512 293.217C535.557 289.12 541.225 285.222 557.513 276.957C583.526 263.758 684.45 203.77 731.699 175.403C751.462 161.317 779.758 138.977 803.922 119.319C816.005 109.489 827.052 100.333 835.478 93.2176C843.917 86.092 849.699 81.0359 851.279 79.3937C857.537 72.889 869.419 60.5138 881.486 46.2032C893.56 31.8854 905.794 15.6597 912.775 1.4553L913.49 0L913.72 1.60582Z" fill="white"/><path d="M427.854 665.848C381.656 661.553 335.335 660.728 305.517 668.212L305.493 668.218L305.469 668.222C286.8 670.97 255.43 677.32 222.275 687.184C189.113 697.049 154.203 710.419 128.427 727.194L128.407 727.208L128.384 727.219C111.217 736.13 84.4564 752.229 59.7408 771.295C35.5413 789.963 13.3827 811.419 4.04577 831.715C35.4617 814.718 85.3817 793.655 140.928 776.942C197.245 759.997 259.386 747.514 313.915 748.293C348.983 748.793 424.328 757.3 458.198 765.816C471.464 768.401 492.042 772.305 510.401 775.611C519.581 777.264 528.206 778.768 535.084 779.883C541.977 781.001 547.083 781.723 549.251 781.821H549.265C564.014 782.904 588.374 783.504 613.244 781.784C638.131 780.062 663.457 776.021 680.187 767.859C697.393 759.385 720.627 741.538 739.56 721.428C749.025 711.375 757.401 700.772 763.408 690.509C769.204 680.606 772.769 671.061 773.018 662.656C763.463 668.917 747.561 677.994 729.858 685.539C711.668 693.291 691.521 699.453 674.392 699.252C631.825 698.752 574.705 692.248 549.094 684.222C519.988 677.889 474.018 670.139 427.854 665.848Z" fill="white"/></svg></div>
+                        <span class="product-name" style="font-weight:700;">智聚行</span>
+                    </div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-check" viewBox="0 0 40 40"><path d="M10 21 L17 28 L30 12"></path></svg></div>
+                    <div class="col-cell"><svg class="svg-dash" viewBox="0 0 40 40"><path d="M12 20 L28 20"></path></svg></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fitToScreen() {
+            const wrapper = document.getElementById('scale-wrapper');
+            const slide   = document.getElementById('slide');
+            const windowWidth = window.innerWidth;
+            const scale = windowWidth < 1920 ? windowWidth / 1920 : 1;
+            slide.style.transform = scale < 1 ? 'scale(' + scale + ')' : 'scale(1)';
+            slide.style.margin    = scale < 1 ? '0' : '0 auto';
+            const actualHeight = slide.offsetHeight * scale;
+            wrapper.style.height = actualHeight + 'px';
+            if (window.parent !== window) {
+                window.parent.postMessage({ type: 'iframeHeight', height: actualHeight }, '*');
+            }
+        }
+        window.addEventListener('resize', fitToScreen);
+        window.addEventListener('load', fitToScreen);
+        fitToScreen();
+    </script>
+</body>
+</html>

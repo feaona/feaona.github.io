@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智连芯造CRM - 视觉规范定义</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <link href="https://fonts.loli.net/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 智造芯连 CRM 核心变量 */
+            --primary: #1677ff;
+            --success: #52c41a;
+            --warning: #faad14;
+            --error: #ff4d4f;
+            --text-main: rgba(255,255,255,0.92);
+            --text-sub: #4e5969;
+            --text-muted: #86909c;
+            --line: #e5e6eb;
+            --bg-page: #f7f8fa;
+            --surface: #ffffff;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: transparent;
+            color: var(--text-main);
+            padding: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .spec-container {
+            width: 100%;
+            max-width: 1400px;
+            height: calc(100vh - 40px);
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 40px 60px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 装饰背景 */
+        .spec-container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(22,119,255,0.03) 0%, rgba(22,119,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        /* 内部内容区域允许自身滚动，以防万一内容还是太多 */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            /* 隐藏滚动条但保留功能 (可选) */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .content-area::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 减小间距 */
+            font-size: 18px; /* 稍微减小字号 */
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        .section-title::before {
+            display: none;
+        }
+        .section-subtitle {
+            font-size: 13px; /* 稍微减小字号 */
+            color: #b0b8c4;
+            margin-bottom: 8px; /* 减小下边距 */
+            margin-left: 22px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .section-desc {
+            font-size: 12px; /* 稍微减小字号 */
+            color: var(--text-sub);
+            margin-left: 22px;
+            margin-bottom: 20px; /* 减小下边距 */
+            position: relative;
+        }
+        .section-desc::before {
+            content: '·';
+            position: absolute;
+            left: -10px;
+            top: 0;
+        }
+
+        /* 字体展示卡片阴影 */
+        .font-card {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            border: 1px solid var(--line);
+        }
+
+        /* 标注线样式 */
+        .measure-dot {
+            position: absolute;
+            width: 24px; /* 调整为模板截图的尺寸 */
+            height: 24px;
+            background: #dce8ff; /* 浅蓝底色 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .measure-dot::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+        .measure-line {
+            position: absolute;
+            background: #a3c6ff; /* 浅蓝细引线 */
+            z-index: 5;
+        }
+        .measure-text {
+            position: absolute;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="spec-container">
+    
+    <!-- 头部区域 -->
+    <div class="flex justify-between items-start border-b border-[#f0f1f5] pb-4 mb-6 shrink-0">
+        <div>
+            <div class="flex items-center gap-3">
+                <h1 class="text-3xl font-bold text-white">智连芯造 CRM 组件规范</h1>
+            </div>
+        </div>
+        <div class="text-[#86909c] text-base font-medium">V2.0</div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content-area">
+        <!-- 1. 颜色规范 -->
+        <div class="mb-8">
+            <h2 class="section-title">颜色规范</h2>
+            <div class="section-subtitle">Color Specifications</div>
+            <p class="section-desc">主色采用科技蓝（#1677ff），同时提供成功/告警/错误等状态色与中性色。大面积背景使用浅灰，卡片使用白色并搭配分割线。</p>
+
+            <div class="flex gap-6 ml-[22px]">
+                <!-- 左侧大块背景色 -->
+                <div class="w-1/3 bg-[#f7f8fa] border border-[#e5e6eb] rounded-[12px] p-5 flex flex-col justify-between h-[160px]">
+                    <div class="text-base font-bold text-white self-center mt-8">页面背景色</div>
+                    <div class="text-xs font-medium text-[#86909c] self-end">#F7F8FA</div>
+                </div>
+
+                <!-- 右侧色块网格 (4列 x 2行 = 8块) -->
+                <div class="w-2/3 grid grid-cols-4 gap-3">
+                    <!-- 第一行：主色与功能色 -->
+                    <div class="bg-[#1677ff] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">品牌主色</div>
+                        <div class="text-sm font-bold">#1677FF</div>
+                    </div>
+                    <div class="bg-[#52c41a] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">成功色</div>
+                        <div class="text-sm font-bold">#52C41A</div>
+                    </div>
+                    <div class="bg-[#faad14] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">告警色</div>
+                        <div class="text-sm font-bold">#FAAD14</div>
+                    </div>
+                    <div class="bg-[#ff4d4f] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">错误色</div>
+                        <div class="text-sm font-bold">#FF4D4F</div>
+                    </div>
+
+                    <!-- 第二行：中性文字与分割线 -->
+                    <div class="bg-[#1f2329] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">主文案</div>
+                        <div class="text-sm font-bold">#1F2329</div>
+                    </div>
+                    <div class="bg-[#4e5969] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">次级文案</div>
+                        <div class="text-sm font-bold">#4E5969</div>
+                    </div>
+                    <div class="bg-[#86909c] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-white shadow-sm">
+                        <div class="text-xs font-medium opacity-90">说明文案</div>
+                        <div class="text-sm font-bold">#86909C</div>
+                    </div>
+                    <div class="bg-[#e5e6eb] rounded-[8px] p-3 flex flex-col justify-between h-[74px] text-[#4e5969] shadow-sm">
+                        <div class="text-xs font-medium">分割线/边框</div>
+                        <div class="text-sm font-bold">#E5E6EB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 字体规范 -->
+        <div class="mb-8">
+            <h2 class="section-title">字体规范</h2>
+            <div class="section-subtitle">Font Specifications</div>
+            <p class="section-desc">推荐使用系统无衬线字体栈，字号层级：12/14/16/20/24/32。确保在不同操作系统下获得最佳阅读体验。</p>
+
+            <div class="ml-[22px]">
+                <div class="flex gap-6 items-center">
+                    <!-- 左侧字体家族展示 -->
+                    <div class="flex flex-col gap-4 shrink-0 pr-6">
+                        <h3 class="text-[26px] font-semibold text-white mt-0 mb-1">苹方 / 微软雅黑 / Helvetica Neue</h3>
+                        <div class="flex gap-5">
+                            <div class="flex flex-col gap-3">
+                                <span class="text-xs text-[rgba(255,255,255,0.45)]">中文Mac OS系统</span>
+                                <div class="font-card w-[130px] h-[150px] bg-[rgba(255,255,255,0.06)] border-[rgba(255,255,255,0.1)] rounded-md flex flex-col items-center justify-center relative">
+                                    <span class="text-5xl font-normal text-white mb-4" style="font-family: 'PingFang SC', sans-serif;">苹</span>
+                                    <span class="text-[11px] text-[rgba(255,255,255,0.45)] absolute bottom-3">PingFang SC</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <span class="text-xs text-[rgba(255,255,255,0.45)]">中文Windows系统</span>
+                                <div class="font-card w-[130px] h-[150px] bg-[rgba(255,255,255,0.06)] border-[rgba(255,255,255,0.1)] rounded-md flex flex-col items-center justify-center relative">
+                                    <span class="text-5xl font-normal text-white mb-4" style="font-family: 'Microsoft YaHei', sans-serif;">软</span>
+                                    <span class="text-[11px] text-[rgba(255,255,255,0.45)] absolute bottom-3">Microsoft YaHei</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-3">
+                                <span class="text-xs text-[rgba(255,255,255,0.45)]">英文/数字</span>
+                                <div class="font-card w-[130px] h-[150px] bg-[rgba(255,255,255,0.06)] border-[rgba(255,255,255,0.1)] rounded-md flex flex-col items-center justify-center relative">
+                                    <span class="text-5xl font-normal text-white mb-4" style="font-family: 'Helvetica Neue', Arial, sans-serif;">Aa</span>
+                                    <span class="text-[11px] text-[rgba(255,255,255,0.45)] absolute bottom-3">Helvetica Neue</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧字号层级表格 -->
+                    <div class="flex-1 font-card bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.08)] rounded-lg p-5">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-[rgba(255,255,255,0.9)] text-[13px] font-bold border-b border-[rgba(255,255,255,0.1)]">
+                                    <th class="pb-2 font-semibold">字号 (Size)</th>
+                                    <th class="pb-2 font-semibold">样式 (Weight)</th>
+                                    <th class="pb-2 font-semibold">使用场景</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs">
+                                <tr class="border-b border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+                                    <td class="py-2 text-[24px] font-bold text-white">32px</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">700 (Bold)</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">H1 / 页面主标题 / 核心数字指标</td>
+                                </tr>
+                                <tr class="border-b border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+                                    <td class="py-2 text-[20px] font-semibold text-white">24px</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">600 (Semibold)</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">H2 / 独立模块标题</td>
+                                </tr>
+                                <tr class="border-b border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+                                    <td class="py-2 text-[16px] font-semibold text-white">20px</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">600 (Semibold)</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">H3 / 卡片内分组标题 / 弹窗标题</td>
+                                </tr>
+                                <tr class="border-b border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+                                    <td class="py-2 text-[14px] text-white">16px</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">400 (Regular)</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">重要正文 / 主按钮文字 / 列表强文本</td>
+                                </tr>
+                                <tr class="border-b border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+                                    <td class="py-2 text-[13px] text-[rgba(255,255,255,0.7)]">14px</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">400 (Regular)</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">标准正文 / 输入框 / 表格内容 / 下拉菜单</td>
+                                </tr>
+                                <tr class="hover:bg-[rgba(255,255,255,0.04)] transition-colors">
+                                    <td class="py-2 text-[12px] text-[rgba(255,255,255,0.45)]">12px</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">400 (Regular)</td>
+                                    <td class="py-2 text-[rgba(255,255,255,0.55)]">辅助说明 / 标签分类 / 校验提示 / 底部信息</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 圆角规范 -->
+        <div>
+            <h2 class="section-title">圆角规范</h2>
+            <div class="section-subtitle">Fillet Specifications</div>
+            <p class="section-desc">圆角设计有效提升信息间的层次感与亲和力。小控件/标签 2px，输入框/按钮 6px，常规卡片/弹窗 8px，大型容器 12px。</p>
+
+            <div class="ml-[22px] flex gap-8">
+                <!-- 演示框 1：小圆角 (2px / 6px) -->
+                <div class="flex-1 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-[8px] p-6 pt-10 pb-8 relative" style="box-shadow: 0 8px 24px rgba(22,119,255,0.06);">
+
+                    <div class="w-full h-full bg-[rgba(255,255,255,0.04)] rounded-[6px] border border-[rgba(255,255,255,0.1)] p-5 flex gap-4 items-center justify-center relative">
+                        
+                        <!-- 标注：6px 输入框级 (左上角) -->
+                        <div class="measure-dot" style="top: -12px; left: -12px;"></div>
+                        <div class="measure-line h-[1px] w-[30px]" style="top: -1px; left: 12px;"></div>
+                        <div class="measure-text" style="top: -12px; left: 46px;">6px</div>
+
+                        <!-- 内部元素 -->
+                        <div class="w-1/3 h-[44px] bg-[rgba(255,255,255,0.15)] rounded-[2px]"></div>
+                        <div class="w-1/3 h-[44px] bg-[rgba(255,255,255,0.15)] rounded-[2px]"></div>
+                        <div class="w-1/3 h-[44px] bg-[rgba(255,255,255,0.15)] rounded-[2px] relative">
+                            <!-- 标注：2px 标签级 (右下角) -->
+                            <div class="measure-dot" style="bottom: -12px; right: -12px;"></div>
+                            <div class="measure-line h-[1px] w-[30px]" style="bottom: -1px; right: -40px;"></div>
+                            <div class="measure-text" style="bottom: -12px; right: -75px;">2px</div>
+                        </div>
+                    </div>
+
+                    <p class="mt-8 text-[12px] text-[#86909c] leading-relaxed">
+                        基础输入框、按钮等交互控件使用圆角为 <span class="text-[#1677ff] font-medium">6px</span>；<br>
+                        内部更小的状态标签、单选/复选框等基础元素使用圆角为 <span class="text-[#1677ff] font-medium">2px</span>。
+                    </p>
+                </div>
+
+                <!-- 演示框 2：大圆角 (8px / 12px) -->
+                <div class="flex-1 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-[12px] p-6 pt-10 pb-8 relative" style="box-shadow: 0 8px 24px rgba(22,119,255,0.06);">
+
+                    <!-- 标注：12px 容器级 (外部大容器左上角) -->
+                    <div class="measure-dot" style="top: -12px; left: -12px;"></div>
+                    <div class="measure-line h-[1px] w-[30px]" style="top: -1px; left: 12px;"></div>
+                    <div class="measure-text" style="top: -12px; left: 46px;">12px</div>
+
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div class="w-[80%] h-[90px] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] rounded-[8px] relative shadow-sm">
+                            <!-- 标注：8px 卡片级 (内部卡片左上角) -->
+                            <div class="measure-dot" style="top: -12px; left: -12px;"></div>
+                            <div class="measure-line h-[1px] w-[25px]" style="top: -1px; left: 12px;"></div>
+                            <div class="measure-text" style="top: -12px; left: 42px;">8px</div>
+                        </div>
+                    </div>
+
+                    <p class="mt-8 text-[12px] text-[#86909c] leading-relaxed">
+                        页面主容器、大型模态弹窗使用最大级别圆角 <span class="text-[#1677ff] font-medium">12px</span>；<br>
+                        常规的数据总览卡片、详情区块容器使用圆角为 <span class="text-[#1677ff] font-medium">8px</span>。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

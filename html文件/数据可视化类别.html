@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据可视化类别展示 - Data Visualization Category</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        @import url('https://fonts.loli.net/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card-shadow:hover {
+            box-shadow: 0 6px 20px 0 rgba(147, 197, 253, 0.2);
+            border-color: rgba(147, 197, 253, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tree-line {
+            background-color: rgba(147, 197, 253, 0.4);
+        }
+    </style>
+</head>
+<body class="w-full">
+
+    <!-- 整个画布外壳：确保无论屏幕多小，内部尺寸固定，出现滚动条，且标题跟随页面一起滚动 -->
+    <div class="relative w-full min-h-[950px] flex items-center justify-center py-10 px-0 mx-auto overflow-hidden">
+
+        <!-- 顶部标题区 (改为基于外壳的绝对定位，不使用 fixed，跟随页面滚动) -->
+        <div class="absolute top-10 left-10 flex flex-col gap-1.5 z-50 pointer-events-none">
+            <div class="flex items-center gap-2">
+                <h1 class="text-white font-bold text-3xl tracking-wider"><span style="color:#2b5aed">数据</span>可视化类别展示</h1>
+            </div>
+        </div>
+
+        <!-- 核心画布区 (基于绝对坐标中心定位) -->
+        <div class="relative w-[1000px] h-[800px] bg-transparent mt-8">
+
+            <!-- ======================= -->
+            <!-- 1. 全局连接线 (底层 Z-0) -->
+            <!-- ======================= -->
+            <div class="absolute inset-0 pointer-events-none z-0">
+                <!-- 【核心到各类的连线】-->
+                <div class="absolute tree-line w-[1px] left-1/2 top-[calc(50%-76px)] h-[52px]"></div>
+                <div class="absolute tree-line w-[1px] left-1/2 top-[calc(50%+24px)] h-[52px]"></div>
+                <!-- 偏移改为 76px，确保连线止于 hub 边缘外，不进入 hub 内部 -->
+                <div class="absolute tree-line h-[1px] top-1/2 right-[calc(50%+76px)] w-[130px]"></div>
+                <div class="absolute tree-line h-[1px] top-1/2 left-[calc(50%+76px)] w-[130px]"></div>
+
+                <!-- 【各类到收集器的连线】-->
+                <div class="absolute tree-line w-[1px] left-1/2 top-[calc(50%-124px)] h-[20px]"></div>
+                <div class="absolute tree-line w-[1px] left-1/2 top-[calc(50%+104px)] h-[20px]"></div>
+                <!-- 宽度从 28px 改为 68px，使线段从脊柱(x=182/818)延伸至标签，形成可见连接 -->
+                <div class="absolute tree-line h-[1px] top-1/2 right-[calc(50%+250px)] w-[68px]"></div>
+                <div class="absolute tree-line h-[1px] top-1/2 left-[calc(50%+250px)] w-[68px]"></div>
+
+                <!-- 【主收集器连线 (Collector Lines)】 -->
+                <div class="absolute tree-line h-[1px] top-[calc(50%-124px)] left-[calc(50%-186px)] w-[372px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%+124px)] left-[calc(50%-186px)] w-[372px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%-186px)] left-[calc(50%-318px)] h-[372px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%-186px)] left-[calc(50%+318px)] h-[372px]"></div>
+
+                <!-- 【卡片脊柱线 (穿透卡片背面)】 -->
+                <div class="absolute tree-line w-[1px] top-[calc(50%-360px)] left-[calc(50%-186px)] h-[236px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%-360px)] left-[calc(50%-62px)] h-[236px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%-360px)] left-[calc(50%+62px)] h-[236px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%-360px)] left-[calc(50%+186px)] h-[236px]"></div>
+                
+                <div class="absolute tree-line w-[1px] top-[calc(50%+124px)] left-[calc(50%-186px)] h-[236px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%+124px)] left-[calc(50%-62px)] h-[236px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%+124px)] left-[calc(50%+62px)] h-[236px]"></div>
+                <div class="absolute tree-line w-[1px] top-[calc(50%+124px)] left-[calc(50%+186px)] h-[236px]"></div>
+
+                <div class="absolute tree-line h-[1px] top-[calc(50%-186px)] left-[calc(50%-380px)] w-[62px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%-62px)] left-[calc(50%-380px)] w-[62px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%+62px)] left-[calc(50%-380px)] w-[62px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%+186px)] left-[calc(50%-380px)] w-[62px]"></div>
+
+                <div class="absolute tree-line h-[1px] top-[calc(50%-186px)] left-[calc(50%+318px)] w-[62px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%-62px)] left-[calc(50%+318px)] w-[62px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%+62px)] left-[calc(50%+318px)] w-[62px]"></div>
+                <div class="absolute tree-line h-[1px] top-[calc(50%+186px)] left-[calc(50%+318px)] w-[62px]"></div>
+            </div>
+
+            <!-- ======================= -->
+            <!-- 2. 中央枢纽与节点标签 (Z-20) -->
+            <!-- ======================= -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-[rgba(7,10,25,0.96)] border border-[#81bbf8] text-blue-300 px-8 py-2.5 rounded-[24px] text-lg font-semibold tracking-widest shadow-md">
+                图表类型
+            </div>
+
+            <div class="absolute top-[calc(50%-90px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-[#7aa6fe] text-white px-5 py-1 rounded-full text-[13px] font-medium tracking-widest shadow-sm">比较类</div>
+            <div class="absolute top-[calc(50%+90px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-[#7aa6fe] text-white px-5 py-1 rounded-full text-[13px] font-medium tracking-widest shadow-sm">占比类</div>
+            <div class="absolute top-1/2 left-[calc(50%-250px)] -translate-x-1/2 -translate-y-1/2 z-20 bg-[#7aa6fe] text-white px-5 py-1 rounded-full text-[13px] font-medium tracking-widest shadow-sm">趋势类</div>
+            <div class="absolute top-1/2 left-[calc(50%+250px)] -translate-x-1/2 -translate-y-1/2 z-20 bg-[#7aa6fe] text-white px-5 py-1 rounded-full text-[13px] font-medium tracking-widest shadow-sm">分布类</div>
+
+
+            <!-- ======================= -->
+            <!-- 3. 卡片群组 (顶层 Z-10) -->
+            <!-- ======================= -->
+
+            <!-- 【上方分支：比较类】 -->
+            <div class="absolute top-[calc(50%-248px)] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[472px] h-[224px] z-10 grid grid-cols-4 gap-6">
+                
+                <!-- Row 1 -->
+                <!-- 基础柱状图 (修复对齐：色块紧贴基准线) -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-end w-full px-5 pb-2 relative top-1">
+                        <div class="flex items-end justify-between w-full z-10">
+                            <div class="w-3 h-8 bg-blue-400 rounded-t-sm"></div>
+                            <div class="w-3 h-12 bg-blue-500 rounded-t-sm"></div>
+                            <div class="w-3 h-6 bg-blue-300 rounded-t-sm"></div>
+                        </div>
+                        <!-- 取消 margin 紧贴底部 -->
+                        <div class="w-full h-[2px] bg-[rgba(255,255,255,0.2)]"></div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">基础柱状图</div>
+                </div>
+                
+                <!-- 堆叠柱状图 (修复对齐：色块紧贴基准线) -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-end w-full px-5 pb-2 relative top-1">
+                        <div class="flex items-end justify-between w-full z-10">
+                            <div class="flex flex-col gap-0 w-3"><div class="w-full h-3 bg-blue-300 rounded-t-sm"></div><div class="w-full h-5 bg-blue-500"></div></div>
+                            <div class="flex flex-col gap-0 w-3"><div class="w-full h-5 bg-blue-300 rounded-t-sm"></div><div class="w-full h-7 bg-blue-500"></div></div>
+                            <div class="flex flex-col gap-0 w-3"><div class="w-full h-2 bg-blue-300 rounded-t-sm"></div><div class="w-full h-4 bg-blue-500"></div></div>
+                        </div>
+                        <div class="w-full h-[2px] bg-[rgba(255,255,255,0.2)]"></div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">堆叠柱状图</div>
+                </div>
+
+                <!-- 条形图 (修复对齐：左侧基准线紧密贴合) -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-start w-full pl-5 pb-1 relative top-1">
+                        <div class="w-[2px] h-[52px] bg-[rgba(255,255,255,0.2)]"></div>
+                        <div class="flex flex-col justify-center gap-[4px] z-10">
+                            <div class="h-2.5 w-10 bg-blue-400 rounded-r-sm"></div>
+                            <div class="h-2.5 w-16 bg-blue-500 rounded-r-sm"></div>
+                            <div class="h-2.5 w-12 bg-blue-300 rounded-r-sm"></div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">条形图</div>
+                </div>
+
+                <!-- 玉玦图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center relative top-1">
+                        <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9" fill="none" stroke="#eff6ff" stroke-width="3"/>
+                            <circle cx="12" cy="12" r="9" fill="none" stroke="#60a5fa" stroke-width="3" stroke-dasharray="40 100"/>
+                            <circle cx="12" cy="12" r="5" fill="none" stroke="#eff6ff" stroke-width="3"/>
+                            <circle cx="12" cy="12" r="5" fill="none" stroke="#818cf8" stroke-width="3" stroke-dasharray="20 100"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">玉玦图</div>
+                </div>
+
+                <!-- Row 2 -->
+                <!-- 玫瑰图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center relative top-1">
+                        <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 24 24">
+                            <path d="M12 12 L22 12 A10 10 0 0 1 19.07 19.07 Z" fill="#a78bfa"/>
+                            <path d="M12 12 L20.48 20.48 A12 12 0 0 1 12 24 Z" fill="#60a5fa"/>
+                            <path d="M12 12 L12 20 A8 8 0 0 1 6.34 17.66 Z" fill="#34d399"/>
+                            <path d="M12 12 L4.22 19.78 A11 11 0 0 1 1 12 Z" fill="#fcd34d"/>
+                            <path d="M12 12 L5 12 A7 7 0 0 1 7.05 7.05 Z" fill="#94a3b8"/>
+                            <path d="M12 12 L5.63 5.63 A9 9 0 0 1 12 3 Z" fill="#38bdf8"/>
+                            <path d="M12 12 L12 0 A12 12 0 0 1 20.48 3.52 Z" fill="#818cf8"/>
+                            <path d="M12 12 L19.07 4.93 A10 10 0 0 1 22 12 Z" fill="#c084fc"/>
+                            <circle cx="12" cy="12" r="4.5" fill="rgba(7,7,16,0.85)"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">玫瑰图</div>
+                </div>
+
+                <!-- 堆叠面积图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center w-full px-2 relative top-1">
+                        <svg class="w-full h-10" viewBox="0 0 100 50" preserveAspectRatio="none">
+                            <path d="M0 50 L0 10 L30 20 L60 5 L100 15 L100 50 Z" fill="#fdba74" opacity="0.9"/>
+                            <path d="M0 50 L0 25 L30 35 L60 20 L100 30 L100 50 Z" fill="#6ee7b7" opacity="0.9"/>
+                            <path d="M0 50 L0 40 L30 45 L60 35 L100 45 L100 50 Z" fill="#60a5fa" opacity="0.9"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">堆叠面积图</div>
+                </div>
+
+                <!-- 雷达图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center relative top-1">
+                        <svg class="w-12 h-12" viewBox="0 0 24 24">
+                            <polygon points="12,2 21,9 18,20 6,20 3,9" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+                            <polygon points="12,6 18,11 15,17 9,17 6,11" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+                            <line x1="12" y1="2" x2="12" y2="12" stroke="#e2e8f0"/><line x1="21" y1="9" x2="12" y2="12" stroke="#e2e8f0"/><line x1="18" y1="20" x2="12" y2="12" stroke="#e2e8f0"/><line x1="6" y1="20" x2="12" y2="12" stroke="#e2e8f0"/><line x1="3" y1="9" x2="12" y2="12" stroke="#e2e8f0"/>
+                            <polygon points="12,5 17,9 15,16 9,16 7,9" fill="#94a3b8" opacity="0.6"/>
+                            <polygon points="12,7 15,11 14,14 10,14 9,11" fill="#34d399" opacity="0.8"/>
+                            <polygon points="12,9 14,11 13,12 11,12 10,11" fill="#60a5fa" opacity="0.9"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">雷达图</div>
+                </div>
+
+                <!-- 词云图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 relative w-full h-full overflow-hidden font-sans">
+                        <span class="absolute text-blue-500 text-[14px] font-medium top-2 left-2">abandon</span>
+                        <span class="absolute text-gray-200 text-[9px] top-[4px] left-[65px]">OPPO</span>
+                        
+                        <span class="absolute text-blue-400 text-[13px] top-[24px] left-2">abandon</span>
+                        <span class="absolute text-gray-200 text-[8px] top-[28px] left-[60px]">abandon</span>
+                        
+                        <span class="absolute text-blue-300 text-[9px] top-[48px] left-2">abandon</span>
+                        <span class="absolute text-blue-300 text-[11px] top-[46px] left-[45px]">abandon</span>
+                        
+                        <span class="absolute text-gray-300 text-[10px] top-2 right-1.5 tracking-widest" style="writing-mode: vertical-rl;">abandon</span>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">词云图</div>
+                </div>
+            </div>
+
+            <!-- 【下方分支：占比类】 -->
+            <div class="absolute top-[calc(50%+248px)] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[472px] h-[224px] z-10 grid grid-cols-4 gap-6">
+                
+                <!-- Row 1 -->
+                <!-- 环图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center relative top-1">
+                        <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="8" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+                            <circle cx="12" cy="12" r="8" fill="none" stroke="#60a5fa" stroke-width="4" stroke-dasharray="35 100"/>
+                            <circle cx="12" cy="12" r="8" fill="none" stroke="#34d399" stroke-width="4" stroke-dasharray="10 100" stroke-dashoffset="-35"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">环图</div>
+                </div>
+
+                <!-- 饼状图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center relative top-1">
+                        <svg class="w-12 h-12" viewBox="0 0 24 24">
+                            <path d="M12 12 L12 2 A10 10 0 1 1 2 12 Z" fill="#60a5fa"/>
+                            <path d="M12 12 L2 12 A10 10 0 0 1 12 2 Z" fill="#34d399"/>
+                            <path d="M12 12 L21.5 8.5" stroke="white" stroke-width="0.5"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">饼状图</div>
+                </div>
+
+                <!-- 仪表盘 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-center relative top-1 w-full">
+                        <svg class="w-16 h-12" viewBox="0 0 24 14">
+                            <path d="M2 12 A 10 10 0 0 1 22 12" fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M2 12 A 10 10 0 0 1 18 3" fill="none" stroke="#60a5fa" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                        <div class="absolute bottom-0 flex flex-col items-center">
+                            <span class="text-[14px] font-bold text-white leading-none">87%</span>
+                            <span class="text-[8px] text-[rgba(255,255,255,0.4)] mt-[2px] scale-90">加载进度</span>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">仪表盘</div>
+                </div>
+
+                <!-- 百分比堆叠面积图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 relative w-full px-2 flex flex-col justify-end pb-1.5 relative top-1">
+                        <div class="relative w-full h-10">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 50" preserveAspectRatio="none">
+                                <polygon points="0 0, 100 0, 100 50, 0 50" fill="#fdba74" opacity="0.9"/>
+                                <path d="M0 50 L0 25 L30 35 L60 20 L100 30 L100 50 Z" fill="#6ee7b7" opacity="0.9"/>
+                                <path d="M0 50 L0 40 L30 45 L60 35 L100 45 L100 50 Z" fill="#60a5fa" opacity="0.9"/>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col justify-between items-center py-[2px]">
+                                <span class="text-[6px] text-white/90 font-bold leading-none mt-[1px]">15%</span>
+                                <span class="text-[6px] text-white/90 font-bold leading-none mt-[4px]">15%</span>
+                                <span class="text-[6px] text-white/90 font-bold leading-none mb-0.5">70%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-[rgba(255,255,255,0.5)] mt-auto whitespace-nowrap scale-90">百分比堆叠面积图</div>
+                </div>
+
+                <!-- Row 2 -->
+                <!-- 水波图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center relative top-1">
+                        <svg class="w-12 h-12" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="46" fill="none" stroke="#60a5fa" stroke-width="4"/>
+                            <clipPath id="waveClip">
+                                <circle cx="50" cy="50" r="46" />
+                            </clipPath>
+                            <g clip-path="url(#waveClip)">
+                                <path d="M 0 55 Q 25 35 50 55 T 100 55 L 100 100 L 0 100 Z" fill="#93c5fd" opacity="0.6"/>
+                                <path d="M 0 70 Q 25 90 50 70 T 100 70 L 100 100 L 0 100 Z" fill="#3b82f6" opacity="0.9"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">水波图</div>
+                </div>
+
+                <!-- 条状图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center w-full px-3 relative top-1">
+                        <div class="w-full h-3 bg-[rgba(255,255,255,0.1)] rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-500 w-2/3"></div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">条状图</div>
+                </div>
+
+                <!-- 堆叠柱状图 (修复对齐：色块紧贴基准线) -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-end w-full px-5 pb-2 relative top-1">
+                        <div class="flex items-end justify-between w-full z-10">
+                            <div class="flex flex-col gap-0 w-3"><div class="w-full h-4 bg-blue-300 rounded-t-sm"></div><div class="w-full h-6 bg-blue-500"></div></div>
+                            <div class="flex flex-col gap-0 w-3"><div class="w-full h-6 bg-blue-300 rounded-t-sm"></div><div class="w-full h-8 bg-blue-500"></div></div>
+                            <div class="flex flex-col gap-0 w-3"><div class="w-full h-3 bg-blue-300 rounded-t-sm"></div><div class="w-full h-5 bg-blue-500"></div></div>
+                        </div>
+                        <div class="w-full h-[2px] bg-[rgba(255,255,255,0.2)]"></div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">堆叠柱状图</div>
+                </div>
+
+                <!-- 百分比堆叠柱状图 (修复对齐：色块紧贴基准线) -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-full flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-end w-full px-4 pb-2 relative top-1">
+                        <div class="flex items-end justify-between w-full h-12 z-10">
+                            <div class="flex flex-col w-[14px] h-full overflow-hidden gap-0 rounded-t-sm">
+                                <div class="w-full h-[20%] bg-blue-300 flex items-center justify-center"><span class="text-[5px] text-white font-bold scale-75">20%</span></div>
+                                <div class="w-full h-[80%] bg-blue-500 flex items-center justify-center"><span class="text-[5px] text-white font-bold scale-75">80%</span></div>
+                            </div>
+                            <div class="flex flex-col w-[14px] h-full overflow-hidden gap-0 rounded-t-sm">
+                                <div class="w-full h-[40%] bg-blue-300 flex items-center justify-center"><span class="text-[5px] text-white font-bold scale-75">40%</span></div>
+                                <div class="w-full h-[60%] bg-blue-500 flex items-center justify-center"><span class="text-[5px] text-white font-bold scale-75">60%</span></div>
+                            </div>
+                            <div class="flex flex-col w-[14px] h-full overflow-hidden gap-0 rounded-t-sm">
+                                <div class="w-full h-[30%] bg-blue-300 flex items-center justify-center"><span class="text-[5px] text-white font-bold scale-75">30%</span></div>
+                                <div class="w-full h-[70%] bg-blue-500 flex items-center justify-center"><span class="text-[5px] text-white font-bold scale-75">70%</span></div>
+                            </div>
+                        </div>
+                        <div class="w-full h-[2px] bg-[rgba(255,255,255,0.2)]"></div>
+                    </div>
+                    <div class="text-[10px] text-[rgba(255,255,255,0.5)] mt-auto whitespace-nowrap scale-90">百分比堆叠柱状图</div>
+                </div>
+            </div>
+
+            <!-- 【左侧分支：趋势类】 -->
+            <div class="absolute top-1/2 left-[calc(50%-380px)] -translate-x-1/2 -translate-y-1/2 w-[100px] h-[472px] z-10 flex flex-col gap-6">
+                
+                <!-- 面积图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 w-full px-2 flex items-center relative top-1">
+                        <svg class="w-full h-8" viewBox="0 0 100 40" preserveAspectRatio="none">
+                            <path d="M0 40 L0 25 L15 30 L35 10 L55 25 L75 15 L100 30 L100 40 Z" fill="#e0e7ff"/>
+                            <polyline points="0 25, 15 30, 35 10, 55 25, 75 15, 100 30" fill="none" stroke="#818cf8" stroke-width="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">面积图</div>
+                </div>
+
+                <!-- 折线图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 w-full px-3 flex items-center relative top-1">
+                        <svg class="w-full h-8" viewBox="0 0 100 40" preserveAspectRatio="none" overflow="visible">
+                            <polyline points="0 30, 20 15, 40 35, 60 10, 80 25, 100 5" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-linejoin="round"/>
+                            <polyline points="0 15, 25 30, 50 15, 75 35, 100 20" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">折线图</div>
+                </div>
+
+                <!-- 堆叠面积图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 w-full px-2 flex items-center relative top-1">
+                        <svg class="w-full h-10" viewBox="0 0 100 50" preserveAspectRatio="none">
+                            <path d="M0 50 L0 10 L30 20 L60 5 L100 15 L100 50 Z" fill="#fdba74" opacity="0.9"/>
+                            <path d="M0 50 L0 25 L30 35 L60 20 L100 30 L100 50 Z" fill="#6ee7b7" opacity="0.9"/>
+                            <path d="M0 50 L0 40 L30 45 L60 35 L100 45 L100 50 Z" fill="#60a5fa" opacity="0.9"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">堆叠面积图</div>
+                </div>
+
+                <!-- 漏斗图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-center w-full px-4 relative top-1">
+                        <svg class="w-full h-12" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <polygon points="10 20, 90 20, 75 45, 25 45" fill="#93c5fd"/>
+                            <polygon points="25 45, 75 45, 60 70, 40 70" fill="#60a5fa"/>
+                            <polygon points="40 70, 60 70, 55 90, 45 90" fill="#3b82f6"/>
+                            <polygon points="45 90, 55 90, 52 100, 48 100" fill="#1e40af"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">漏斗图</div>
+                </div>
+            </div>
+
+            <!-- 【右侧分支：分布类】 -->
+            <div class="absolute top-1/2 left-[calc(50%+380px)] -translate-x-1/2 -translate-y-1/2 w-[100px] h-[472px] z-10 flex flex-col gap-6">
+                
+                <!-- 盒须图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex items-center justify-center gap-3 relative top-1">
+                        <div class="flex flex-col items-center">
+                            <div class="w-[1px] h-2 bg-[rgba(255,255,255,0.3)]"></div>
+                            <div class="w-3 h-5 bg-blue-300 border border-blue-400 relative"><div class="absolute top-1/2 left-0 right-0 h-[1px] bg-blue-600"></div></div>
+                            <div class="w-[1px] h-3 bg-[rgba(255,255,255,0.3)]"></div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-[1px] h-3 bg-[rgba(255,255,255,0.3)]"></div>
+                            <div class="w-3 h-6 bg-blue-400 border border-blue-500 relative"><div class="absolute top-1/3 left-0 right-0 h-[1px] bg-blue-700"></div></div>
+                            <div class="w-[1px] h-2 bg-[rgba(255,255,255,0.3)]"></div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="w-[1px] h-1 bg-[rgba(255,255,255,0.3)]"></div>
+                            <div class="w-3 h-4 bg-blue-200 border border-blue-300 relative"><div class="absolute top-2/3 left-0 right-0 h-[1px] bg-blue-500"></div></div>
+                            <div class="w-[1px] h-2 bg-[rgba(255,255,255,0.3)]"></div>
+                        </div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">盒须图</div>
+                </div>
+
+                <!-- 直方图 (修复对齐：色块紧贴基准线，无间隙) -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 flex flex-col items-center justify-end w-full px-4 pb-2 relative top-1">
+                        <!-- 利用 border 右侧白线做分割，替代 gap，从而底部能够齐平贴地 -->
+                        <div class="flex items-end justify-center w-full z-10">
+                            <div class="w-[13px] h-5 bg-blue-400 border-r border-white border-opacity-70"></div>
+                            <div class="w-[13px] h-9 bg-blue-400 border-r border-white border-opacity-70"></div>
+                            <div class="w-[13px] h-12 bg-blue-400 border-r border-white border-opacity-70"></div>
+                            <div class="w-[13px] h-7 bg-blue-400 border-r border-white border-opacity-70"></div>
+                            <div class="w-[13px] h-4 bg-blue-400"></div>
+                        </div>
+                        <div class="w-full h-[2px] bg-[rgba(255,255,255,0.2)]"></div>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">直方图</div>
+                </div>
+
+                <!-- 气泡图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 relative w-full h-full relative top-1">
+                        <svg class="w-full h-full p-3" viewBox="0 0 100 100">
+                            <line x1="10" y1="90" x2="90" y2="90" stroke="#e2e8f0" stroke-width="2"/>
+                            <line x1="10" y1="90" x2="10" y2="10" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle cx="25" cy="70" r="10" fill="#93c5fd" opacity="0.7"/>
+                            <circle cx="45" cy="45" r="15" fill="#60a5fa" opacity="0.6"/>
+                            <circle cx="70" cy="65" r="8" fill="#3b82f6" opacity="0.8"/>
+                            <circle cx="80" cy="30" r="12" fill="#bfdbfe" opacity="0.9"/>
+                            <circle cx="60" cy="20" r="6" fill="#60a5fa" opacity="0.7"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">气泡图</div>
+                </div>
+
+                <!-- 散点图 -->
+                <div class="card-shadow bg-[rgba(10,11,22,0.95)] rounded-xl w-full h-[100px] flex flex-col items-center pb-2 relative">
+                    <div class="flex-1 relative w-full h-full relative top-1">
+                        <svg class="w-full h-full p-3" viewBox="0 0 100 100">
+                            <line x1="10" y1="90" x2="90" y2="90" stroke="#e2e8f0" stroke-width="2"/>
+                            <line x1="10" y1="90" x2="10" y2="10" stroke="#e2e8f0" stroke-width="2"/>
+                            <circle cx="20" cy="70" r="3" fill="#60a5fa"/> <circle cx="30" cy="80" r="3" fill="#60a5fa"/>
+                            <circle cx="40" cy="60" r="3" fill="#60a5fa"/> <circle cx="50" cy="40" r="3" fill="#60a5fa"/>
+                            <circle cx="60" cy="50" r="3" fill="#60a5fa"/> <circle cx="70" cy="30" r="3" fill="#60a5fa"/>
+                            <circle cx="80" cy="20" r="3" fill="#60a5fa"/> <circle cx="85" cy="40" r="3" fill="#60a5fa"/>
+                        </svg>
+                    </div>
+                    <div class="text-[11px] text-[rgba(255,255,255,0.5)] mt-auto">散点图</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件库结构 - Component Library Structure</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <link href="https://fonts.loli.net/css2?family=Inter:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .text-primary-blue {
+            color: #1a73e8;
+        }
+        .icon-stroke {
+            stroke: rgba(255,255,255,0.3);
+        }
+        .icon-fill {
+            fill: #1a73e8;
+        }
+        .icon-light-fill {
+            fill: #93c5fd;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center px-8 lg:px-16" style="height:780px">
+
+    <div class="w-full flex flex-row justify-between items-center gap-12 lg:gap-20">
+
+        <!-- 左侧：标题与简介 -->
+        <div class="w-5/12 flex flex-col justify-center">
+            <!-- 星星标志 -->
+            <div class="flex gap-2 mb-6 text-[rgba(255,255,255,0.55)]">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+
+            <!-- 英文主标题 -->
+            <h1 class="font-black leading-[1.08] text-[rgba(255,255,255,0.92)] tracking-tight mb-6" style="font-size:clamp(44px,5.5vw,66px)">
+                Component<br>
+                Library<br>
+                <span class="text-primary-blue">Structure</span>
+            </h1>
+
+            <!-- 中文副标题及描述 -->
+            <div>
+                <h2 class="font-bold text-[rgba(255,255,255,0.88)] mb-3" style="font-size:30px">组件库结构</h2>
+                <div class="text-[rgba(255,255,255,0.45)] leading-relaxed space-y-1" style="font-size:13.5px">
+                    <p>组件库设计基于【原子设计理论】</p>
+                    <p>原子层为最小单位即为底层规范，原子层<br>结合在一起形成分子层即为组件与控件，<br>原子层进而形成组织层即为功能组件</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：层级列表 -->
+        <div class="w-6/12 flex flex-col justify-center" style="gap:22px">
+
+            <!-- 1. 原子层 -->
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 flex items-center justify-center rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)]" style="width:58px;height:58px">
+                    <svg viewBox="0 0 40 40" style="width:34px;height:34px">
+                        <circle cx="20" cy="20" r="14" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="20" cy="20" r="5" class="icon-fill"/>
+                        <circle cx="31.5" cy="11.5" r="2.5" class="icon-light-fill"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[rgba(255,255,255,0.9)] mb-1" style="font-size:17px">原子层</h3>
+                    <p class="text-[rgba(255,255,255,0.48)] leading-snug" style="font-size:13.5px">构成页面的基本元素，如颜色、字体、图标、<br>间距、圆角、分割线、阴影等</p>
+                </div>
+            </div>
+
+            <!-- 2. 分子层 -->
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 flex items-center justify-center rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)]" style="width:58px;height:58px">
+                    <svg viewBox="0 0 40 40" style="width:34px;height:34px">
+                        <circle cx="20" cy="12" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="20" cy="12" r="2.5" class="icon-fill"/>
+                        <circle cx="12" cy="26" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="12" cy="26" r="2.5" class="icon-fill"/>
+                        <circle cx="28" cy="26" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="28" cy="26" r="2.5" class="icon-fill"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[rgba(255,255,255,0.9)] mb-1" style="font-size:17px">分子层</h3>
+                    <p class="text-[rgba(255,255,255,0.48)] leading-snug" style="font-size:13.5px">原子组合建立的元素，两个原子即可组成<br>一个分子，如基础按钮、Tab 标签、输入框、头像等</p>
+                </div>
+            </div>
+
+            <!-- 3. 组织层 -->
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 flex items-center justify-center rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)]" style="width:58px;height:58px">
+                    <svg viewBox="0 0 40 40" style="width:34px;height:34px">
+                        <circle cx="13" cy="13" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="13" cy="13" r="2.5" class="icon-fill"/>
+                        <circle cx="27" cy="13" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="27" cy="13" r="2.5" class="icon-fill"/>
+                        <circle cx="13" cy="27" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="13" cy="27" r="2.5" class="icon-fill"/>
+                        <circle cx="27" cy="27" r="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="27" cy="27" r="2.5" class="icon-fill"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[rgba(255,255,255,0.9)] mb-1" style="font-size:17px">组织层</h3>
+                    <p class="text-[rgba(255,255,255,0.48)] leading-snug" style="font-size:13.5px">组合分子和原子，构成更庞大的可拓展性组件。<br>如下拉选择器、搜索框、标签栏、导航菜单、<br>面包屑、表格、卡片等</p>
+                </div>
+            </div>
+
+            <!-- 4. 原型层 -->
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 flex items-center justify-center rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)]" style="width:58px;height:58px">
+                    <svg viewBox="0 0 40 40" style="width:34px;height:34px">
+                        <rect x="4" y="4" width="32" height="32" rx="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="5" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <circle cx="28" cy="28" r="3" class="icon-fill"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[rgba(255,255,255,0.9)] mb-1" style="font-size:17px">原型层</h3>
+                    <p class="text-[rgba(255,255,255,0.48)] leading-snug" style="font-size:13.5px">多个组件和分子的组合，<br>形成一个完整的页面框架</p>
+                </div>
+            </div>
+
+            <!-- 5. 页面层 -->
+            <div class="flex items-start gap-4">
+                <div class="shrink-0 flex items-center justify-center rounded-xl bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)]" style="width:58px;height:58px">
+                    <svg viewBox="0 0 40 40" style="width:34px;height:34px">
+                        <rect x="4" y="4" width="32" height="32" rx="6" fill="none" class="icon-stroke" stroke-width="1.5"/>
+                        <rect x="9" y="9" width="9" height="9" rx="2" fill="none" class="icon-stroke" stroke-width="1"/>
+                        <circle cx="13.5" cy="13.5" r="2" class="icon-fill"/>
+                        <rect x="22" y="9" width="9" height="9" rx="2" fill="none" class="icon-stroke" stroke-width="1"/>
+                        <circle cx="26.5" cy="13.5" r="2" class="icon-fill"/>
+                        <rect x="9" y="22" width="9" height="9" rx="2" fill="none" class="icon-stroke" stroke-width="1"/>
+                        <circle cx="13.5" cy="26.5" r="2" class="icon-fill"/>
+                        <rect x="22" y="22" width="9" height="9" rx="2" fill="none" class="icon-stroke" stroke-width="1"/>
+                        <circle cx="26.5" cy="26.5" r="2" class="icon-fill"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[rgba(255,255,255,0.9)] mb-1" style="font-size:17px">页面层</h3>
+                    <p class="text-[rgba(255,255,255,0.48)] leading-snug" style="font-size:13.5px">页面是原型层的具体实例，<br>代表了真实内容的具体方案</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

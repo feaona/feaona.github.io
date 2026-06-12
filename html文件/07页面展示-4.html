@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H5页面展示 (1920x1080)</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'DIN Alternate', 'DIN Condensed', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+        }
+        *, *::before, *::after { font-weight: 400; }
+
+        .canvas-1920 {
+            width: 1920px; height: 1080px;
+            background-color: #fcfdfa;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+
+        .bg-top-swoosh {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 380px;
+            background: linear-gradient(to left, #ABCC58 0%, #d4e899 55%, #eef6cc 100%);
+            opacity: 0.88; z-index: 1;
+        }
+
+        .mockup-phone {
+            border: 12px solid #ffffff;
+            border-radius: 48px;
+            background-color: #ffffff;
+            position: absolute;
+            z-index: 20;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(0,0,0,0.05);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease;
+        }
+        .mockup-phone:hover {
+            transform: translateY(-14px) scale(1.03);
+            box-shadow: 0 50px 80px -15px rgba(0,0,0,0.35), inset 0 0 0 2px rgba(0,0,0,0.06);
+            z-index: 30;
+        }
+        .popup-hover {
+            cursor: pointer;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.35s ease;
+        }
+        .popup-hover:hover {
+            transform: translateY(-10px) scale(1.04);
+            filter: drop-shadow(0 20px 28px rgba(0,0,0,0.22));
+        }
+        .mockup-phone::before {
+            content: '';
+            position: absolute; top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 120px; height: 28px;
+            background-color: #ffffff;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 30;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="canvas-1920" id="main-canvas">
+
+        <div class="bg-top-swoosh"></div>
+
+        <!-- 水印 -->
+        <div class="absolute top-[100px] left-[100px] flex items-baseline pointer-events-none select-none z-10 opacity-70">
+            <span class="text-[100px] font-black text-[#ABCC58] tracking-tighter leading-none">06<span style="color:#F8D560">.</span></span>
+            <span class="text-[80px] font-black text-[#dce2c6] tracking-widest ml-4 uppercase leading-none mix-blend-multiply">Design</span>
+        </div>
+
+        <!-- 主标题 -->
+        <div class="absolute top-[240px] left-[120px] z-20">
+            <h1 class="text-[48px] font-bold text-gray-900">H5页面展示</h1>
+        </div>
+
+        <!-- 活动弹框 -->
+        <div style="position:absolute;left:430px;top:360px;width:300px;height:650px;z-index:20;
+                    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+            <img src="../image/H5SC.webp" style="width:300px;height:auto;display:block;" class="popup-hover" alt="活动弹框">
+            <div style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,0.9);
+                        background:rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <line x1="4" y1="4" x2="14" y2="14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                    <line x1="14" y1="4" x2="4" y2="14" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <span style="font-size:22px;font-weight:700;color:#374151;letter-spacing:0.1em;">活动【弹框】</span>
+        </div>
+
+        <!-- ① 左侧样机：H5SCBN01.png 铺满 -->
+        <div class="mockup-phone w-[300px] h-[650px]" style="right:818px; bottom:100px;">
+            <img src="../image/H5SCBN01.webp"
+                 style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top;display:block;">
+        </div>
+
+        <!-- ② 右侧样机：H502.png 铺满 -->
+        <div class="mockup-phone w-[300px] h-[650px]" style="right:445px; bottom:100px;">
+            <img src="../image/H502.jpg"
+                 style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top;display:block;">
+        </div>
+
+    </div>
+
+    <script>
+        function fitToScreen() {
+            const canvas = document.getElementById('main-canvas');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            canvas.style.transform = `scale(${scale})`;
+        }
+        fitToScreen();
+        window.addEventListener('resize', fitToScreen);
+    </script>
+</body>
+</html>

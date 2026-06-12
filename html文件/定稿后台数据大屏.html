@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电子结构件全生命周期智能协同大屏</title>
+  
+  <!-- 引入 Tailwind CSS -->
+  <script src="../lib/tailwind.cdn.js"></script>
+  
+  <!-- 引入 ECharts -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  
+  <!-- 引入 React 和 ReactDOM -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- 引入 Babel 以在浏览器中解析 JSX -->
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #02060C;
+      overflow: hidden; /* 强制隐藏所有滚动条 */
+    }
+    .apple-system-font {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .bg-grid {
+      background-color: #02060C;
+      background-image: linear-gradient(rgba(27, 79, 147, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(27, 79, 147, 0.15) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: center center;
+    }
+    @keyframes scroll {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(calc(-50% - 6px)); }
+    }
+    @keyframes scan {
+      0% { transform: translateX(-100%) skewX(-20deg); }
+      100% { transform: translateX(400%) skewX(-20deg); }
+    }
+    .shadow-text { text-shadow: 0 0 15px rgba(0, 209, 255, 0.7); }
+    .animate-scroll { animation: scroll 15s linear infinite; will-change: transform; }
+    /* 鼠标悬浮时暂停滚动 */
+    .scroll-container:hover .animate-scroll { animation-play-state: paused; }
+    .animate-scan { animation: scan 2s ease-in-out infinite; }
+    
+    /* 隐藏浏览器默认滚动条，但保留滚动功能 */
+    ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useRef, useState } = React;
+
+    // --- 全局字体栈 ---
+    const GLOBAL_FONT = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif';
+
+    // --- 工具：等比例缩放居中适配 (基准 1920x1080) ---
+    const useWindowFit = () => {
+      const [scale, setScale] = useState(1);
+      useEffect(() => {
+        const handleResize = () => {
+          const scaleX = window.innerWidth / 1920;
+          const scaleY = window.innerHeight / 1080;
+          // 取最小比例，保证内容完整且不变形
+          setScale(Math.min(scaleX, scaleY));
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      }, []);
+      return scale;
+    };
+
+    // --- 工具：平滑数字翻滚动画 Hook ---
+    const useCountUp = (endValue, duration = 2000, decimals = 0) => {
+      const [value, setValue] = useState(0);
+      useEffect(() => {
+        let startTime = null;
+        let animationFrame;
+        const animate = (timestamp) => {
+          if (!startTime) startTime = timestamp;
+          const progress = Math.min((timestamp - startTime) / duration, 1);
+          const easeProgress = 1 - Math.pow(1 - progress, 4);
+          setValue(endValue * easeProgress);
+          if (progress < 1) {
+            animationFrame = requestAnimationFrame(animate);
+          } else {
+            setValue(endValue);
+          }
+        };
+        animationFrame = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(animationFrame);
+      }, [endValue, duration]);
+      
+      return Number(value.toFixed(decimals)).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    };
+
+    // --- 组件：带科技感边框的面板 ---
+    const Panel = ({ title, children, className = '' }) => (
+      <div className={`relative flex flex-col bg-[#050f24]/90 border border-[#1B4F93] rounded-lg shadow-[0_0_15px_rgba(0,209,255,0.1)] backdrop-blur-sm ${className}`}>
+        {/* 四个角的科幻修饰 */}
+        <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+        <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+        <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+        <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+        
+        <div className="h-12 flex items-center px-5 border-b border-[#1B4F93]/60 bg-gradient-to-r from-[#1B4F93]/30 to-transparent">
+          <div className="w-1 h-5 bg-[#00D1FF] mr-3 shadow-[0_0_8px_#00D1FF]"></div>
+          <h3 className="text-[#e2f1ff] font-semibold text-lg tracking-wider">{title}</h3>
+        </div>
+        <div className="flex-1 p-4 relative overflow-hidden flex flex-col">
+          {children}
+        </div>
+      </div>
+    );
+
+    // --- 主应用组件 ---
+    function App() {
+      const scale = useWindowFit();
+
+      // 核心数字动画
+      const revenueCount = useCountUp(14250, 2500, 0);
+      const yieldCount = useCountUp(98.4, 2500, 1);
+      const projectCount = useCountUp(1342, 2500, 0);
+
+      // DOM Refs
+      const funnelRef = useRef(null);
+      const radarRef = useRef(null);
+      const trendRef = useRef(null);
+      const waterRef = useRef(null);
+      const mapRef = useRef(null);
+      const pieRef = useRef(null);
+      const scatterRef = useRef(null);
+
+      const [scrollData] = useState([
+        { id: 1, project: 'X系列手机中框', process: 'CNC+阳极', time: '12s', margin: '32%' },
+        { id: 2, project: '新能源车架压铸件', process: '铝合金压铸', time: '45s', margin: '48%' },
+        { id: 3, project: '智能穿戴表壳', process: '粉末冶金(MIM)', time: '8s', margin: '45%' },
+        { id: 4, project: '无人机碳纤维臂', process: '复合材料成型', time: '18s', margin: '38%' },
+        { id: 5, project: '服务器散热模组', process: '冲压+铜管', time: '22s', margin: '25%' },
+        { id: 6, project: '医疗器械屏蔽罩', process: '精密冲压', time: '5s', margin: '51%' },
+        { id: 7, project: '折叠屏转轴组件', process: 'MIM+液态金属', time: '15s', margin: '55%' },
+      ]);
+
+      // 1. 硬件唯一销售漏斗
+      useEffect(() => {
+        let chart;
+        const timer = setTimeout(() => {
+          if (!funnelRef.current) return;
+          chart = echarts.init(funnelRef.current);
+          chart.setOption({
+            textStyle: { fontFamily: GLOBAL_FONT },
+            tooltip: { trigger: 'item', formatter: '{b} : {c}%' },
+            series: [
+              {
+                name: '转化率',
+                type: 'funnel',
+                left: '10%', top: '5%', bottom: '5%', width: '80%',
+                min: 0, max: 100, minSize: '20%', maxSize: '100%',
+                sort: 'descending', gap: 6,
+                label: { show: true, position: 'inside', formatter: '{b} {c}%', fontSize: 16, fontWeight: 'bold', color: '#fff', textShadowColor: 'rgba(0,0,0,0.8)', textShadowBlur: 4 },
+                itemStyle: { borderColor: 'transparent', borderWidth: 0, shadowBlur: 10, shadowOffsetX: 0, shadowOffsetY: 5, shadowColor: 'rgba(0, 0, 0, 0.5)' },
+                data: [
+                  { value: 100, name: '报备', itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#1B4F93' }, { offset: 1, color: '#2A73D4' }]) } },
+                  { value: 80, name: '报价', itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#2A73D4' }, { offset: 1, color: '#00D1FF' }]) } },
+                  { value: 65, name: '制样', itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#00D1FF' }, { offset: 1, color: '#5CE1E6' }]) } },
+                  { value: 40, name: '试产', itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#F5A623' }, { offset: 1, color: '#FFC857' }]) } },
+                  { value: 25, name: '量产', itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#FF5722' }, { offset: 1, color: '#F5A623' }]) } }
+                ]
+              }
+            ]
+          });
+        }, 100);
+        return () => { clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      // 2. 360°客户健康度
+      useEffect(() => {
+        let chart;
+        const timer = setTimeout(() => {
+          if (!radarRef.current) return;
+          chart = echarts.init(radarRef.current);
+          chart.setOption({
+            textStyle: { fontFamily: GLOBAL_FONT },
+            tooltip: {},
+            radar: {
+              radius: '70%', center: ['50%', '50%'], splitNumber: 4,
+              axisName: { color: '#a0aec0', fontSize: 14, padding: [3, 5] },
+              splitArea: { areaStyle: { color: ['rgba(0, 209, 255, 0.02)', 'rgba(0, 209, 255, 0.05)', 'rgba(0, 209, 255, 0.1)', 'rgba(0, 209, 255, 0.15)'], shadowColor: 'rgba(0, 0, 0, 0.3)', shadowBlur: 10 } },
+              axisLine: { lineStyle: { color: '#1B4F93' } },
+              splitLine: { lineStyle: { color: '#1B4F93' } },
+              indicator: [
+                { name: '履约信用', max: 100 }, { name: '财务账期', max: 100 },
+                { name: '需求清晰', max: 100 }, { name: '打样转化', max: 100 },
+                { name: '质量容忍', max: 100 }, { name: '报价接受', max: 100 },
+                { name: '合作年限', max: 100 }, { name: '战略对齐', max: 100 }
+              ]
+            },
+            series: [{
+              name: '客户画像', type: 'radar', symbol: 'circle', symbolSize: 8,
+              itemStyle: { color: '#00D1FF' },
+              areaStyle: { color: 'rgba(0, 209, 255, 0.4)' },
+              lineStyle: { width: 2, color: '#00D1FF', shadowColor: '#00D1FF', shadowBlur: 10 },
+              data: [{ value: [90, 85, 75, 88, 80, 70, 95, 85], name: '核心大客A' }]
+            }]
+          });
+        }, 100);
+        return () => { clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      // 3. 累计营业额与毛利趋势
+      useEffect(() => {
+        let chart;
+        const timer = setTimeout(() => {
+          if (!trendRef.current) return;
+          chart = echarts.init(trendRef.current);
+          chart.setOption({
+            textStyle: { fontFamily: GLOBAL_FONT },
+            tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+            legend: { data: ['营业额(千万)', '毛利率(%)'], textStyle: { color: '#a0aec0', fontSize: 14 }, top: 0 },
+            grid: { left: '3%', right: '4%', bottom: '5%', top: '22%', containLabel: true },
+            xAxis: [{ type: 'category', data: ['23-Q1', '23-Q2', '23-Q3', '23-Q4', '24-Q1', '24-Q2', '24-Q3(预)'], axisLine: { lineStyle: { color: '#1B4F93' } }, axisLabel: { color: '#a0aec0', fontSize: 13, margin: 12 } }],
+            yAxis: [
+              { type: 'value', axisLabel: { color: '#a0aec0', fontSize: 13 }, splitLine: { lineStyle: { color: '#1B4F93', type: 'dashed' } } },
+              { type: 'value', min: 0, max: 50, axisLabel: { formatter: '{value} %', color: '#a0aec0', fontSize: 13 }, splitLine: { show: false } }
+            ],
+            series: [
+              {
+                name: '营业额(千万)', type: 'bar', barWidth: '35%',
+                itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#00D1FF' }, { offset: 1, color: 'rgba(0, 209, 255, 0.1)' }]), borderRadius: [4, 4, 0, 0] },
+                data: [12.5, 15.2, 18.3, 22.4, 19.5, 24.1, 28.5]
+              },
+              {
+                name: '毛利率(%)', type: 'line', yAxisIndex: 1, smooth: true, symbolSize: 8,
+                itemStyle: { color: '#F5A623' }, lineStyle: { width: 3, shadowColor: '#F5A623', shadowBlur: 10 },
+                data: [25.1, 26.5, 28.4, 30.2, 32.5, 34.2, 35.8]
+              }
+            ]
+          });
+        }, 100);
+        return () => { clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      // 4. 销售预测与产能水位
+      useEffect(() => {
+        let chart;
+        const timer = setTimeout(() => {
+          if (!waterRef.current) return;
+          chart = echarts.init(waterRef.current);
+          chart.setOption({
+            textStyle: { fontFamily: GLOBAL_FONT },
+            tooltip: { trigger: 'axis' },
+            legend: { data: ['滚动销售预测', '产能负担水位'], textStyle: { color: '#a0aec0', fontSize: 14 }, top: 0 },
+            grid: { left: '3%', right: '4%', bottom: '5%', top: '22%', containLabel: true },
+            xAxis: { type: 'category', boundaryGap: false, data: ['1周', '2周', '3周', '4周', '5周', '6周', '7周', '8周'], axisLine: { lineStyle: { color: '#1B4F93' } }, axisLabel: { color: '#a0aec0', fontSize: 13, margin: 12 } },
+            yAxis: { type: 'value', axisLabel: { color: '#a0aec0', fontSize: 13 }, splitLine: { lineStyle: { color: '#1B4F93', type: 'dashed' } } },
+            series: [
+              {
+                name: '产能负担水位', type: 'line', smooth: true, symbol: 'none',
+                // 更新为科技感紫色渐变 (#A855F7)
+                areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(168, 85, 247, 0.7)' }, { offset: 1, color: 'rgba(168, 85, 247, 0.1)' }]) },
+                lineStyle: { color: '#A855F7', width: 2, shadowColor: 'rgba(168, 85, 247, 0.5)', shadowBlur: 8 },
+                data: [60, 65, 80, 95, 98, 90, 85, 80]
+              },
+              {
+                name: '滚动销售预测', type: 'line', smooth: true, symbol: 'circle', symbolSize: 6,
+                itemStyle: { color: '#00D1FF' }, lineStyle: { color: '#00D1FF', width: 2, type: 'dashed' },
+                data: [50, 60, 75, 110, 120, 105, 90, 85],
+                markLine: { data: [{ type: 'average', name: '产能红线', yAxis: 100, lineStyle: { color: '#F5A623', width: 2 }, label: { formatter: '产能告警', color: '#F5A623', fontSize: 13, padding: [0, 0, 0, 10] } }] }
+              }
+            ]
+          });
+        }, 100);
+        return () => { clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      // 5. 全球订单交付完成率地图
+      useEffect(() => {
+        let chart;
+        let isMounted = true;
+        const timer = setTimeout(async () => {
+          if (!mapRef.current) return;
+          chart = echarts.init(mapRef.current);
+          try {
+            const response = await fetch('https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/json/world.json');
+            const worldJson = await response.json();
+            if (!isMounted) return;
+            echarts.registerMap('world', worldJson);
+
+            const data = [
+              { name: '北美区', value: [-100, 40], completion: 98, status: '正常' },
+              { name: '欧洲区', value: [15, 50], completion: 95, status: '正常' },
+              { name: '大中华区', value: [114, 22], completion: 100, status: '枢纽优秀' },
+              { name: '东南亚', value: [103, 1], completion: 88, status: '异常' },
+              { name: '拉美区', value: [-60, -10], completion: 92, status: '关注' }
+            ];
+
+            chart.setOption({
+              textStyle: { fontFamily: GLOBAL_FONT },
+              backgroundColor: 'transparent',
+              tooltip: { trigger: 'item', formatter: (p) => p.seriesType === 'effectScatter' ? `<div style="font-size:14px;padding:4px;">${p.data.name}<br/><span style="color:#00D1FF;font-weight:bold;">完成率: ${p.data.completion}%</span><br/>状态: ${p.data.status}</div>` : '' },
+              geo: {
+                map: 'world', roam: true, zoom: 1.2, scaleLimit: { min: 1, max: 5 },
+                label: { emphasis: { show: false } },
+                itemStyle: {
+                  normal: { areaColor: '#051124', borderColor: '#1B4F93', borderWidth: 1, shadowColor: 'rgba(0, 209, 255, 0.2)', shadowBlur: 8 },
+                  emphasis: { areaColor: '#1B4F93', borderColor: '#00D1FF', borderWidth: 1.5 }
+                }
+              },
+              series: [
+                {
+                  type: 'effectScatter', coordinateSystem: 'geo',
+                  symbolSize: (val, p) => p.data.name === '大中华区' ? 22 : p.data.completion / 6,
+                  showEffectOn: 'render',
+                  rippleEffect: { brushType: 'stroke', scale: 4, period: 3 },
+                  itemStyle: {
+                    color: (p) => p.data.completion >= 95 ? '#00D1FF' : p.data.completion >= 90 ? '#1B4F93' : '#F5A623',
+                    shadowBlur: 15, shadowColor: '#00D1FF'
+                  },
+                  data: data,
+                  label: {
+                    show: true, position: 'right', formatter: (p) => `{title|${p.data.name}}\n{rate|${p.data.completion}%}`,
+                    rich: { title: { color: '#fff', fontSize: 14, textShadowBlur: 2, textShadowColor: '#000', padding: [0, 0, 4, 0] }, rate: { color: '#00D1FF', fontSize: 16, fontWeight: 'bold' } }
+                  }
+                },
+                {
+                  type: 'lines', coordinateSystem: 'geo', zlevel: 1,
+                  effect: { show: true, period: 5, trailLength: 0.2, symbol: 'arrow', symbolSize: 6 },
+                  lineStyle: { color: 'rgba(0, 209, 255, 0.7)', width: 1.5, curveness: 0.3, shadowColor: 'rgba(0, 209, 255, 0.5)', shadowBlur: 5 },
+                  data: [
+                    { coords: [[114, 22], [-100, 40]] }, { coords: [[114, 22], [15, 50]] },
+                    { coords: [[114, 22], [103, 1]] }, { coords: [[114, 22], [-60, -10]] }
+                  ]
+                }
+              ]
+            });
+          } catch (e) { console.error("Map loaded failed:", e); }
+        }, 100);
+        return () => { isMounted = false; clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      // 6. 订单状态分布
+      useEffect(() => {
+        let chart;
+        const timer = setTimeout(() => {
+          if (!pieRef.current) return;
+          chart = echarts.init(pieRef.current);
+          chart.setOption({
+            textStyle: { fontFamily: GLOBAL_FONT },
+            graphic: [{
+              type: 'group',
+              bounding: 'raw',
+              left: '35%',
+              top: 'middle',
+              children: [
+                {
+                  type: 'text',
+                  z: 100,
+                  style: {
+                    fill: '#00D1FF', text: '总计订单',
+                    fontSize: 16, fontWeight: 'bold', fontFamily: GLOBAL_FONT,
+                    textAlign: 'center', textVerticalAlign: 'bottom',
+                    textShadowBlur: 10, textShadowColor: 'rgba(0,209,255,0.5)',
+                    y: -3
+                  }
+                },
+                {
+                  type: 'text',
+                  z: 100,
+                  style: {
+                    fill: '#00D1FF', text: '3,147',
+                    fontSize: 20, fontWeight: 'bold', fontFamily: GLOBAL_FONT,
+                    textAlign: 'center', textVerticalAlign: 'top',
+                    textShadowBlur: 10, textShadowColor: 'rgba(0,209,255,0.5)',
+                    y: 3
+                  }
+                }
+              ]
+            }],
+            tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c} ({d}%)' },
+            legend: { 
+                orient: 'vertical', 
+                right: '10%', 
+                top: 'center', 
+                textStyle: { color: '#a0aec0', fontSize: 15 }, 
+                itemWidth: 16, 
+                itemHeight: 16, 
+                itemGap: 20 
+            },
+            series: [
+              {
+                name: '订单状态', type: 'pie', 
+                radius: ['60%', '80%'], center: ['35%', '50%'],
+                avoidLabelOverlap: false,
+                itemStyle: { borderRadius: 6, borderColor: '#050f24', borderWidth: 3 },
+                label: { show: false },
+                data: [
+                  { value: 1048, name: '生产中', itemStyle: { color: '#00D1FF' } },
+                  { value: 735, name: '已发货', itemStyle: { color: '#1B4F93' } },
+                  { value: 580, name: '研发中', itemStyle: { color: '#5CE1E6' } },
+                  { value: 484, name: '排产中', itemStyle: { color: '#F5A623' } },
+                  { value: 300, name: '异常挂起', itemStyle: { color: '#FF5722' } }
+                ]
+              }
+            ]
+          });
+        }, 100);
+        return () => { clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      // 7. 智能风险预警雷达 (散点图)
+      useEffect(() => {
+        let chart;
+        const timer = setTimeout(() => {
+          if (!scatterRef.current) return;
+          chart = echarts.init(scatterRef.current);
+          const data = [
+            [80, 90, 25, '铝件氧化不良', '异常'], [60, 50, 18, '物料迟交', '临期'], [95, 85, 30, '机台故障延期', '逾期'],
+            [40, 70, 20, '公差超标退回', '异常'], [70, 40, 15, '客户图纸变更', '临期'], [85, 60, 22, '包材缺货', '逾期'],
+            [30, 30, 12, '工艺优化', '正常'], [20, 50, 15, '标签打印出错', '正常']
+          ];
+          chart.setOption({
+            textStyle: { fontFamily: GLOBAL_FONT },
+            grid: { left: '12%', right: '8%', bottom: '18%', top: '15%' },
+            tooltip: { 
+                formatter: (p) => `<div style="padding:4px;"><b>${p.data[3]}</b><br/>状态: ${p.data[4]}<br/>紧急度: ${p.data[0]}<br/>影响度: ${p.data[1]}</div>` 
+            },
+            xAxis: { name: '紧急度', nameTextStyle: { color: '#a0aec0', padding:[0,0,0,10] }, splitLine: { show: false }, axisLine: { lineStyle: { color: '#1B4F93' } }, axisLabel: { color: '#a0aec0', fontSize: 13 } },
+            yAxis: { name: '影响度', nameTextStyle: { color: '#a0aec0', padding:[0,0,10,0] }, splitLine: { lineStyle: { color: '#1B4F93', type: 'dashed' } }, axisLabel: { color: '#a0aec0', fontSize: 13 } },
+            series: [{
+              type: 'scatter', symbolSize: (d) => d[2],
+              itemStyle: {
+                color: (p) => p.data[4] === '逾期' ? 'rgba(255, 87, 34, 0.9)' : p.data[4] === '异常' || p.data[4] === '临期' ? 'rgba(245, 166, 35, 0.9)' : 'rgba(0, 209, 255, 0.8)',
+                shadowBlur: 10,
+                shadowColor: (p) => p.data[4] === '逾期' ? '#FF5722' : p.data[4] === '异常' || p.data[4] === '临期' ? '#F5A623' : '#00D1FF'
+              },
+              data: data
+            }]
+          });
+        }, 100);
+        return () => { clearTimeout(timer); chart?.dispose(); };
+      }, []);
+
+      return (
+        <div className="w-screen h-screen bg-[#02060C] overflow-hidden relative apple-system-font flex items-center justify-center">
+          {/* 核心大屏容器：严格锁定 1920x1080 宽高，并居中缩放 */}
+          <div 
+            style={{ 
+              width: '1920px', 
+              height: '1080px', 
+              transform: `scale(${scale})`, 
+              transformOrigin: 'center center',
+              position: 'absolute'
+            }}
+            className="flex flex-col p-6 box-border bg-grid relative"
+          >
+            {/* 顶部高光背景效果 */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[300px] bg-[radial-gradient(ellipse_at_top,_rgba(0,209,255,0.12),_transparent_70%)] pointer-events-none z-0"></div>
+
+            {/* 顶部 Header (高度调整，文字适配) */}
+            <header className="flex justify-between items-center h-[100px] mb-4 relative z-10 px-4">
+              <div className="w-[28%] flex items-center gap-12 pl-6">
+                <span className="text-[#00D1FF] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-white transition-colors drop-shadow-[0_0_8px_rgba(0,209,255,0.8)]">首页大盘</span>
+                <span className="text-[#87a1c4] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-[#00D1FF] transition-colors">项目管控</span>
+              </div>
+              <div className="w-[44%] text-center">
+                <h1 className="text-[44px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-[#00D1FF] tracking-[0.15em] filter drop-shadow-[0_0_12px_rgba(0,209,255,0.6)]" style={{whiteSpace:'nowrap'}}>
+                  电子结构件全生命周期智能协同
+                </h1>
+                <p className="text-[#00D1FF] tracking-[0.5em] text-sm mt-2 opacity-80 uppercase font-medium">Global Structural Components Visual Center</p>
+              </div>
+              <div className="w-[28%] flex items-center justify-end gap-12 pr-6">
+                <span className="text-[#87a1c4] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-[#00D1FF] transition-colors">产能中心</span>
+                <span className="text-[#87a1c4] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-[#00D1FF] transition-colors">质量追溯</span>
+              </div>
+            </header>
+
+            {/* 主体内容区 */}
+            <main className="flex-1 grid grid-cols-12 gap-6 relative z-10">
+              
+              {/* 左侧栏 */}
+              <div className="col-span-3 flex flex-col gap-6 h-full">
+                <Panel title="硬件唯一销售漏斗" className="flex-[1.2]"><div ref={funnelRef} className="w-full h-full"></div></Panel>
+                
+                <Panel title="CPQ智能报价实况 (Non-Standard)" className="flex-1">
+                  <div className="w-full h-full flex flex-col pt-2">
+                    {/* 表头 */}
+                    <div className="grid grid-cols-5 text-[#87a1c4] text-[15px] bg-[#1B4F93]/40 p-3 rounded mb-3 font-semibold text-center">
+                      <div className="col-span-2 text-left pl-2">定制件项目</div><div>工艺路线</div><div>BOM耗时</div><div>毛利</div>
+                    </div>
+                    {/* 滚动区 */}
+                    <div className="flex-1 overflow-hidden relative scroll-container">
+                      <div className="absolute w-full animate-scroll flex flex-col gap-3">
+                        {[...scrollData, ...scrollData].map((item, i) => {
+                          const isHighMargin = parseInt(item.margin) >= 40;
+                          return (
+                            <div key={i} className="grid grid-cols-5 py-3 px-2 bg-[#0A162B] border border-[#1B4F93]/50 rounded items-center hover:bg-[#1B4F93]/40 transition-colors shadow-sm text-center">
+                              <div className="col-span-2 truncate text-left pl-2 text-[#00D1FF] text-[15px] font-medium" title={item.project}>{item.project}</div>
+                              <div className="text-[14px] truncate text-[#a0aec0]">{item.process}</div>
+                              <div className="text-[#00D1FF] font-mono text-[16px]">{item.time}</div>
+                              <div className={`font-mono text-[17px] font-bold ${isHighMargin ? 'text-[#F5A623] drop-shadow-[0_0_8px_rgba(245,166,35,0.8)]' : 'text-gray-300'}`}>{item.margin}</div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Panel>
+
+                <Panel title="360°客户健康度画像" className="flex-[1.1]"><div ref={radarRef} className="w-full h-full"></div></Panel>
+              </div>
+
+              {/* 中间栏 */}
+              <div className="col-span-6 flex flex-col gap-6 h-full">
+                {/* KPI 核心数据区 */}
+                <div className="flex justify-around items-center bg-[#081324]/80 border border-[#1B4F93] rounded-lg py-6 px-4 shadow-[0_0_20px_rgba(0,209,255,0.15)] backdrop-blur-sm h-[140px] shrink-0">
+                  <div className="flex flex-col items-center">
+                    <span className="text-[#87a1c4] text-lg mb-2 font-medium tracking-wide">年度累计营业额 (万)</span>
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-[56px] leading-none font-black text-[#00D1FF] font-mono shadow-text">¥{revenueCount}</span>
+                      <span className="text-base text-[#F5A623] font-bold drop-shadow-[0_0_5px_rgba(245,166,35,0.8)]">▲ 15.2%</span>
+                    </div>
+                  </div>
+                  <div className="w-[1px] h-20 bg-gradient-to-b from-transparent via-[#1B4F93] to-transparent"></div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[#87a1c4] text-lg mb-2 font-medium tracking-wide">综合良品率</span>
+                    <span className="text-[56px] leading-none font-bold text-white font-mono">{yieldCount}<span className="text-3xl ml-1 text-gray-400">%</span></span>
+                  </div>
+                  <div className="w-[1px] h-20 bg-gradient-to-b from-transparent via-[#1B4F93] to-transparent"></div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[#87a1c4] text-lg mb-2 font-medium tracking-wide">交付中项目数</span>
+                    <span className="text-[56px] leading-none font-bold text-[#F5A623] font-mono drop-shadow-[0_0_8px_rgba(245,166,35,0.5)]">{projectCount}<span className="text-2xl ml-2 text-[#87a1c4] font-sans">件</span></span>
+                  </div>
+                </div>
+
+                <Panel title="全球订单交付网格枢纽" className="flex-[2.5]">
+                  {/* 地图图例 */}
+                  <div className="absolute top-5 right-6 z-10 flex gap-6 bg-[#050f24]/80 px-4 py-2 rounded border border-[#1B4F93]/50">
+                    <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-[#00D1FF] shadow-[0_0_8px_#00D1FF]"></span><span className="text-[14px] text-gray-300">正常(&gt;95%)</span></div>
+                    <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-[#1B4F93] shadow-[0_0_8px_#1B4F93]"></span><span className="text-[14px] text-gray-300">关注(90-95%)</span></div>
+                    <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-[#F5A623] shadow-[0_0_8px_#F5A623]"></span><span className="text-[14px] text-[#F5A623] font-bold">预警(&lt;90%)</span></div>
+                  </div>
+                  <div ref={mapRef} className="w-full h-full relative z-10"></div>
+                </Panel>
+
+                <div className="flex gap-6 flex-[1.5]">
+                  <Panel title="营业额与毛利趋势" className="flex-1"><div ref={trendRef} className="w-full h-full"></div></Panel>
+                  <Panel title="滚动销售预测 VS 产能" className="flex-1"><div ref={waterRef} className="w-full h-full"></div></Panel>
+                </div>
+              </div>
+
+              {/* 右侧栏 */}
+              <div className="col-span-3 flex flex-col gap-6 h-full">
+                <Panel title="样品全生命周期推进器" className="flex-1">
+                  <div className="flex flex-col h-full justify-evenly px-2 pt-2">
+                    {[
+                      { stage: '样品申请', progress: 100, active: false, yield: '-' },
+                      { stage: '研发制作 (CNC/模具)', progress: 100, active: false, yield: '99%' },
+                      { stage: '小试与客户反馈', progress: 75, active: true, yield: '92%' },
+                      { stage: '中试验证', progress: 0, active: false, yield: '-' },
+                      { stage: '量产结案', progress: 0, active: false, yield: '-' }
+                    ].map((item, index) => (
+                      <div key={index} className="flex flex-col gap-3">
+                        <div className="flex justify-between text-[15px]">
+                          <span className={item.active ? 'text-[#00D1FF] font-bold tracking-wide text-[16px]' : 'text-[#87a1c4] font-medium'}>{item.stage}</span>
+                          <span className="text-[#87a1c4]">良率: <span className={item.active ? 'text-[#F5A623] font-bold drop-shadow-[0_0_5px_#F5A623] text-lg font-mono' : 'font-mono'}>{item.yield}</span></span>
+                        </div>
+                        <div className="w-full h-3.5 bg-[#050f24] rounded-full overflow-hidden relative border border-[#1B4F93]/60">
+                          <div className={`h-full rounded-full ${item.active ? 'bg-gradient-to-r from-[#00D1FF] to-[#1B4F93] shadow-[0_0_12px_#00D1FF]' : 'bg-[#1B4F93]'}`} style={{ width: `${item.progress}%`, transition: 'width 1s ease-in-out' }}></div>
+                          {item.active && <div className="absolute top-0 left-0 h-full w-12 bg-white/40 skew-x-12 animate-scan shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Panel>
+
+                <Panel title="订单全生命周期追踪" className="flex-1"><div ref={pieRef} className="w-full h-full"></div></Panel>
+
+                <Panel title="智能风险预警雷达 (拦截池)" className="flex-[1.1]">
+                  <div className="absolute top-14 left-6 text-[14px] text-[#87a1c4] z-10 font-medium bg-[#050f24]/60 px-3 py-1 rounded">
+                    <span className="text-[#FF5722] drop-shadow-[0_0_3px_#FF5722]">●</span> 逾期 
+                    <span className="text-[#F5A623] ml-4 drop-shadow-[0_0_3px_#F5A623]">●</span> 临期 
+                    <span className="text-[#00D1FF] ml-4 drop-shadow-[0_0_3px_#00D1FF]">●</span> 正常
+                  </div>
+                  <div ref={scatterRef} className="w-full h-full"></div>
+                </Panel>
+              </div>
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

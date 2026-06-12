@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竞品分析 - Competitor Analysis</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #dceaff 0%, #edf4ff 50%, #dceaff 100%); 
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden; /* 彻底禁止横向滚动条 */
+            -ms-overflow-style: none;  /* IE and Edge 隐藏滚动条 */
+            scrollbar-width: none;  /* Firefox 隐藏滚动条 */
+        }
+
+        /* 隐藏右侧滑动条但保留滚动能力 (Chrome, Safari, Opera) */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 缩放自适应外层容器 */
+        #scale-wrapper {
+            width: 100%;
+            background: linear-gradient(135deg, #dceaff 0%, #edf4ff 50%, #dceaff 100%);
+            /* 高度将由 JS 动态计算撑开 */
+        }
+
+        /* 核心内容区：逻辑宽度永远固定 1920px，保证排版完美 */
+        .presentation-slide {
+            width: 1920px;
+            margin: 0 auto;
+            padding: 100px 160px 150px 160px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #dceaff 0%, #edf4ff 50%, #dceaff 100%); 
+            transform-origin: top left; /* 关键修复：以左上角为缩放基准点 */
+        }
+
+        /* 头部标题区域 */
+        .header {
+            display: block;
+            margin-bottom: 70px;
+        }
+
+        .blue-slash {
+            width: 16px;
+            height: 54px;
+            background-color: #2563eb; /* 亮眼商务蓝 */
+            transform: skewX(-15deg);
+            margin-right: 24px;
+            margin-top: 6px;
+            border-radius: 2px;
+        }
+
+        .title-group h1 {
+            margin: 0;
+            font-size: 75px;
+            color: #111111;
+            font-weight: 300;
+            letter-spacing: -1.2px;
+            line-height: 1.15;
+        }
+
+        .title-group h2 {
+            margin: 0 0 18px 0;
+            font-size: 20px;
+            color: rgba(26,100,180,0.7);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3.5px;
+        }
+
+        /* 表格主容器 */
+        .table-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 表头 */
+        .table-header {
+            display: flex;
+            border-bottom: 2px solid #2563eb; /* 强化表头的蓝色分割线 */
+            padding-bottom: 25px;
+        }
+
+        .th {
+            color: #2563eb;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* 数据行 */
+        .table-row {
+            display: flex;
+            align-items: center; /* 垂直居中对齐 */
+            padding: 40px 0; /* 增加行间距，提升呼吸感 */
+            border-bottom: 1px solid #e2e8f0; /* 浅灰色分隔线 */
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        /* 列宽分配 (总和 100%)：flex:0 0 X% 防止列在长文本时被压缩 */
+        .col-1 { flex: 0 0 12%; width: 12%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .col-2 { flex: 0 0 28%; width: 28%; padding-left: 20px; padding-right: 40px; min-width: 0; }
+        .col-3 { flex: 0 0 23%; width: 23%; padding-left: 20px; padding-right: 40px; min-width: 0; }
+        .col-4 { flex: 0 0 15%; width: 15%; padding-left: 20px; padding-right: 30px; text-align: left; min-width: 0; }
+        .col-5 { flex: 0 0 22%; width: 22%; padding-left: 20px; padding-right: 20px; min-width: 0; }
+
+        .td {
+            font-size: 26px;
+            color: #475569;
+            line-height: 1.7;
+            font-weight: 400;
+            overflow-wrap: break-word;
+            word-break: normal;
+        }
+
+        /* 列表产品 Logo 占位符规范 */
+        .app-logo-placeholder {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            object-fit: cover; /* 保证替换真实图片时等比填充圆角矩形，不拉伸 */
+            margin-bottom: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #e2e8f0;
+            display: block;
+        }
+        
+        .app-logo-placeholder:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-name {
+            font-size: 22px;
+            color: #1e293b;
+            font-weight: 600;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 缩放控制外壳 -->
+    <div id="scale-wrapper">
+        <!-- 1920px 宽度的核心内容区 -->
+        <div class="presentation-slide" id="slide">
+            
+            <!-- 头部 -->
+            <div class="header">
+                <div class="title-group">
+                    <h2>03 · Competitive Analysis</h2>
+                    <h1>竞品<strong style="color:#111111">分析</strong></h1>
+                </div>
+            </div>
+
+            <!-- 列表容器 -->
+            <div class="table-container">
+                
+                <!-- 表头 -->
+                <div class="table-header">
+                    <div class="th col-1">产品名称</div>
+                    <div class="th col-2">商业背景</div>
+                    <div class="th col-3">目标人群</div>
+                    <div class="th col-4" style="text-align: center;">slogan</div>
+                    <div class="th col-5">商业模式</div>
+                </div>
+
+                <!-- 竞品 1：携程商旅 -->
+                <div class="table-row">
+                    <div class="col-1">
+                        <img class="app-logo-placeholder" src="../image/携程商旅.webp" alt="携程商旅Logo">
+                        <div class="app-name">携程商旅</div>
+                    </div>
+                    <div class="td col-2">携程商旅是携程集团旗下的TMC（差旅管理公司），2006年正式进入差旅管理市场。依托携程的全球供应链和上市公司信用背书，专注提供专业的企业差旅管控服务。</div>
+                    <div class="td col-3"><strong>B端企业客户</strong>，尤其是有差旅管理需求、希望降本增效的大中型企业及跨国公司；同时也服务部分成长型中小企业。</div>
+                    <div class="td col-4">让差旅更简单，让企业更高效</div>
+                    <div class="td col-5">以<strong>"系统+服务+资源"</strong>的TMC模式为主，通过SaaS差旅管理系统整合机票、酒店等资源，为企业提供预订、审批、报销等全流程服务。主要收入来自<strong>技术服务费</strong>和<strong>资源端返佣</strong>，并向部分企业提供差旅数据分析和合规审计等增值服务。</div>
+                </div>
+
+                <!-- 竞品 2：携程旅行 -->
+                <div class="table-row">
+                    <div class="col-1">
+                        <img class="app-logo-placeholder" src="../image/携程旅行.webp" alt="携程旅行Logo">
+                        <div class="app-name">携程旅行</div>
+                    </div>
+                    <div class="td col-2">中国最大的一站式在线旅行平台，通过自营和并购（如整合去哪儿、艺龙）构建起覆盖全球的旅游供应链。</div>
+                    <div class="td col-3">25-45岁的一二线城市商旅人士及中高收入家庭，同时也覆盖追求便捷的休闲旅游人群。</div>
+                    <div class="td col-4">携程在手，说走就走。</div>
+                    <div class="td col-5">以 <strong>OTA（在线旅游代理）</strong> 模式为主，通过预订酒店、机票、旅游度假等抽取佣金，同时拓展交通票务、商旅服务和广告收入。近年来加大“机票+酒店”动态打包及会员生态建设，并利用大数据进行精准营销。</div>
+                </div>
+
+                <!-- 竞品 3：飞猪旅行 -->
+                <div class="table-row">
+                    <div class="col-1">
+                        <img class="app-logo-placeholder" src="../image/飞猪旅行.webp" alt="飞猪旅行Logo">
+                        <div class="app-name">飞猪旅行</div>
+                    </div>
+                    <div class="td col-2">阿里巴巴集团推出的在线旅行平台，前身为2010年推出的"淘宝旅行"，2016年品牌升级为"飞猪"。它定位面向年轻消费者的休闲度假品牌，依托阿里生态的流量、支付（支付宝）。</div>
+                    <div class="td col-3">20-35岁的互联网原住民，偏好个性化、高品质的自由行和出境游，对"信用住"、免押金等创新服务接受度高。</div>
+                    <div class="td col-4">飞猪，享受大不同</div>
+                    <div class="td col-5">以 <strong>OTP（在线旅行平台）</strong> 模式为主，连接用户与旅行社、酒店等供应方，通过交易抽佣和广告营销获得收入。亮点包括基于芝麻信用的"信用住"（免押金）、跨界会员合作（如与优酷互通），以及通过直播、达人内容进行种草营销。</div>
+                </div>
+
+                <!-- 竞品 4：传统旅行社 -->
+                <div class="table-row">
+                    <div class="col-1">
+                        <img class="app-logo-placeholder" src="../image/传统旅行社.webp" alt="传统旅行社Logo">
+                        <div class="app-name">传统旅行社</div>
+                    </div>
+                    <div class="td col-2">如中青旅、国旅定制部。掌握深厚To B大客户客情关系与独家重资产地接、导游资源。</div>
+                    <div class="td col-3">对价格极其敏感、需求相对传统（如年终百人常规拉练大会）的规模型传统制造企业。</div>
+                    <div class="td col-4">值得信赖的国民旅游品牌</div>
+                    <div class="td col-5">传统组团差价 + 大客户常年协议返点 + 资源买断式溢价。</div>
+                </div>
+
+                <!-- 竞品 5：去哪儿旅行 -->
+                <div class="table-row">
+                    <div class="col-1">
+                        <img class="app-logo-placeholder" src="../image/去哪儿旅行.webp" alt="去哪儿旅行Logo">
+                        <div class="app-name">去哪儿旅行</div>
+                    </div>
+                    <div class="td col-2">成立于2005年，是中国早期领先的旅游搜索引擎。2011年获得百度战略投资，2015年与携程合并，目前作为携程集团推出的独立品牌运营。依托技术驱动（尤其是收取在线比价和搜索算法），旅游市场获得了重要贡献。</div>
+                    <div class="td col-3">18-35岁的价格敏感型年轻消费者，包括学生、初入职场的白领及追求高端的自由行用户。对低价机票、特价酒店、火车票抢票等需求强烈。</div>
+                    <div class="td col-4">总有你要的低价</div>
+                    <div class="td col-5">以“搜索比价+OTA代理”的混合模式为主，收入主要来自：①收费、酒店、度假产品的交易佣金；②保险、接送机等增值服务；③广告及营销推广费；④火车票抢票包、加速包等增值收费。</div>
+                </div>
+
+                <!-- 竞品 6：同程旅行 -->
+                <div class="table-row">
+                    <div class="col-1">
+                        <img class="app-logo-placeholder" src="../image/同程旅行.webp" alt="同程旅行Logo">
+                        <div class="app-name">同程旅行</div>
+                    </div>
+                    <div class="td col-2">同程旅行是同程旅行控股有限公司（0780.HK）的主打品牌，2004年成立于苏州。早期以同程网（B2B旅游）起家，后转型OTA。2018年在港交所上市，由<strong>同程网络</strong>与<strong>艺龙旅行网</strong>合并而成，并获<strong>腾讯</strong>与<strong>携程</strong>为战略股东，核心流量来自微信支付“火车票机票”及“酒店”入口。</div>
+                    <div class="td col-3">18-30岁的年轻群体及<strong>下沉市场</strong>（三线及以下城市）居民。这类用户价格敏感、习惯微信等社交生态，偏好短途周边游、“机票+盲盒”等创新玩法，以及火车票、汽车票等基础出行服务。</div>
+                    <div class="td col-4">再出发，就同程</div>
+                    <div class="td col-5">以<strong>“OTA+微信生态”</strong>为核心模式。收入主要来自：①住宿预订与交通票务（机票、火车票、汽车票）的交易佣金；②广告及营销服务；③会员增值服务（如“黑鲸会员”提供免退票费、酒店折扣等，显著提升复购）；④酒店PMS等SaaS服务收入。优势在于通过微信小程序低成本获取流量，并深耕低线城市，通过“机票盲盒”、“同程小站”等社交化运营拉动非一线城市用户增长。</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 智能等比缩放引擎：在不改变 1920px 逻辑结构的前提下，视觉上完整贴合屏幕
+        function fitToScreen() {
+            const wrapper = document.getElementById('scale-wrapper');
+            const slide = document.getElementById('slide');
+            const windowWidth = window.innerWidth;
+            
+            let scale = 1;
+            
+            // 计算缩放比例：如果屏幕小于 1920，则等比缩小；否则保持 1 倍大小
+            if (windowWidth < 1920) {
+                scale = windowWidth / 1920;
+                slide.style.transform = `scale(${scale})`;
+                slide.style.margin = '0'; // 缩放时取消居中，紧贴左侧以匹配 top left 原点
+            } else {
+                slide.style.transform = `scale(1)`;
+                slide.style.margin = '0 auto'; // 超大屏幕下恢复居中显示
+            }
+            
+            // 同步调整外壳的高度，防止底部出现大量空白或被截断
+            const actualHeight = slide.offsetHeight * scale;
+            wrapper.style.height = `${actualHeight}px`;
+            // 通知父页面实际高度，让 iframe 自动撑高
+            if (window.parent !== window) {
+                window.parent.postMessage({ type: 'iframeHeight', height: actualHeight }, '*');
+            }
+        }
+
+        // 监听窗口大小改变及加载完成事件
+        window.addEventListener('resize', fitToScreen);
+        window.addEventListener('load', fitToScreen);
+        
+        // 立即执行一次以保证初次渲染完美
+        fitToScreen();
+    </script>
+</body>
+</html>

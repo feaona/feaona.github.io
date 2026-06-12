@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闪屏页设计细化展示</title>
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            font-family: 'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 严格限制画布尺寸 */
+        .canvas {
+            width: 1600px;
+            height: 900px;
+            background: transparent;
+            position: relative;
+            transform-origin: center center;
+            display: flex;
+            align-items: stretch;
+            padding: 20px 70px;
+            box-sizing: border-box;
+            border-radius: 20px;
+        }
+
+        #scale-wrapper {
+            width: 1600px;
+            height: 900px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+        }
+
+        /* 手机模型样式（由下方 .phone-wrapper 统一定义） */
+
+        .iphone-mockup {
+            width: 100%;
+            height: 610px;
+            background-color: #374151; /* 深灰色手机外壳 */
+            border-radius: 44px;
+            padding: 10px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border-radius: 34px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 24px;
+            background-color: #374151;
+        /* 边缘微微圆角，更现代 */
+        }
+
+        /* 左侧图片展示区 */
+        .phone-wrapper {
+            flex-shrink: 0;
+            margin-right: 60px;
+            width: 480px;
+            height: 860px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 中间文本内容区 */
+        .content-panel {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 60px;
+            max-width: 800px; /* 约束最大宽度确保居中紧凑 */
+        }
+
+        .main-title {
+            font-size: 56px;
+            font-weight: 900;
+            color: #111111;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .sub-title {
+            font-size: 22px;
+            color: rgba(10, 25, 55, 0.72);
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .section-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111111;
+            margin: 0;
+        }
+
+        .section-header span {
+            font-size: 14px;
+            color: rgba(10, 25, 55, 0.5);
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        /* 渐变绿色色块设计 */
+        .gradient-bar {
+            height: 4px;
+            width: 183px;
+            background: linear-gradient(90deg, #8cc63f 0%, rgba(140, 198, 63, 0) 100%);
+            border-radius: 2px;
+            margin-top: 8px;
+            margin-bottom: 14px;
+        }
+
+        .section-content {
+            font-size: 20px;
+            color: rgba(10, 25, 55, 0.72);
+            line-height: 1.9;
+            font-weight: 400;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 20px;
+            margin-top: 18px;
+            align-items: center;
+        }
+
+        .color-circle {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+            flex-shrink: 0;
+        }
+
+        .color-circle.white-bordered {
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 右侧圆形局部提取区 */
+        .detail-crops {
+            width: 200px;
+            height: 690px;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            flex-shrink: 0;
+        }
+
+        .crop-item {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: none;
+            box-shadow: none;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .crop-item img {
+            width: 112%;
+            height: 112%;
+            object-fit: contain;
+        }
+
+        .crop-face img,
+        .crop-tent img,
+        .crop-bag img {
+            transform: none;
+            object-fit: contain;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 缩放容器，用于在小屏幕下预览完整 1754x718 画布 -->
+    <div id="scale-wrapper">
+        <!-- 透明背景画布 -->
+        <div class="canvas">
+            
+            <!-- 左侧：IP闪屏图片展示 -->
+            <div class="phone-wrapper">
+                <img src="../image/shanpingye1.webp" alt="IP闪屏页1">
+            </div>
+
+            <!-- 中间：信息排版区 -->
+            <div class="content-panel">
+                
+                <div style="margin-bottom:24px">
+                    <h1 class="main-title"><span style="color: #8cc63f;">IP·</span>闪屏设计</h1>
+                    <div class="sub-title">赴一场春天的约会，感受自然生机</div>
+                </div>
+
+                <div>
+                    <div class="section-header">
+                        <h2>设计思路</h2>
+                        <span>DESIGN IDEAS</span>
+                    </div>
+                    <!-- 渐变色块 -->
+                    <div class="gradient-bar"></div>
+                    <div class="section-content">
+                        春日到来，携手定制您的春日出游计划，开启精彩旅程
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-header">
+                        <h2>设计细节</h2>
+                        <span>DESIGN DETAILS</span>
+                    </div>
+                    <!-- 渐变色块 -->
+                    <div class="gradient-bar"></div>
+                    <div class="section-content">
+                        闪屏主题：春日出游计划<br>
+                        情感关键词：活泼、开心、定制、旅游<br>
+                        设计元素：相机、IP、帐篷、春日
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-header">
+                        <h2>配色方案</h2>
+                        <span>COLOR SCHEME</span>
+                    </div>
+                    <!-- 渐变色块 -->
+                    <div class="gradient-bar"></div>
+                    <div class="color-palette">
+                        <!-- 提取自原图的配色 -->
+                        <div class="color-circle" style="background-color: #3ba4dd;" title="天空蓝"></div>
+                        <div class="color-circle" style="background-color: #00569e;" title="品牌蓝"></div>
+                        <div class="color-circle" style="background-color: #8cc63f;" title="草地绿"></div>
+                        <div class="color-circle" style="background-color: #f39200;" title="活力橙"></div>
+                        <div class="color-circle" style="background-color: #f0a1b4;" title="樱花粉"></div>
+                        <div class="color-circle white-bordered" title="纯白"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右侧：圆形局部特写区 -->
+            <div class="detail-crops">
+                <!-- 相机特写 -->
+                <div class="crop-item crop-face">
+                    <img src="../image/shanpingxiangji.webp" alt="相机特写">
+                </div>
+                <!-- 帐篷特写 -->
+                <div class="crop-item crop-tent">
+                    <img src="../image/shanpingzhangpeng.webp" alt="帐篷特写">
+                </div>
+                <!-- 书包特写 -->
+                <div class="crop-item crop-bag">
+                    <img src="../image/shanpinigyeshubao.webp" alt="书包特写">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 视口自适应缩放脚本 -->
+    <script>
+        function resizeCanvas() {
+            const wrapper = document.getElementById('scale-wrapper');
+            const targetWidth = 1600;
+            const targetHeight = 900;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            // 计算缩放比例，留出 20px 的边距
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+            const scale = Math.min(scaleX, scaleY, 1); // 最大不超原尺寸
+
+            wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            wrapper.style.width = 1600 + 'px';
+            wrapper.style.height = 900 + 'px';
+        }
+
+        // 初始化并监听窗口变化
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+    </script>
+</body>
+</html>

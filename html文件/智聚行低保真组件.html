@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>团建商务平台组件库 | 低保真设计</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.5;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        
+        /* 侧边导航 */
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            padding-right: 15px;
+        }
+        
+        .sidebar h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111;
+            border-bottom: 2px solid #111;
+            padding-bottom: 8px;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-nav a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #444;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-nav a:hover {
+            background-color: #e9ecef;
+            color: #000;
+        }
+        
+        .sidebar-nav a.active {
+            background-color: #111;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .component-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+        
+        .component-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+        
+        .component-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #111;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .component-title::before {
+            content: "•";
+            margin-right: 8px;
+            color: #666;
+        }
+        
+        /* 基础类组件样式 */
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .color-item {
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .color-1 { background-color: #111; color: #fff; }
+        .color-2 { background-color: #333; color: #fff; }
+        .color-3 { background-color: #666; color: #fff; }
+        .color-4 { background-color: #999; color: #111; }
+        .color-5 { background-color: #ccc; color: #111; }
+        .color-6 { background-color: #eee; color: #111; }
+        .color-7 { background-color: #f8f9fa; color: #111; }
+        .color-8 { background-color: #fff; border: 1px solid #e0e0e0; color: #111; }
+        
+        .typography-example {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .typography-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .h1 { font-size: 28px; font-weight: 700; color: #111; }
+        .h2 { font-size: 22px; font-weight: 600; color: #111; }
+        .h3 { font-size: 18px; font-weight: 600; color: #111; }
+        .body-large { font-size: 16px; color: #333; }
+        .body { font-size: 14px; color: #333; }
+        .caption { font-size: 12px; color: #666; }
+        
+        .icon-set {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .shadow-example {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .shadow-item {
+            height: 50px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background-color: #fff;
+        }
+        
+        .shadow-1 { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+        .shadow-2 { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+        .shadow-3 { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+        .shadow-4 { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); }
+        
+        /* 按钮样式 */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary { background-color: #111; color: #fff; }
+        .btn-secondary { background-color: #333; color: #fff; }
+        .btn-outline { background-color: transparent; color: #333; border: 1px solid #999; }
+        .btn-text { background-color: transparent; color: #333; }
+        .btn-disabled { background-color: #eee; color: #999; cursor: not-allowed; }
+        
+        /* 导航栏样式 */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .nav-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #111;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        /* 搜索栏 */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .search-icon {
+            margin-right: 10px;
+            color: #666;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            outline: none;
+            color: #333;
+        }
+        
+        /* 工具栏 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* 底部标签栏 */
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 0;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .tab-item.active {
+            color: #111;
+        }
+        
+        .tab-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        /* 分段式导航 */
+        .segmented-control {
+            display: flex;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .segment {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 6px;
+            color: #666;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .segment.active {
+            background-color: #fff;
+            color: #111;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 宫格式导航 */
+        .grid-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .grid-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .grid-text {
+            font-size: 12px;
+            color: #333;
+        }
+        
+        /* 下拉菜单 */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            padding: 10px 20px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+            z-index: 10;
+            margin-top: 5px;
+        }
+        
+        .dropdown-item {
+            padding: 12px 15px;
+            color: #333;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* 列表导航 */
+        .list-nav {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .list-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 抽屉式导航 */
+        .drawer {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .drawer-content {
+            background-color: #fff;
+            height: 100%;
+            width: 70%;
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 20px;
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 轻提示 */
+        .toast {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 弹窗 */
+        .modal {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            margin: 0 auto;
+        }
+        
+        .modal-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 15px;
+        }
+        
+        .modal-body {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* 浮层气泡 */
+        .popover {
+            position: relative;
+            width: 200px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+        
+        .popover::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            width: 16px;
+            height: 16px;
+            background-color: #fff;
+            transform: rotate(45deg);
+            border-left: 1px solid #e0e0e0;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        /* 表单组件 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #999;
+        }
+        
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: #111;
+        }
+        
+        /* 步进器 */
+        .stepper {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: fit-content;
+        }
+        
+        .stepper-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            color: #333;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .stepper-value {
+            padding: 0 15px;
+            min-width: 40px;
+            text-align: center;
+            color: #333;
+        }
+        
+        /* 选择器 */
+        .select {
+            position: relative;
+            width: 100%;
+        }
+        
+        .select-toggle {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+            text-align: left;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        /* 提示步骤 */
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        
+        .step.active .step-icon {
+            background-color: #333;
+            color: #fff;
+        }
+        
+        .step-line {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #eee;
+            z-index: 1;
+        }
+        
+        /* 条页码器 */
+        .pagination {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .page-item {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .page-item.active {
+            background-color: #111;
+            color: #fff;
+            border-color: #111;
+        }
+        
+        /* 列表 */
+        .list {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .list-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .list-item-content {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .list-item-content:last-child {
+            border-bottom: none;
+        }
+        
+        /* 走马灯 */
+        .carousel {
+            position: relative;
+            height: 180px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .carousel-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .carousel-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .dot.active {
+            background-color: #fff;
+        }
+        
+        /* 标签卡片 */
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .card-img {
+            height: 120px;
+            background-color: #eee;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 8px;
+        }
+        
+        .card-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .tag {
+            padding: 4px 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #eee;
+            border-top-color: #333;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 缺省页 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .empty-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .empty-desc {
+            color: #666;
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 页脚 */
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边导航 -->
+        <aside class="sidebar">
+            <h2>组件导航</h2>
+            <ul class="sidebar-nav">
+                <li><a href="#foundation" class="active">基础类组件</a></li>
+                <li><a href="#ui-bars">UI各类栏</a></li>
+                <li><a href="#navigation">导航类</a></li>
+                <li><a href="#feedback">操作反馈</a></li>
+                <li><a href="#forms">表单类</a></li>
+                <li><a href="#indicators">提示类</a></li>
+                <li><a href="#content">内容展示</a></li>
+                <li><a href="#loading">加载状态</a></li>
+                <li><a href="#empty-states">缺省页</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>团建商务平台组件库</h1>
+                <p>基于iOS规范与Ant Design参考的一站式团建及商务旅游定制平台C端及中端业务组件</p>
+            </header>
+            
+            <!-- 基础类组件 -->
+            <section class="section" id="foundation">
+                <h2 class="section-header">基础类组件</h2>
+                <div class="component-grid">
+                    <!-- 颜色 -->
+                    <div class="component-card">
+                        <div class="component-title">颜色</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">采用黑白灰配色方案，通过明度对比突出层级</p>
+                        <div class="color-palette">
+                            <div class="color-item color-1">#111</div>
+                            <div class="color-item color-2">#333</div>
+                            <div class="color-item color-3">#666</div>
+                            <div class="color-item color-4">#999</div>
+                            <div class="color-item color-5">#CCC</div>
+                            <div class="color-item color-6">#EEE</div>
+                            <div class="color-item color-7">#F8F9FA</div>
+                            <div class="color-item color-8">#FFF</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 文字 -->
+                    <div class="component-card">
+                        <div class="component-title">文字</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">字体层次与大小规范</p>
+                        <div class="typography-example">
+                            <div class="typography-item h1">标题 H1 - 28px</div>
+                            <div class="typography-item h2">标题 H2 - 22px</div>
+                            <div class="typography-item h3">标题 H3 - 18px</div>
+                            <div class="typography-item body-large">正文大 - 16px</div>
+                            <div class="typography-item body">正文 - 14px</div>
+                            <div class="typography-item caption">辅助文字 - 12px</div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- 阴影 -->
+                    <div class="component-card">
+                        <div class="component-title">阴影</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">四个层级的阴影效果</p>
+                        <div class="shadow-example">
+                            <div class="shadow-item shadow-1">Level 1 阴影</div>
+                            <div class="shadow-item shadow-2">Level 2 阴影</div>
+                            <div class="shadow-item shadow-3">Level 3 阴影</div>
+                            <div class="shadow-item shadow-4">Level 4 阴影</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 按钮 -->
+                    <div class="component-card">
+                        <div class="component-title">按钮</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">主按钮、次按钮、文本按钮等</p>
+                        <div class="button-group">
+                            <button class="btn btn-primary">主按钮</button>
+                            <button class="btn btn-secondary">次按钮</button>
+                            <button class="btn btn-outline">线框按钮</button>
+                            <button class="btn btn-text">文本按钮</button>
+                            <button class="btn btn-disabled">禁用按钮</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- UI各类栏 -->
+            <section class="section" id="ui-bars">
+                <h2 class="section-header">UI各类栏</h2>
+                <div class="component-grid">
+                    <!-- 导航栏 -->
+                    <div class="component-card">
+                        <div class="component-title">导航栏</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">页面顶部导航栏</p>
+                        <div class="nav-bar">
+                            <div class="nav-title">团建平台</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 搜索栏 -->
+                    <div class="component-card">
+                        <div class="component-title">搜索栏</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">全局搜索功能</p>
+                        <div class="search-bar">
+                            <div class="search-icon">🔍</div>
+                            <input type="text" class="search-input" placeholder="搜索目的地、活动或供应商">
+                        </div>
+                    </div>
+                    
+                    <!-- 工具栏 -->
+                    <div class="component-card">
+                        <div class="component-title">工具栏</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">操作工具集合</p>
+                        <div class="toolbar">
+                            <div>筛选与排序</div>
+                            <div class="toolbar-actions">
+                                <button class="btn btn-outline" style="padding: 8px 15px;">筛选</button>
+                                <button class="btn btn-outline" style="padding: 8px 15px;">排序</button>
+                                <button class="btn btn-outline" style="padding: 8px 15px;">地图</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 导航类 -->
+            <section class="section" id="navigation">
+                <h2 class="section-header">导航类</h2>
+                <div class="component-grid">
+                    <!-- 底部标签栏 -->
+                    <div class="component-card">
+                        <div class="component-title">底部标签栏</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">主功能导航</p>
+                        <div class="tab-bar">
+                            <div class="tab-item active">
+                                <div>首页</div>
+                            </div>
+                            <div class="tab-item">
+                                <div>发现</div>
+                            </div>
+                            <div class="tab-item">
+                                <div>订单</div>
+                            </div>
+                            <div class="tab-item">
+                                <div>我的</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 分段式导航 -->
+                    <div class="component-card">
+                        <div class="component-title">分段式导航</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">分类切换</p>
+                        <div class="segmented-control">
+                            <div class="segment active">全部</div>
+                            <div class="segment">团建</div>
+                            <div class="segment">商务</div>
+                            <div class="segment">旅行</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 宫格式导航 -->
+                    <div class="component-card">
+                        <div class="component-title">宫格式导航</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">功能入口集合</p>
+                        <div class="grid-nav">
+                            <div class="grid-item">
+                                <div class="grid-text">酒店</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-text">机票</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-text">大巴</div>
+                            </div>
+                            <div class="grid-item">
+                                <div class="grid-text">餐饮</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 侧边导航 -->
+                    <div class="component-card">
+                        <div class="component-title">侧边导航</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">左侧导航菜单</p>
+                        <div class="list-nav">
+                            <div class="list-item">我的行程 <span>➔</span></div>
+                            <div class="list-item">我的收藏 <span>➔</span></div>
+                            <div class="list-item">订单管理 <span>➔</span></div>
+                            <div class="list-item">消息通知 <span>➔</span></div>
+                            <div class="list-item">设置 <span>➔</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 下拉菜单 -->
+                    <div class="component-card">
+                        <div class="component-title">下拉菜单</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">选择操作</p>
+                        <div class="dropdown">
+                            <div class="dropdown-toggle">选择目的地 ▼</div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-item">北京</div>
+                                <div class="dropdown-item">上海</div>
+                                <div class="dropdown-item">广州</div>
+                                <div class="dropdown-item">深圳</div>
+                                <div class="dropdown-item">成都</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 抽屉式导航 -->
+                    <div class="component-card">
+                        <div class="component-title">抽屉式导航</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">侧边滑出菜单</p>
+                        <div class="drawer">
+                            <div class="drawer-content">
+                                <h3 style="margin-bottom: 20px;">筛选条件</h3>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-weight: 500; margin-bottom: 8px;">价格范围</div>
+                                    <div style="height: 4px; background-color: #eee; border-radius: 2px;"></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="font-weight: 500; margin-bottom: 8px;">活动类型</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                                        <span class="tag">户外拓展</span>
+                                        <span class="tag">团队建设</span>
+                                        <span class="tag">会议活动</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">应用筛选</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 操作反馈 -->
+            <section class="section" id="feedback">
+                <h2 class="section-header">操作反馈</h2>
+                <div class="component-grid">
+                    <!-- 轻提示 -->
+                    <div class="component-card">
+                        <div class="component-title">轻提示</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">短暂的操作反馈</p>
+                        <div class="toast">操作成功！</div>
+                    </div>
+                    
+                    <!-- 弹窗 -->
+                    <div class="component-card">
+                        <div class="component-title">弹窗</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">对话框提示</p>
+                        <div class="modal">
+                            <div class="modal-header">确认操作</div>
+                            <div class="modal-body">您确定要删除这个行程吗？此操作不可撤销。</div>
+                            <div class="modal-footer">
+                                <button class="btn btn-outline">取消</button>
+                                <button class="btn btn-primary">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 浮层气泡 -->
+                    <div class="component-card">
+                        <div class="component-title">浮层气泡</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">上下文提示信息</p>
+                        <div class="popover">
+                            <div style="font-weight: 500; margin-bottom: 8px;">提示信息</div>
+                            <div style="color: #666; font-size: 14px;">这里可以显示相关的操作提示或说明信息。</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 表单类 -->
+            <section class="section" id="forms">
+                <h2 class="section-header">表单类</h2>
+                <div class="component-grid">
+                    <!-- 单选/复选 -->
+                    <div class="component-card">
+                        <div class="component-title">单选/复选</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">选择控件</p>
+                        <div class="form-group">
+                            <div class="form-label">出行方式（单选）</div>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="plane" name="transport" checked>
+                                    <label for="plane">飞机</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="train" name="transport">
+                                    <label for="train">高铁</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="bus" name="transport">
+                                    <label for="bus">大巴</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label">包含服务（多选）</div>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="meal" checked>
+                                    <label for="meal">餐饮</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="hotel" checked>
+                                    <label for="hotel">住宿</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="guide">
+                                    <label for="guide">导游</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 步进器 -->
+                    <div class="component-card">
+                        <div class="component-title">步进器</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">数量增减控件</p>
+                        <div class="form-group">
+                            <div class="form-label">参与人数</div>
+                            <div class="stepper">
+                                <button class="stepper-btn">-</button>
+                                <div class="stepper-value">10</div>
+                                <button class="stepper-btn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 多行文本框 -->
+                    <div class="component-card">
+                        <div class="component-title">多行文本框</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">长文本输入</p>
+                        <div class="form-group">
+                            <div class="form-label">特殊需求</div>
+                            <textarea class="form-control" rows="4" placeholder="请输入您的特殊需求或备注..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- 单文本框 -->
+                    <div class="component-card">
+                        <div class="component-title">单文本框</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">单行文本输入</p>
+                        <div class="form-group">
+                            <div class="form-label">联系人姓名</div>
+                            <input type="text" class="form-control" placeholder="请输入联系人姓名">
+                        </div>
+                    </div>
+                    
+                    <!-- 选择器 -->
+                    <div class="component-card">
+                        <div class="component-title">选择器</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">下拉选择</p>
+                        <div class="form-group">
+                            <div class="form-label">出行日期</div>
+                            <div class="select">
+                                <div class="select-toggle">请选择出行日期 ▼</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 提示类 -->
+            <section class="section" id="indicators">
+                <h2 class="section-header">提示类</h2>
+                <div class="component-grid">
+                    <!-- 提示步骤 -->
+                    <div class="component-card">
+                        <div class="component-title">提示步骤</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">流程步骤指示器</p>
+                        <div class="steps">
+                            <div class="step active">
+                                <div class="step-icon">1</div>
+                                <div style="font-size: 12px;">选择</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-icon">2</div>
+                                <div style="font-size: 12px;">填写</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-icon">3</div>
+                                <div style="font-size: 12px;">支付</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-icon">4</div>
+                                <div style="font-size: 12px;">完成</div>
+                            </div>
+                            <div class="step-line"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 条页码器 -->
+                    <div class="component-card">
+                        <div class="component-title">条页码器</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">分页导航</p>
+                        <div class="pagination">
+                            <div class="page-item">〈</div>
+                            <div class="page-item active">1</div>
+                            <div class="page-item">2</div>
+                            <div class="page-item">3</div>
+                            <div class="page-item">4</div>
+                            <div class="page-item">5</div>
+                            <div class="page-item">...</div>
+                            <div class="page-item">10</div>
+                            <div class="page-item">〉</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 内容展示 -->
+            <section class="section" id="content">
+                <h2 class="section-header">内容展示</h2>
+                <div class="component-grid">
+                    <!-- 列表 -->
+                    <div class="component-card">
+                        <div class="component-title">列表</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">信息列表展示</p>
+                        <div class="list">
+                            <div class="list-header">热门团建目的地</div>
+                            <div class="list-item-content">
+                                <div style="font-weight: 500; margin-bottom: 5px;">北京·古北水镇</div>
+                                <div style="color: #666; font-size: 13px;">适合团队拓展、古镇文化体验</div>
+                            </div>
+                            <div class="list-item-content">
+                                <div style="font-weight: 500; margin-bottom: 5px;">上海·迪士尼</div>
+                                <div style="color: #666; font-size: 13px;">主题乐园、团队娱乐活动</div>
+                            </div>
+                            <div class="list-item-content">
+                                <div style="font-weight: 500; margin-bottom: 5px;">杭州·西溪湿地</div>
+                                <div style="color: #666; font-size: 13px;">自然风光、户外拓展训练</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 走马灯 -->
+                    <div class="component-card">
+                        <div class="component-title">走马灯</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">轮播图展示</p>
+                        <div class="carousel">
+                            <div class="carousel-item">热门团建活动推荐 1</div>
+                            <div class="carousel-dots">
+                                <div class="dot active"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 标签卡片 -->
+                    <div class="component-card">
+                        <div class="component-title">标签卡片</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">信息卡片展示</p>
+                        <div class="card">
+                            <div class="card-img"></div>
+                            <div class="card-body">
+                                <div class="card-title">三亚海滩团建</div>
+                                <div class="card-text">阳光沙滩团队活动，适合20-50人团队，包含水上项目、沙滩拓展等</div>
+                                <div class="card-tags">
+                                    <span class="tag">海边</span>
+                                    <span class="tag">拓展</span>
+                                    <span class="tag">3天2夜</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 加载状态 -->
+            <section class="section" id="loading">
+                <h2 class="section-header">加载状态</h2>
+                <div class="component-grid">
+                    <!-- 全局加载 -->
+                    <div class="component-card">
+                        <div class="component-title">全局加载</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">页面级加载状态</p>
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <div style="color: #666; font-size: 14px;">加载中，请稍候...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 上拉加载 -->
+                    <div class="component-card">
+                        <div class="component-title">上拉加载</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">列表底部加载更多</p>
+                        <div style="text-align: center; padding: 20px; color: #666; border: 1px dashed #ccc; border-radius: 6px;">
+                            <div>上拉加载更多</div>
+                            <div style="font-size: 12px; margin-top: 5px;">松手加载</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 缺省页 -->
+            <section class="section" id="empty-states">
+                <h2 class="section-header">缺省页</h2>
+                <div class="component-grid">
+                    <!-- 暂无内容 -->
+                    <div class="component-card">
+                        <div class="component-title">暂无内容</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">空状态提示</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <div class="empty-title">暂无内容</div>
+                            <div class="empty-desc">当前没有相关行程，快去创建一个吧！</div>
+                            <button class="btn btn-primary">创建行程</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 网络异常 -->
+                    <div class="component-card">
+                        <div class="component-title">网络异常</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">网络错误提示</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">📡</div>
+                            <div class="empty-title">网络连接异常</div>
+                            <div class="empty-desc">请检查网络设置后重试</div>
+                            <button class="btn btn-outline">重新加载</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 搜索无结果 -->
+                    <div class="component-card">
+                        <div class="component-title">搜索无结果</div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">搜索空状态</p>
+                        <div class="empty-state">
+                            <div class="empty-icon">🔍</div>
+                            <div class="empty-title">未找到相关内容</div>
+                            <div class="empty-desc">换个关键词试试看吧</div>
+                            <button class="btn btn-outline">重新搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <footer class="footer">
+                <p>团建商务平台组件库 | 基于iOS规范与Ant Design设计 | 黑白灰低保真版本</p>
+                <p style="margin-top: 5px; font-size: 12px;">重要内容颜色深，对比大；次要内容颜色浅，对比弱</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // 简单交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 侧边导航点击效果
+            const navLinks = document.querySelectorAll('.sidebar-nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 滚动到对应区域
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 简单模拟下拉菜单
+            const dropdownToggle = document.querySelector('.dropdown-toggle');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            
+            if (dropdownToggle && dropdownMenu) {
+                dropdownToggle.addEventListener('click', function() {
+                    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                });
+                
+                // 点击其他地方关闭下拉菜单
+                document.addEventListener('click', function(e) {
+                    if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 模拟步进器功能
+            const stepperMinus = document.querySelector('.stepper-btn:first-child');
+            const stepperPlus = document.querySelector('.stepper-btn:last-child');
+            const stepperValue = document.querySelector('.stepper-value');
+            
+            if (stepperMinus && stepperPlus && stepperValue) {
+                let value = parseInt(stepperValue.textContent);
+                
+                stepperMinus.addEventListener('click', function() {
+                    if (value > 1) {
+                        value--;
+                        stepperValue.textContent = value;
+                    }
+                });
+                
+                stepperPlus.addEventListener('click', function() {
+                    value++;
+                    stepperValue.textContent = value;
+                });
+            }
+            
+            // 分段导航切换
+            const segments = document.querySelectorAll('.segment');
+            segments.forEach(segment => {
+                segment.addEventListener('click', function() {
+                    segments.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 标签页切换
+            const tabItems = document.querySelectorAll('.tab-item');
+            tabItems.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabItems.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能 CPQ 报价系统 - 交互设计方案</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #080e1a;
+            color: rgba(255,255,255,0.85);
+            padding: 52px 48px 60px;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        .phase-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: rgba(26,159,218,0.75);
+            margin-bottom: 10px;
+        }
+        .section-eyebrow {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.25);
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .section-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.92);
+            line-height: 1.28;
+            letter-spacing: -.5px;
+            margin-bottom: 10px;
+        }
+        .section-title strong { color: #1A9FDA; }
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(26,159,218,0.1);
+            border: 1px solid rgba(26,159,218,0.22);
+            padding: 3px 12px;
+            border-radius: 999px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: rgba(26,159,218,0.85);
+            margin-bottom: 10px;
+        }
+        .section-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.35);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        /* ── Layout ── */
+        .main-layout {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+        }
+        .left-col {
+            width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .right-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+        }
+        .right-col img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+        .img-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
+
+        /* ── Cards ── */
+        .highlight-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 16px 16px 16px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-accent {
+            position: absolute;
+            left: 0; top: 16px; bottom: 16px;
+            width: 3px;
+            border-radius: 0 2px 2px 0;
+        }
+        .card-snippet {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 62px;
+            gap: 8px;
+        }
+        .card-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.88);
+            margin-bottom: 5px;
+        }
+        .card-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.36);
+            line-height: 1.65;
+        }
+
+        /* SLA snippet */
+        .sla-dot {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .sla-line {
+            height: 2px; width: 28px; border-radius: 1px; flex-shrink: 0;
+        }
+        .sla-badge {
+            background: rgba(251,146,60,0.12);
+            border: 1px solid rgba(251,146,60,0.28);
+            color: #fdba74;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 6px;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* BOM snippet */
+        .bom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 10.5px;
+            color: rgba(255,255,255,0.55);
+            width: 100%;
+        }
+
+        /* Pricing snippet */
+        .price-box {
+            flex: 1;
+            border-radius: 8px;
+            padding: 8px 6px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .price-box.active {
+            background: rgba(26,159,218,0.12);
+            border-color: rgba(26,159,218,0.35);
+            position: relative;
+        }
+        .price-label { font-size: 9px; color: rgba(255,255,255,0.38); }
+        .price-value { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.82); margin-top: 2px; }
+        .price-box.active .price-label { color: rgba(26,159,218,0.8); }
+        .price-box.active .price-value { color: #1A9FDA; }
+        .price-recommend {
+            position: absolute; top: -9px;
+            background: #1A9FDA; color: #fff;
+            font-size: 8px; font-weight: 700;
+            padding: 1px 7px; border-radius: 999px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <h1 class="section-title">智能 <strong>CPQ 报价</strong> 交互设计方案</h1>
+    <div class="section-badge">页面 02：BOM 拆解与报价单生成</div>
+    <p class="section-desc">基于 BOM 图纸自动匹配加工工序，引入跨部门 SLA 协同监控与智能阶梯报价预演，打通核价黑盒，确保报价精准高效。</p>
+
+    <!-- Main layout -->
+    <div class="main-layout">
+
+        <!-- Left: cards -->
+        <div class="left-col">
+
+            <!-- Card 1: SLA -->
+            <div class="highlight-card">
+                <div class="card-accent" style="background:#f97316"></div>
+                <div class="card-snippet" style="flex-direction:column;gap:10px">
+                    <div style="display:flex;align-items:center;gap:4px">
+                        <div class="sla-dot" style="background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.4)">
+                            <svg width="8" height="8" fill="none" stroke="#10b981" viewBox="0 0 24 24" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="sla-line" style="background:rgba(16,185,129,0.4)"></div>
+                        <div class="sla-dot" style="background:rgba(26,159,218,0.2);border:2px solid rgba(26,159,218,0.5)"></div>
+                        <div class="sla-line" style="background:rgba(255,255,255,0.1)"></div>
+                        <div class="sla-dot" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12)">
+                            <span style="font-size:8px;font-weight:700;color:rgba(255,255,255,0.4)">3</span>
+                        </div>
+                    </div>
+                    <div class="sla-badge">
+                        <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        SLA 剩余：04:24:13
+                    </div>
+                </div>
+                <div class="card-title">跨部门 SLA 协同监控</div>
+                <p class="card-desc">全局透视销售、工程与财务流转节点，引入 SLA 倒计时预警，明确权责时效，保障报价效率。</p>
+            </div>
+
+            <!-- Card 2: BOM -->
+            <div class="highlight-card">
+                <div class="card-accent" style="background:#a855f7"></div>
+                <div class="card-snippet" style="flex-direction:column;gap:6px">
+                    <div class="bom-row">
+                        <span style="display:flex;align-items:center;gap:6px">
+                            <span style="width:6px;height:6px;border-radius:2px;background:#a855f7;flex-shrink:0"></span>
+                            压铸模具
+                        </span>
+                        <span style="display:flex;gap:14px">
+                            <span style="color:rgba(255,255,255,0.35)">¥50,000</span>
+                            <span style="color:#1A9FDA;font-weight:600">¥2.50/件</span>
+                        </span>
+                    </div>
+                    <div class="bom-row">
+                        <span style="display:flex;align-items:center;gap:6px">
+                            <span style="width:6px;height:6px;border-radius:2px;background:#1A9FDA;flex-shrink:0"></span>
+                            CNC精加工
+                        </span>
+                        <span style="display:flex;gap:14px">
+                            <span style="color:rgba(255,255,255,0.2)">--</span>
+                            <span style="color:rgba(255,255,255,0.65);font-weight:600">¥2.50/件</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-title">BOM 级精细化成本拆解</div>
+                <p class="card-desc">基于图纸自动匹配加工工序，清晰拆解固定模具费、单件加工费及工时，确保底层核价精准无误。</p>
+            </div>
+
+            <!-- Card 3: Tiered Pricing -->
+            <div class="highlight-card">
+                <div class="card-accent" style="background:#1A9FDA"></div>
+                <div class="card-snippet" style="gap:8px">
+                    <div class="price-box">
+                        <span class="price-label">1 万件</span>
+                        <span class="price-value">¥22.5</span>
+                    </div>
+                    <div class="price-box active">
+                        <span class="price-recommend">推荐</span>
+                        <span class="price-label">5 万件</span>
+                        <span class="price-value">¥16.9</span>
+                    </div>
+                    <div class="price-box">
+                        <span class="price-label">10 万件</span>
+                        <span class="price-value">¥16.2</span>
+                    </div>
+                </div>
+                <div class="card-title">智能阶梯报价预演</div>
+                <p class="card-desc">动态推演不同订单量下的模具分摊差异，一键生成阶梯报价对比，辅助销售引导客户提升单量。</p>
+            </div>
+
+        </div>
+
+        <!-- Right: stacked images -->
+        <div class="right-col">
+            <img src="../image/L2C/2智能CPQ1.webp" alt="智能CPQ报价 - BOM 拆解">
+            <div class="img-divider"></div>
+            <img src="../image/L2C/2智能CPQ2.webp" alt="智能CPQ报价 - 阶梯报价单">
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Banner轮播展示</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        body {
+            background-color: #f4f6f8;
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            touch-action: pan-y;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* 标题：与轮播第一张左边缘对齐（同为 6% 左距） */
+        .banner-title {
+            padding: 0.5rem 0 2rem 0;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: flex-start;
+        }
+        .banner-title .title-left {
+            padding-left: 6%;
+            flex: 0 0 auto;
+            box-sizing: border-box;
+        }
+        .banner-title .title-left img {
+            width: 320px;
+            height: auto;
+            display: block;
+            max-width: 100%;
+        }
+        .banner-title .preview-img {
+            flex-shrink: 0;
+            width: 320px;
+            height: auto;
+            max-width: 100%;
+            display: block;
+            align-self: center;
+            margin-left: auto;
+        }
+
+        .carousel-wrapper {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            padding: 0 0 40px;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 20px;
+            padding-left: 6%;    /* ← 与标题左边距相同 */
+            padding-right: 12%;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            cursor: grab;
+        }
+        .carousel-track:active { cursor: grabbing; }
+
+        .carousel-slide {
+            flex: 0 0 82%;
+            max-width: 1355px;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .slide-content {
+            width: 100%;
+            aspect-ratio: 1653 / 705;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transform: scale(0.94);
+            opacity: 0.6;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            pointer-events: none;
+        }
+        .carousel-slide.active .slide-content {
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        .slide-content img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .indicator-dot {
+            width: 10px; height: 10px;
+            border-radius: 5px;
+            background-color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative; overflow: hidden;
+        }
+        .indicator-dot.active { width: 48px; background-color: #e5e7eb; }
+        .indicator-dot .progress-fill {
+            position: absolute; top: 0; left: 0;
+            height: 100%; width: 0%;
+            background-color: #10b981; border-radius: 5px;
+        }
+        .indicator-dot.active.running .progress-fill {
+            animation: fillProgress 4s linear forwards;
+        }
+        .carousel-wrapper:hover .indicator-dot.active.running .progress-fill,
+        .carousel-wrapper.is-dragging .indicator-dot.active.running .progress-fill {
+            animation-play-state: paused;
+        }
+        @keyframes fillProgress { 0% { width:0%; } 100% { width:100%; } }
+    </style>
+</head>
+<body>
+
+    <!-- 标题：左边距 6%，宽度 82%，与第一张 banner 完全左对齐；LBYW.png 右对齐页面 -->
+    <div class="banner-title">
+        <div class="title-left">
+            <img src="../image/LBBNZS.webp" alt="轮播Banner展示" />
+        </div>
+        <img src="../image/LBYW.webp" alt="预览效果" class="preview-img" />
+    </div>
+
+    <!-- 轮播：padding-left 6% 与标题保持一致 -->
+    <div class="carousel-wrapper" id="carouselWrapper">
+        <div class="carousel-track" id="carouselTrack">
+
+            <div class="carousel-slide active">
+                <div class="slide-content">
+                    <img src="../image/CRCT01.webp" alt="Banner 1">
+                </div>
+            </div>
+
+            <div class="carousel-slide">
+                <div class="slide-content">
+                    <img src="../image/JQCY02.webp" alt="Banner 2">
+                </div>
+            </div>
+
+            <div class="carousel-slide">
+                <div class="slide-content">
+                    <img src="../image/LYTJ03.webp" alt="Banner 3">
+                </div>
+            </div>
+
+            <div class="carousel-slide">
+                <div class="slide-content">
+                    <img src="../image/GQFS04.webp" alt="Banner 4">
+                </div>
+            </div>
+
+        </div>
+        <div class="carousel-indicators" id="indicators"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('carouselWrapper');
+            const track = document.getElementById('carouselTrack');
+            const slides = document.querySelectorAll('.carousel-slide');
+            const indicatorsContainer = document.getElementById('indicators');
+            let currentIndex = 0;
+            const slideCount = slides.length;
+            let autoPlayTimer, playStartTime;
+            let timeRemaining = 4000, isPaused = false;
+            let isDragging = false, startPos = 0;
+            let currentTranslate = 0, prevTranslate = 0, animationID;
+
+            slides.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.classList.add('indicator-dot');
+                const fill = document.createElement('div');
+                fill.classList.add('progress-fill');
+                dot.appendChild(fill);
+                dot.addEventListener('click', () => { if (currentIndex !== i) { goToSlide(i); resetTimer(); } });
+                indicatorsContainer.appendChild(dot);
+            });
+            const dots = document.querySelectorAll('.indicator-dot');
+
+            function getSlideStep() {
+                if (slides.length < 2) return 0;
+                return slides[1].getBoundingClientRect().left - slides[0].getBoundingClientRect().left;
+            }
+            function goToSlide(index) {
+                if (index < 0) index = 0;
+                if (index >= slideCount) index = slideCount - 1;
+                currentIndex = index;
+                const step = getSlideStep();
+                currentTranslate = -(currentIndex * step);
+                prevTranslate = currentTranslate;
+                track.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                track.style.transform = `translateX(${currentTranslate}px)`;
+                slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+                updateIndicators();
+            }
+            function updateIndicators() {
+                dots.forEach(d => {
+                    d.classList.remove('active', 'running');
+                    const fill = d.querySelector('.progress-fill');
+                    fill.style.animation = 'none';
+                    void fill.offsetWidth;
+                    fill.style.animation = '';
+                });
+                dots[currentIndex].classList.add('active');
+                if (!isPaused && !isDragging) dots[currentIndex].classList.add('running');
+            }
+            function startTimer() {
+                if (isPaused || isDragging) return;
+                playStartTime = Date.now();
+                dots[currentIndex].classList.add('running');
+                autoPlayTimer = setTimeout(() => { currentIndex = (currentIndex+1)%slideCount; goToSlide(currentIndex); resetTimer(); }, timeRemaining);
+            }
+            function pauseTimer() { clearTimeout(autoPlayTimer); if (!isPaused) timeRemaining -= (Date.now()-playStartTime); isPaused=true; dots[currentIndex].classList.remove('running'); }
+            function resumeTimer() { isPaused=false; startTimer(); }
+            function resetTimer() { clearTimeout(autoPlayTimer); timeRemaining=4000; isPaused=false; startTimer(); }
+
+            function getPos(e) { return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX; }
+            function dragStart(e) {
+                if (e.type==='touchstart' && e.touches.length>1) return;
+                isDragging=true; wrapper.classList.add('is-dragging');
+                startPos=getPos(e); track.style.transition='none'; cancelAnimationFrame(animationID); pauseTimer();
+            }
+            function dragMove(e) {
+                if (!isDragging) return;
+                let t = prevTranslate + (getPos(e)-startPos);
+                const max=0, min=-(slideCount-1)*getSlideStep();
+                if (t>max) t=max+(t-max)*0.2; else if (t<min) t=min+(t-min)*0.2;
+                currentTranslate=t;
+                animationID=requestAnimationFrame(()=>{ track.style.transform=`translateX(${currentTranslate}px)`; });
+            }
+            function dragEnd() {
+                if (!isDragging) return;
+                isDragging=false; wrapper.classList.remove('is-dragging'); cancelAnimationFrame(animationID);
+                const moved=currentTranslate-prevTranslate, thr=getSlideStep()*0.15;
+                if (moved<-thr) currentIndex++; else if (moved>thr) currentIndex--;
+                goToSlide(currentIndex); resetTimer();
+            }
+
+            track.addEventListener('mousedown', dragStart);
+            track.addEventListener('touchstart', dragStart, {passive:true});
+            window.addEventListener('mousemove', dragMove);
+            window.addEventListener('touchmove', dragMove, {passive:false});
+            window.addEventListener('mouseup', dragEnd);
+            window.addEventListener('touchend', dragEnd);
+            wrapper.addEventListener('mouseleave', ()=>{ if(isDragging) dragEnd(); resumeTimer(); });
+            wrapper.addEventListener('mouseenter', pauseTimer);
+            window.addEventListener('resize', ()=>{ track.style.transition='none'; goToSlide(currentIndex); });
+
+            setTimeout(()=>{ goToSlide(0); resetTimer(); }, 100);
+        });
+
+        function reportHeight() {
+            var h = document.documentElement.scrollHeight;
+            if (window.parent !== window)
+                window.parent.postMessage({ type: 'iframeHeight', height: h }, '*');
+        }
+        window.addEventListener('load', ()=>{ setTimeout(reportHeight, 400); });
+        setTimeout(reportHeight, 1200);
+    </script>
+</body>
+</html>

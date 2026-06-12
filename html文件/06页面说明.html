@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H5页面说明 (1920x1080)</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'DIN Alternate', 'DIN Condensed', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+        }
+
+        *, *::before, *::after {
+            font-weight: 400;
+        }
+
+        /* 核心画布区域，严格限制 1920x1080 */
+        .canvas-1920 {
+            width: 1920px;
+            height: 1080px;
+            background-color: #fcfdfa; /* 统一的极简灰白底色 */
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+
+        /* 顶部淡雅的背景色块 */
+        .bg-bottom-swoosh {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 380px;
+            background: linear-gradient(to left, #ABCC58 0%, #d4e899 55%, #eef6cc 100%);
+            opacity: 0.88;
+            z-index: 1;
+        }
+
+        /* 手机边框样式 */
+        .mockup-phone {
+            border: 12px solid #ffffff;
+            border-radius: 56px;
+            background-color: #ffffff;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.2), inset 0 0 0 2px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: absolute;
+            z-index: 20;
+            cursor: pointer;
+            /* 动画 + hover 过渡统一由 animation 处理，box-shadow 单独过渡 */
+            transition: box-shadow 0.4s ease, z-index 0s;
+            animation: phone-float 5s ease-in-out infinite;
+            animation-fill-mode: backwards;
+        }
+
+        /* 三台手机错开浮动节奏 */
+        .mockup-phone.delay-1 { animation-delay: 0s; }
+        .mockup-phone.delay-2 { animation-delay: 1.8s; }
+        .mockup-phone.delay-3 { animation-delay: 3.4s; }
+
+        /* 悬浮动画：保持 rotate(15deg)，只做上下漂浮 */
+        @keyframes phone-float {
+            0%   { transform: rotate(15deg) translateY(0px); }
+            50%  { transform: rotate(15deg) translateY(-14px); }
+            100% { transform: rotate(15deg) translateY(0px); }
+        }
+
+        /* hover：暂停动画，升起 + 放大 + 高光阴影 */
+        .mockup-phone:hover {
+            animation-play-state: paused;
+            transform: rotate(15deg) translateY(-24px) scale(1.06) !important;
+            box-shadow: 0 55px 90px -20px rgba(0, 0, 0, 0.38), inset 0 0 0 2px rgba(0,0,0,0.06);
+            z-index: 80 !important;
+        }
+
+        /* 手机刘海屏 */
+        .mockup-phone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 32px;
+            background-color: #ffffff;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 30;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* 长图可滚动容器（H5CT1 / H5CT02） */
+        .scroll-phone {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+        }
+        .scroll-phone:active { cursor: grabbing; }
+        .scroll-phone::-webkit-scrollbar { display: none; }
+
+        /* 左下角的半透明气泡装饰 */
+        .glass-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
+            box-shadow: inset 10px 10px 20px rgba(255, 255, 255, 0.5), 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 15;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1920*1080 固定画布 -->
+    <div class="canvas-1920" id="main-canvas">
+
+        <!-- 背景色块 -->
+        <div class="bg-bottom-swoosh"></div>
+
+        <!-- ================= 左侧区域 ================= -->
+
+        <!-- 水印文字：顺延为 06，颜色为主题绿 -->
+        <div class="absolute top-[100px] left-[100px] flex items-baseline pointer-events-none select-none z-10 opacity-70">
+            <span class="text-[100px] font-black text-[#ABCC58] tracking-tighter leading-none">06<span style="color:#F8D560">.</span></span>
+            <span class="text-[80px] font-black text-[#dce2c6] tracking-widest ml-4 uppercase leading-none mix-blend-multiply">Design</span>
+        </div>
+
+        <!-- 主标题 (修改为黑色) -->
+        <div class="absolute top-[240px] left-[120px] z-20">
+            <h1 class="text-[48px] font-bold text-gray-900">
+                H5页面说明
+            </h1>
+        </div>
+
+        <!-- 左侧文本描述区块 -->
+        <div class="absolute top-[420px] left-[120px] w-[600px] z-30">
+
+            <!-- 1. 活动目标 (圆点：绿色) -->
+            <div class="mb-[36px]">
+                <div class="flex items-center mb-3">
+                    <span class="w-4 h-4 rounded-full bg-[#ABCC58] mr-4 shadow-sm"></span>
+                    <h2 class="text-[36px] font-bold text-gray-800 tracking-widest">活动目标</h2>
+                </div>
+                <p class="text-[28px] text-gray-600 leading-[1.7] text-justify tracking-wide pl-[32px]">
+                    配合"踏春出游季"核心节点，以最高8888元旅行基金及转盘抽奖的形式，提升APP用户活跃度与参与感，诱发购买欲望并有效拉动平台GMV转化。
+                </p>
+            </div>
+
+            <!-- 2. 设计目标 (圆点：黄色) -->
+            <div class="mb-[36px]">
+                <div class="flex items-center mb-3">
+                    <span class="w-4 h-4 rounded-full bg-[#F8D560] mr-4 shadow-sm"></span>
+                    <h2 class="text-[36px] font-bold text-gray-800 tracking-widest">设计目标</h2>
+                </div>
+                <p class="text-[28px] text-gray-600 leading-[1.7] text-justify tracking-wide pl-[32px]">
+                    打造生机勃勃的春日视觉氛围，通过3D可爱IP与强互动的UI组件，让用户在轻松愉快的体验中清晰感知到"有奖可得"的核心利益点。
+                </p>
+            </div>
+
+            <!-- 3. 活动入口 (圆点：黄色) -->
+            <div>
+                <div class="flex items-center mb-3">
+                    <span class="w-4 h-4 rounded-full bg-[#F8D560] mr-4 shadow-sm"></span>
+                    <h2 class="text-[36px] font-bold text-gray-800 tracking-widest">活动入口</h2>
+                </div>
+                <p class="text-[28px] text-gray-600 leading-[1.7] text-justify tracking-wide pl-[32px]">
+                    Banner、弹窗、H5
+                </p>
+            </div>
+
+        </div>
+
+        <!-- 左下角的转盘装饰 (隐藏) -->
+        <div class="hidden absolute w-[360px] h-[360px] left-[-50px] bottom-[-80px] flex items-center justify-center rounded-full shadow-2xl z-20 bg-[#eef6e1] border-[10px] border-white overflow-hidden hover-float">
+            <!-- 占位图：替换为你上传的大转盘图片即可 -->
+            <img src="../image/H5ZP01.webp" class="w-full h-full object-cover" alt="大转盘图">
+            <div class="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer">
+                <span class="text-white border-2 border-white px-4 py-2 rounded-full font-bold text-sm">替换转盘图片</span>
+            </div>
+        </div>
+
+
+        <!-- ================= 右侧视觉图形区域 (倾斜的高级样机组) ================= -->
+
+        <!-- 1. 最左侧手机（H5CRHD，长图可滚动） -->
+        <div class="mockup-phone delay-1 w-[380px] h-[820px]" style="right: 660px; top: 200px;">
+            <div class="scroll-phone bg-[#eef6e1]">
+                <img src="../image/H5CRHD.webp" alt="H5主会场页面" class="w-full" style="height:auto;display:block;">
+            </div>
+        </div>
+
+        <!-- 2. 中间手机（H5CT1，长图可滚动） -->
+        <div class="mockup-phone delay-2 w-[380px] h-[820px]" style="right: 320px; top: 120px;">
+            <div class="scroll-phone bg-[#eef6e1]">
+                <img src="../image/H5CT1.webp" alt="H5分会场页面1" class="w-full" style="height:auto;display:block;">
+            </div>
+        </div>
+
+        <!-- 3. 右侧手机（H5CT02，填满显示） -->
+        <div class="mockup-phone delay-3 w-[380px] h-[820px]" style="right: -100px; top: -140px;">
+            <div class="w-full h-full">
+                <img src="../image/H5CT02.webp" alt="H5分会场页面2" class="w-full h-full" style="object-fit:cover;display:block;">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 兼容性完美的 JS 动态缩放控制 -->
+    <script>
+        function fitToScreen() {
+            const canvas = document.getElementById('main-canvas');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            canvas.style.transform = `scale(${scale})`;
+        }
+        fitToScreen();
+        window.addEventListener('resize', fitToScreen);
+    </script>
+</body>
+</html>
