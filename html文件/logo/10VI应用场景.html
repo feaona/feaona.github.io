@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VI 应用场景 - VI Application Scenarios</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            width: 100%; height: 100%; overflow: hidden; background: #fff;
+            font-family: 'DIN Alternate', 'DIN Next', 'DIN Pro', 'PingFang SC', 'PingFang', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .slide {
+            width: 1920px;
+            height: 1080px;
+            transform-origin: top left;
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 72px 48px 48px 96px;
+        }
+    </style>
+</head>
+<body>
+<div class="slide">
+
+    <!-- 背景光影 -->
+    <div style="position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;">
+        <div style="position:absolute;bottom:80px;left:25%;width:480px;height:160px;background:#ffcc00;opacity:0.02;filter:blur(80px);transform:rotate(-12deg);border-radius:9999px;"></div>
+        <div style="position:absolute;top:25%;right:25%;width:320px;height:320px;background:#1A9FDA;opacity:0.03;filter:blur(100px);border-radius:9999px;"></div>
+        <svg style="position:absolute;bottom:0;left:0;width:100%;height:45%;opacity:0.15;" preserveAspectRatio="none" viewBox="0 0 1440 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,400 L0,200 C250,320 500,100 800,180 C1100,260 1300,80 1440,100 L1440,400 Z" fill="url(#wL10)"/>
+            <path d="M0,400 L0,250 C300,350 450,180 850,220 C1150,250 1350,150 1440,180 L1440,400 Z" fill="url(#wD10)"/>
+            <defs>
+                <linearGradient id="wL10" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#1A9FDA" stop-opacity="0.8"/>
+                    <stop offset="50%" stop-color="#00f2fe" stop-opacity="0.4"/>
+                    <stop offset="100%" stop-color="#fff" stop-opacity="0.1"/>
+                </linearGradient>
+                <linearGradient id="wD10" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#0a4b8c" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#1A9FDA" stop-opacity="0.05"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+
+    <!-- 四角裁剪标记 -->
+    <div style="position:absolute;top:32px;left:32px;width:20px;height:20px;border-top:2px solid #e5e7eb;border-left:2px solid #e5e7eb;z-index:1;"></div>
+    <div style="position:absolute;top:32px;right:32px;width:20px;height:20px;border-top:2px solid #e5e7eb;border-right:2px solid #e5e7eb;z-index:1;"></div>
+    <div style="position:absolute;bottom:32px;left:32px;width:20px;height:20px;border-bottom:2px solid #e5e7eb;border-left:2px solid #e5e7eb;z-index:1;"></div>
+    <div style="position:absolute;bottom:32px;right:32px;width:20px;height:20px;border-bottom:2px solid #e5e7eb;border-right:2px solid #e5e7eb;z-index:1;"></div>
+
+    <!-- Header -->
+    <header style="display:grid;grid-template-columns:5fr 7fr;gap:64px;position:relative;z-index:10;width:100%;margin-bottom:80px;flex-shrink:0;">
+        <div style="padding-bottom:7px;border-bottom:2.5px solid #1A9FDA;color:#374151;font-size:24px;letter-spacing:0.12em;font-family:'DIN Alternate','DIN Next','DIN Pro',sans-serif;">
+            ZHIJUXING Visual Image Guidance
+        </div>
+        <div style="padding-bottom:7px;border-bottom:2.5px solid #1A9FDA;color:#374151;font-size:24px;letter-spacing:0.12em;font-family:'DIN Alternate','DIN Next','DIN Pro',sans-serif;">
+            VI Application Scenarios
+        </div>
+    </header>
+
+    <!-- 主体内容：左图 | 右图 -->
+    <div style="flex:1;min-height:0;position:relative;z-index:10;display:grid;grid-template-columns:5fr 7fr;gap:64px;align-items:stretch;">
+
+        <!-- 左侧：标题 + 竖向场景图 -->
+        <div style="display:flex;flex-direction:column;height:100%;min-height:0;">
+            <h1 style="font-size:72px;font-weight:700;color:#111827;letter-spacing:0.06em;margin-bottom:48px;flex-shrink:0;font-family:'PingFang SC','PingFang',-apple-system,BlinkMacSystemFont,sans-serif;">VI 应用场景</h1>
+            <!-- 竖向图片（3:4） -->
+            <div style="flex:1;min-height:0;display:flex;align-items:stretch;">
+                <img src="../../image/VI应用场景/01行李箱.webp" style="flex:1;min-height:0;min-width:0;width:100%;object-fit:cover;border-radius:4px;display:block;" alt="行李箱应用场景"/>
+            </div>
+        </div>
+
+        <!-- 右侧：方形大图 -->
+        <div style="height:100%;min-height:0;display:flex;align-items:stretch;">
+            <img src="../../image/VI应用场景/02服装.webp" style="flex:1;min-height:0;min-width:0;width:100%;object-fit:cover;border-radius:4px;display:block;" alt="服装应用场景"/>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function scaleSlide() {
+        var slide = document.querySelector('.slide');
+        var sx = window.innerWidth / 1920;
+        var sy = window.innerHeight / 1080;
+        var s = Math.min(sx, sy);
+        slide.style.transform = 'scale(' + s + ')';
+    }
+    scaleSlide();
+    window.addEventListener('resize', scaleSlide);
+</script>
+</body>
+</html>

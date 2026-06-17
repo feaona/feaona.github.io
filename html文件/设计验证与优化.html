@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设计验证与优化</title>
+  <script src="../lib/tailwind.cdn.js"></script>
+  <style>
+    .glass-panel {
+      background-color: rgba(255, 255, 255, 0.93);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .data-bar {
+      background: #005DFF;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(0,93,255,0.22);
+      cursor: default;
+    }
+    .data-bar:hover { transform: scaleX(1.01); box-shadow: 0 6px 24px rgba(0,93,255,0.35); }
+    .data-label { font-size: 14px; font-weight: 500; letter-spacing: 0.05em; }
+    .data-value { display: flex; align-items: baseline; gap: 2px; }
+    .data-num   { font-size: 32px; font-weight: 900; line-height: 1; }
+    .data-unit  { font-size: 18px; font-weight: 700; }
+    .data-desc  {
+      font-size: 12.5px; color: #6b7280; margin-top: 8px; padding-left: 12px;
+      border-left: 3px solid rgba(0,93,255,0.28); line-height: 1.6;
+    }
+  </style>
+</head>
+<body class="m-0 p-0 w-full" style="background:transparent">
+
+  <div class="w-full relative overflow-hidden rounded-xl flex" style="background:#070710; min-height:580px">
+
+    <!-- 背景图（右侧） -->
+    <img
+      src="../image/设计验证与优化.webp"
+      alt="设计验证与优化"
+      class="absolute inset-0 w-full h-full object-cover"
+    />
+
+    <!-- 左侧毛玻璃内容区 -->
+    <div class="glass-panel relative z-10 border-r border-white/50 shadow-[20px_0_48px_rgba(0,0,0,0.12)]
+                flex flex-col justify-center"
+         style="width: clamp(340px, 42%, 540px); padding: 48px 40px;">
+
+      <!-- 标题 -->
+      <h3 style="font-size:clamp(20px,2.4vw,28px); font-weight:700; color:#1f2937;
+                 letter-spacing:0.04em; line-height:1.35; margin-bottom:16px">
+        业务协同与转化效能跃升
+      </h3>
+
+      <!-- 正文 -->
+      <p style="font-size:clamp(12px,1.1vw,14px); color:#4b5563; line-height:1.85;
+                margin-bottom:28px; font-weight:300; text-align:justify">
+        本项目最终交付 30+ 张高保真原型与 B 端专属组件规范，成功构建从线索到量产的端到端全流程。研发依托组件库高效落地 MCR 权力地图等复杂模块，经多轮验证，业务流转更加流畅直观。系统大幅降低销售与研发在非标报价、样品跟进上的沟通成本；同时凭借 360° 客户画像与数据看板，为管理层提供实时经营透视与产能规划支撑。
+      </p>
+
+      <!-- 数据指标条 -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- 条 1 -->
+        <div>
+          <div class="data-bar">
+            <span class="data-label">非标报价效率</span>
+            <div class="data-value">
+              <span class="data-num">300</span><span class="data-unit">%</span>
+              <svg style="width:18px;height:18px;margin-left:6px" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 19V7.83l4.88 4.88c.39.39 1.03.39 1.42 0 .39-.39.39-1.02 0-1.41l-6.59-6.59a.996.996 0 0 0-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 7.83V19c0 .55.45 1 1 1s1-.45 1-1z"/>
+              </svg>
+            </div>
+          </div>
+          <p class="data-desc">CPQ 配置器使平均报价周期由 2 天缩短至 4 小时内</p>
+        </div>
+
+        <!-- 条 2 -->
+        <div>
+          <div class="data-bar">
+            <span class="data-label">跨部门协同成本</span>
+            <div class="data-value">
+              <span class="data-num">45</span><span class="data-unit">%</span>
+              <svg style="width:18px;height:18px;margin-left:6px" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M11 5v11.17l-4.88-4.88c-.39-.39-1.03-.39-1.42 0-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L13 16.17V5c0-.55-.45-1-1-1s-1 .45-1 1z"/>
+              </svg>
+            </div>
+          </div>
+          <p class="data-desc">样品生命周期推进器减少了销售与研发的反复确询</p>
+        </div>
+
+        <!-- 条 3 -->
+        <div>
+          <div class="data-bar">
+            <span class="data-label">大客赢单转化率</span>
+            <div class="data-value">
+              <span class="data-num">18</span><span class="data-unit">%</span>
+              <svg style="width:18px;height:18px;margin-left:6px" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 19V7.83l4.88 4.88c.39.39 1.03.39 1.42 0 .39-.39.39-1.02 0-1.41l-6.59-6.59a.996.996 0 0 0-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 7.83V19c0 .55.45 1 1 1s1-.45 1-1z"/>
+              </svg>
+            </div>
+          </div>
+          <p class="data-desc">基于 MCR 权力地图与 360 雷达精准制定攻单策略</p>
+        </div>
+
+        <!-- 条 4 -->
+        <div>
+          <div class="data-bar">
+            <span class="data-label">系统易用性满意度</span>
+            <div class="data-value">
+              <span class="data-num">92</span><span class="data-unit">%</span>
+              <svg style="width:18px;height:18px;margin-left:6px" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 19V7.83l4.88 4.88c.39.39 1.03.39 1.42 0 .39-.39.39-1.02 0-1.41l-6.59-6.59a.996.996 0 0 0-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 7.83V19c0 .55.45 1 1 1s1-.45 1-1z"/>
+              </svg>
+            </div>
+          </div>
+          <p class="data-desc">极简可视化的 UX 设计大幅超越传统 ERP 及老旧 CRM</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

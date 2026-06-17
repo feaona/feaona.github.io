@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产销协同业务泳道图 (暗黑科技完整版)</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        @import url('https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #0B0F19; /* 最外层深色背景 */
+            margin: 0;
+            padding: 40px 0; /* 利用原生 padding 留出上下边距，利于滚动 */
+            display: flex;
+            justify-content: center;
+            overflow-x: hidden; 
+        }
+
+        /* 占位计算器：它的作用是撑开正确的长宽，告诉浏览器怎么展示滚动条 */
+        #viewport-scaler {
+            position: relative;
+        }
+
+        /* 真实的画布本体，扩大至 1880px 确保囊括所有深层节点 */
+        .canvas-container {
+            width: 1920px;
+            height: 2650px; 
+            background-color: #0d1117; 
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center top;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+            transform-origin: top left;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lane-divider { border-right: 1px solid rgba(255, 255, 255, 0.05); }
+
+        .node-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+        .node-card:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.2);
+        }
+
+        .shadow-orange-glow { box-shadow: 0 0 20px rgba(249, 115, 22, 0.08); }
+        .shadow-blue-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.08); }
+        .shadow-green-glow { box-shadow: 0 0 20px rgba(16, 185, 129, 0.08); }
+        .shadow-purple-glow { box-shadow: 0 0 20px rgba(168, 85, 247, 0.08); }
+    </style>
+</head>
+<body>
+
+    <!-- 解决滚动裁剪核心：动态宽高占位符 -->
+    <div id="viewport-scaler">
+        
+        <div id="canvas" class="canvas-container rounded-2xl overflow-hidden border border-gray-800">
+            
+            <!-- 头部标题区 -->
+            <header class="flex justify-between items-end px-16 py-12 shrink-0 z-20 relative">
+                <div>
+                    <div class="flex items-center space-x-3 mb-5">
+                        <span class="bg-[#064E3B] text-[#34D399] border border-[#059669] px-4 py-1.5 rounded-full text-[22px] font-bold tracking-widest uppercase">
+                            ● PHASE 02 · CORE BUSINESS FLOW
+                        </span>
+                    </div>
+                    <h1 class="text-[60px] font-bold tracking-wide text-[#3B82F6] flex items-center">
+                        产销协同<span class="text-gray-300">业务泳道图</span>
+                    </h1>
+                </div>
+                
+                <!-- 图例区 -->
+                <div class="flex items-center space-x-8 text-[24px] font-medium text-gray-400 mb-2 bg-[#161b22] border border-gray-800 px-6 py-4 rounded-full">
+                    <div class="flex items-center space-x-2">
+                        <svg width="60" height="4"><line x1="0" y1="2" x2="60" y2="2" stroke="#475569" stroke-width="4"/></svg>
+                        <span>标准流程</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg width="60" height="4"><line x1="0" y1="2" x2="60" y2="2" stroke="#f97316" stroke-width="4" stroke-dasharray="8,8"/></svg>
+                        <span>异常/回退</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 border-2 border-dashed border-purple-500 rounded"></div>
+                        <span>系统自动化</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 泳道表头结构 -->
+            <div class="px-16 w-full z-20">
+                <div class="flex w-full h-[72px] bg-[#161b22] border border-gray-800 rounded-t-xl overflow-hidden">
+                    <div class="flex-1 border-t-4 border-orange-500 flex items-center justify-center font-bold text-orange-500 text-[30px] gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 17 28 h 5 v -3 4 4 0 0 -7 -3 M 17 28 H 7 m 10 0 v -3 0 -1 0 -2 0 -3 M 7 28 H 2 v -3 4 4 0 21 -3 M 7 28 v -3 0 -1 0 -2 0 -3 m 0 0 5.002 7 0 27 0 M 15 10 3 4 0 15 -6 0 3 4 0 22 0 z m 6 4 2 3 0 15 -4 0 2 3 0 20 0 z M 7 14 2 3 0 15 -4 0 2 3 0 20 0 z"></path></svg>
+                        销售端 (Sales)
+                    </div>
+                    <div class="flex-1 border-t-4 border-blue-500 border-l border-gray-800 flex items-center justify-center font-bold text-blue-500 text-[30px] gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 21 19 23.931 34 0 157 15 -4 0 -9 -.62 -13 -1.745 M 16 8 V 6 3 3 0 0 -3 -3 h -4 2 2 0 00 -2 2 v 3 m 4 8 h .01 M 5 28 h 14 2 2 0 002 -2 V 11 3 3 0 0 -3 -3 H 5 2 2 0 00 -2 2 v 14 3 3 0 3 3 z"></path></svg>
+                        供应链/PMC (SCM)
+                    </div>
+                    <div class="flex-1 border-t-4 border-green-500 border-l border-gray-800 flex items-center justify-center font-bold text-green-500 text-[30px] gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 10.325 6 .426 -2 2.924 -2 3.35 0 1.724 2 0 4 1.066 2 -.94 5 .826 3 2.37 2 1.724 0 001.065 4 1.756 1 1.756 4 0 5 1.724 2 0 0 -1.066 4 .94 2 -.826 5 -2.37 3 1.724 2 0 0 -2.572 1 -.426 2 -2.924 2 -3.35 0 1.724 2 0 0 -2.573 -1 -1.543 1 -3.31 -1 -2.37 -3 1.724 2 0 0 -1.065 -4 -1.756 -1 -1.756 -4 0 -5 1.724 2 0 1 -2.573 -1 -1.543 1 -3.31 3 -2.37 1 .608 3 .07 4 -1.065 z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        生产/工程 (Production)
+                    </div>
+                    <div class="flex-1 border-t-4 border-purple-500 border-l border-gray-800 flex items-center justify-center font-bold text-purple-400 text-[30px] gap-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        系统自动化 (System)
+                    </div>
+                </div>
+            </div>
+
+            <!-- 泳道主体 -->
+            <div class="flex-1 flex w-full relative px-16">
+                <div class="flex-1 lane-divider"></div>
+                <div class="flex-1 lane-divider"></div>
+                <div class="flex-1 lane-divider"></div>
+                <div class="flex-1"></div>
+
+                <!-- SVG 连线层 (已进行像素级精调，完美衔接每一个组件边缘) -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none z-0">
+                    <defs>
+                        <marker id="arrow-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="12" markerHeight="12" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748B" />
+                        </marker>
+                        <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="12" markerHeight="12" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#A855F7" />
+                        </marker>
+                        <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="12" markerHeight="12" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#F97316" />
+                        </marker>
+                    </defs>
+
+                    <!-- 产前协同阶段连线 -->
+                    <path d="M 280 200 V 224 Q 280 238 290 238 H 1590 Q 1600 238 1600 252" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-purple)"/>
+                    <path d="M 1600 392 V 440" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-purple)"/>
+                    <path d="M 1600 588 V 609 Q 1600 616 1590 616 H 730 Q 720 616 720 623 V 623" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-purple)"/>
+                    <path d="M 720 770 V 826" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    
+                    <!-- 重新沟通异常流 -->
+                    <path d="M 677 896 H 426" fill="none" stroke="#F97316" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-orange)"/>
+                    <path d="M 280 826 V 700 Q 280 686 290 686 H 574" fill="none" stroke="#F97316" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-orange)"/>
+
+                    <!-- 齐套排产阶段连线 -->
+                    <path d="M 720 956 V 1008 Q 720 1022 730 1022 H 1590 Q 1600 1022 1600 1036 V 1029" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    <path d="M 1600 1176 V 1232" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    
+                    <!-- 缺料与采购分支 -->
+                    <path d="M 1557 1302 H 866" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    <path d="M 720 1372 V 1434" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    
+                    <!-- 齐套分支 -->
+                    <path d="M 1600 1362 V 1484 Q 1600 1512 1590 1512 H 866" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    
+                    <!-- 履约交付阶段连线 -->
+                    <path d="M 720 1582 V 1624 Q 720 1638 730 1638 H 1150 Q 1160 1638 1160 1652 V 1645" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    <path d="M 1160 1792 V 1848" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                    
+                    <!-- 插单异常流 -->
+                    <path d="M 1203 1918 H 1454" fill="none" stroke="#F97316" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-orange)"/>
+                    <path d="M 1740 1918 H 1780 Q 1790 1918 1790 1904 V 714 Q 1790 700 1780 700 H 866" fill="none" stroke="#F97316" stroke-width="4" stroke-dasharray="12,8" marker-end="url(#arrow-orange)"/>
+
+                    <path d="M 1160 1978 V 2052" fill="none" stroke="#64748B" stroke-width="4" marker-end="url(#arrow-gray)"/>
+                </svg>
+
+                <!-- 线条文字标签 -->
+                <div class="absolute left-[500px] top-[857px] text-[#f97316] text-[22px] bg-[#161b22] border border-gray-700 px-3 py-1 rounded font-medium z-10">未通过/需协调</div>
+                <div class="absolute left-[1100px] top-[997px] text-[#34D399] text-[22px] bg-[#161b22] border border-gray-700 px-4 py-1 rounded-full font-medium z-10">评审通过</div>
+                <div class="absolute left-[1150px] top-[1277px] text-gray-400 text-[22px] bg-[#161b22] border border-gray-700 px-4 py-1 rounded-full font-medium z-10">判定缺料</div>
+                <div class="absolute left-[1150px] top-[1487px] text-[#34D399] text-[22px] bg-[#161b22] border border-gray-700 px-4 py-1 rounded-full font-medium z-10">100%齐套</div>
+                <div class="absolute left-[1300px] top-[1879px] text-[#f97316] text-[22px] bg-[#161b22] border border-gray-700 px-3 py-1 rounded font-medium z-10">发生插单/异常</div>
+                <div class="absolute left-[1175px] top-[2002px] text-[#34D399] text-[22px] bg-[#161b22] border border-gray-700 px-3 py-1 rounded font-medium z-10">正常履约</div>
+
+
+                <!-- ================= 节点组件放大版开始 ================= -->
+                <!-- 列宽域绝对中心点： Lane1=280, Lane2=720, Lane3=1160, Lane4=1600 -->
+
+                <!-- N1: 开始节点 -->
+                <div class="absolute left-[280px] top-[161px] -ml-[110px] -mt-[28px] w-[220px] h-[56px] bg-[#0d1117] border border-[#F97316] text-[#F97316] rounded-full flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(249,115,22,0.2)] z-10">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                    <span class="font-bold text-[18px] tracking-wide">高赢率商机接入</span>
+                </div>
+
+                <!-- N2: 自动化预案 -->
+                <div class="absolute left-[1600px] top-[322px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border-2 border-dashed border-[#A855F7] p-5 flex items-center gap-4 z-10 node-card shadow-purple-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#A855F7]/10 text-[#A855F7] border border-[#A855F7]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 8 10 v 11 3 3 0 3 3 h 6 M 8 10 V 7 3 3 0 17 -3 h 4.586 1 1 0 01.707 .293 l 4.414 6 1 1 0 2 .707 V 21 3 3 0 1 -3 3 h -2 M 8 10 H 6 2 2 0 00 -2 2 v 14 3 3 0 3 3 h 8 2 2 0 002 -2 v -3"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">转化为备料预案</span>
+                        <span class="text-gray-400 text-[22px] mt-1">系统自动映射前置需求</span>
+                    </div>
+                </div>
+
+                <!-- N3: 拉起评审 -->
+                <div class="absolute left-[1600px] top-[518px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border-2 border-dashed border-[#A855F7] p-5 flex items-center gap-4 z-10 node-card shadow-purple-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#A855F7]/10 text-[#A855F7] border border-[#A855F7]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 15 24 h 5 l -1.405 -2 2.032 3 0 165 14.158 V 15 8 8 0 0 -6 -8 V 7 3 3 0 14 -6 0 v 0 11 9 8 12 8 15 v 4 0 1 0 1 -1 2 L 4 24 h 5 m 6 0 v 1 4 4 0 15 -8 0 v -1 m 6 0 H 9"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">拉起在线评审流</span>
+                        <span class="text-gray-400 text-[22px] mt-1">强制触发三方校验机制</span>
+                    </div>
+                </div>
+
+                <!-- N4: 协同评审 -->
+                <div class="absolute left-[720px] top-[700px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border border-gray-700 hover:border-[#3B82F6] p-5 flex items-center gap-4 z-10 node-card shadow-blue-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 17 28 h 5 v -3 4 4 0 0 -7 -3 M 17 28 H 7 m 10 0 v -3 0 -1 0 -2 0 -3 M 7 28 H 2 v -3 4 4 0 21 -3 M 7 28 v -3 0 -1 0 -2 0 -3 m 0 0 5.002 7 0 27 0 M 15 10 3 4 0 15 -6 0 3 4 0 22 0 z m 6 4 2 3 0 15 -4 0 2 3 0 20 0 z M 7 14 2 3 0 15 -4 0 2 3 0 20 0 z"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">交期协同评审</span>
+                        <span class="text-gray-400 text-[22px] mt-1">销售/工程/SCM工作台</span>
+                    </div>
+                </div>
+
+                <!-- D1: 判定菱形 -->
+                <div class="absolute left-[720px] top-[896px] -ml-[43px] -mt-[43px] w-[86px] h-[86px] bg-[#1c1212] rounded-lg border border-[#F97316] shadow-[0_0_15px_rgba(249,115,22,0.15)] rotate-45 z-10 flex items-center justify-center transition-colors hover:bg-[#F97316]/10">
+                    <span class="text-[#F97316] text-[16px] font-bold -rotate-45">通过?</span>
+                </div>
+
+                <!-- N5: 重新沟通 -->
+                <div class="absolute left-[280px] top-[896px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border border-gray-700 hover:border-[#F97316] p-5 flex items-center gap-4 z-10 node-card shadow-orange-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 8 17 h .01 M 12 17 h .01 M 16 17 h .01 M 21 17 0 6 -4.03 11 -9 11 9.863 14 0 1 -4.255 -1 L 3 28 l 1.395 -5 3.512 21 3 19 3 17 0 -6 4.03 -11 9 -11 9 5 9 11 z"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">重新协调交期</span>
+                        <span class="text-gray-400 text-[22px] mt-1">防范盲目过度承诺</span>
+                    </div>
+                </div>
+
+                <!-- N6: BOM探测 -->
+                <div class="absolute left-[1600px] top-[1106px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border-2 border-dashed border-[#A855F7] p-5 flex items-center gap-4 z-10 node-card shadow-purple-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#A855F7]/10 text-[#A855F7] border border-[#A855F7]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">一键齐套探测</span>
+                        <span class="text-gray-400 text-[22px] mt-1">比对快照及动态库存水位</span>
+                    </div>
+                </div>
+
+                <!-- D2: 缺料菱形 -->
+                <div class="absolute left-[1600px] top-[1302px] -ml-[43px] -mt-[43px] w-[86px] h-[86px] bg-[#171322] rounded-lg border border-[#A855F7] shadow-[0_0_15px_rgba(168,85,247,0.15)] rotate-45 z-10 flex items-center justify-center transition-colors hover:bg-[#A855F7]/10">
+                        <span class="text-[#A855F7] text-[16px] font-bold -rotate-45">齐套?</span>
+                </div>
+
+                <!-- N7: 采购PR -->
+                <div class="absolute left-[720px] top-[1302px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border border-gray-700 hover:border-[#3B82F6] p-5 flex items-center gap-4 z-10 node-card shadow-blue-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 3 4 h 2 l .4 3 M 7 18 h 10 l 4 -11 H 5.4 M 7 18 L 5.4 7 M 7 18 l -2.293 3 -.63 1 -.184 2 .707 2 H 17 m 0 0 2 3 0 140 4 3 2 0 000 -6 z m -8 3 2 3 0 15 -4 0 2 3 0 20 0 z"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">生成采购PR建议</span>
+                        <span class="text-gray-400 text-[22px] mt-1">针对长交期缺料自动触发</span>
+                    </div>
+                </div>
+
+                <!-- N8: 产能分配 -->
+                <div class="absolute left-[720px] top-[1512px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border border-gray-700 hover:border-[#3B82F6] p-5 flex items-center gap-4 z-10 node-card shadow-blue-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">排产与产能分配</span>
+                        <span class="text-gray-400 text-[22px] mt-1">下达工单及甘特图调度</span>
+                    </div>
+                </div>
+
+                <!-- N9: 生产履约 -->
+                <div class="absolute left-[1160px] top-[1722px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border border-gray-700 hover:border-[#10B981] p-5 flex items-center gap-4 z-10 node-card shadow-green-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">生产执行与监控</span>
+                        <span class="text-gray-400 text-[22px] mt-1">车间作业与状态流转</span>
+                    </div>
+                </div>
+
+                <!-- D3: 异常菱形 -->
+                <div class="absolute left-[1160px] top-[1918px] -ml-[43px] -mt-[43px] w-[86px] h-[86px] bg-[#1c1212] rounded-lg border border-[#F97316] shadow-[0_0_15px_rgba(249,115,22,0.15)] rotate-45 z-10 flex items-center justify-center transition-colors hover:bg-[#F97316]/10">
+                    <span class="text-[#F97316] text-[16px] font-bold -rotate-45">异常?</span>
+                </div>
+
+                <!-- N10: 自动熔断 -->
+                <div class="absolute left-[1600px] top-[1918px] -ml-[200px] -mt-[50px] w-[400px] h-[100px] bg-[#161b22] rounded-xl border-2 border-dashed border-[#A855F7] p-5 flex items-center gap-4 z-10 node-card shadow-purple-glow">
+                    <div class="w-14 h-14 rounded-lg bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/30 flex items-center justify-center shrink-0">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M 12 13 v 3 m 0 6 h .01 m -6.938 6 h 13.856 1.54 0 2.502 -1.667 1.732 -3 L 13.732 6 -.77 -2 -2.694 -2 -3.464 0 L 3.34 22 -.77 2 .192 4 1.732 4 z"></path></svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-gray-100 font-bold text-[28px]">自动熔断与沙盘</span>
+                        <span class="text-gray-400 text-[22px] mt-1">挂起工单，预演插单涟漪</span>
+                    </div>
+                </div>
+
+                <!-- N11: 终点交付 -->
+                <div class="absolute left-[1160px] top-[2100px] -ml-[110px] -mt-[28px] w-[220px] h-[56px] bg-[#0d1117] border border-[#10B981] text-[#10B981] rounded-full flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.2)] z-10">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+                    <span class="font-bold text-[18px] tracking-wide">履约交付完成</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fitCanvasToScreen() {
+            // 获取定位用的外层容器和实施缩放的内层画板
+            const scaler = document.getElementById('viewport-scaler');
+            const canvas = document.getElementById('canvas');
+            
+            // 基于当前窗口宽度动态计算缩放比例，留出左右各 2% 的外边距使视觉更舒适
+            const targetWidth = window.innerWidth * 0.96; 
+            const scale = targetWidth / 1920;
+            
+            // 执行内部绝对定位的 CSS Transform 缩放
+            canvas.style.transform = `scale(${scale})`;
+            
+            // 核心修复点：将外部占位容器的宽、高强制设定为 “原尺寸 x 缩放系数”
+            // 这样无论里面的容器怎么缩放，浏览器系统层面都能确切知道它占多大地方，从而正常显示全局滚动条。
+            scaler.style.width = `${1920 * scale}px`;
+            scaler.style.height = `${2650 * scale}px`; 
+        }
+
+        // 监听窗口尺寸调整以保证随时贴合
+        window.addEventListener('resize', fitCanvasToScreen);
+        window.addEventListener('DOMContentLoaded', fitCanvasToScreen);
+    </script>
+</body>
+</html>

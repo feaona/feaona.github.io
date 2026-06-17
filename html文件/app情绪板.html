@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI旅游App - 全景视觉情绪板 (致甲方汇报版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2BA2DF',    /* 智游蓝 - 品牌与科技感 */
+                        secondary: '#F58220',  /* 鸭嘴橙 - 强转化与视觉焦点 */
+                        surface: '#F8FAFC',    /* 极浅灰蓝 - 呼吸感底色 */
+                        dark: '#0F172A',       /* 深空蓝灰 - 专业正文内容 */
+                        grayLight: '#F1F5F9',
+                        grayBorder: '#E2E8F0'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"PingFang SC"', '"Helvetica Neue"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 20px 40px -15px rgba(15, 23, 42, 0.05)',
+                        'btn': '0 8px 25px -8px rgba(43, 162, 223, 0.5)',
+                        'accent-btn': '0 10px 25px -8px rgba(245, 130, 32, 0.6)',
+                        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .ultra-glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.05);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* 骨架屏动画 */
+        .skeleton-shimmer {
+            background: #f6f7f8;
+            background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 100%; 
+            animation-duration: 1.5s;
+            animation-fill-mode: forwards; 
+            animation-iteration-count: infinite;
+            animation-name: placeholderShimmer;
+            animation-timing-function: linear;
+        }
+        @keyframes placeholderShimmer {
+            0% { background-position: -468px 0; }
+            100% { background-position: 468px 0; }
+        }
+    </style>
+</head>
+<body class="bg-grayLight text-dark font-sans antialiased selection:bg-primary selection:text-white pb-20">
+
+    <!-- 顶部导航 / 汇报台头 -->
+    <header class="bg-white/90 backdrop-blur-xl shadow-sm sticky top-0 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="2图标iccn.png" alt="Logo" class="w-12 h-12 object-contain rounded-xl drop-shadow-sm border border-gray-50">
+                <div class="flex flex-col">
+                    <h1 class="text-2xl font-bold text-dark leading-tight">AI 智能商旅 App <span class="text-primary font-normal">| 视觉情绪板</span></h1>
+                    <span class="text-xs font-bold text-gray-400 tracking-wider mt-1 uppercase">Visual Design Proposal & Component Library</span>
+                </div>
+            </div>
+            <div class="text-sm font-bold text-dark bg-surface px-5 py-2.5 rounded-full border border-grayBorder flex items-center gap-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></div>
+                致甲方汇报版
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-10 space-y-12">
+        
+        <!-- SECTION 1 & 2: 关键词与色彩 -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <!-- 1. 核心设计关键词 -->
+            <section class="bg-white p-8 rounded-[2rem] shadow-card border border-gray-50">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="ph-fill ph-target text-primary text-2xl"></i> 1. 核心设计关键词</h2>
+                <div class="space-y-4">
+                    <div class="flex gap-4 items-start p-4 rounded-2xl bg-surface border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm flex-shrink-0 text-primary text-2xl"><i class="ph-fill ph-wind"></i></div>
+                        <div>
+                            <h3 class="text-base font-bold text-dark mb-1">透气 (Breathable)</h3>
+                            <p class="text-sm text-gray-500 leading-relaxed">去大面积色块，使用90%的留白与极浅底色。让高品质旅游风光图和精美的盲盒IP成为主角，消除传统App的拥挤感。</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-start p-4 rounded-2xl bg-surface border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm flex-shrink-0 text-dark text-2xl"><i class="ph-fill ph-shield-check"></i></div>
+                        <div>
+                            <h3 class="text-base font-bold text-dark mb-1">专业 (Professional)</h3>
+                            <p class="text-sm text-gray-500 leading-relaxed">正文采用高对比度的“深空蓝灰”，克制色彩的使用，平衡IP的可爱感，确保商旅工具的高级感、严谨性与信任感。</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-start p-4 rounded-2xl bg-surface border border-gray-100">
+                        <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm flex-shrink-0 text-secondary text-2xl"><i class="ph-fill ph-cursor-click"></i></div>
+                        <div>
+                            <h3 class="text-base font-bold text-secondary mb-1">聚焦 (Focused)</h3>
+                            <p class="text-sm text-gray-500 leading-relaxed">提取IP身上的高饱和“鸭嘴橙”作为绝对转化色。在极素雅的背景下，形成锋利的视觉焦点，引导用户一键预订/生成。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 色彩体系与色彩心理学 -->
+            <section class="bg-white p-8 rounded-[2rem] shadow-card border border-gray-50">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="ph-fill ph-palette text-secondary text-2xl"></i> 2. 色彩体系与心理学分析</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- 主色 -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-surface flex flex-col h-full">
+                        <div class="w-full h-20 rounded-xl bg-primary shadow-sm mb-3 flex items-center justify-center flex-shrink-0">
+                            <img src="2图标iccn.png" class="w-10 h-10 object-contain invert brightness-0 opacity-80" alt="logo shape">
+                        </div>
+                        <h3 class="text-sm font-bold text-dark">智游蓝 (品牌/科技)</h3>
+                        <p class="text-xs text-gray-500 mt-1 font-mono">#2BA2DF</p>
+                        <div class="mt-2 text-[10px] text-gray-500 leading-relaxed flex-1">
+                            <span class="font-bold text-primary">色彩心理学：</span>蓝色是全球公认的“信任色”，能有效安抚情绪，降低用户在差旅规划中的焦虑感。偏亮的高明度蓝带有极强的“数字科技”属性，暗示着 AI 算法的高效与精准。
+                        </div>
+                    </div>
+                    <!-- 强调色 -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-surface flex flex-col h-full">
+                        <div class="w-full h-20 rounded-xl bg-secondary shadow-sm mb-3 flex items-center justify-center flex-shrink-0">
+                            <i class="ph-fill ph-lightning text-white text-3xl opacity-80"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-secondary">鸭嘴橙 (转化/焦点)</h3>
+                        <p class="text-xs text-gray-500 mt-1 font-mono">#F58220</p>
+                        <div class="mt-2 text-[10px] text-gray-500 leading-relaxed flex-1">
+                            <span class="font-bold text-secondary">色彩心理学：</span>橙色代表活力、温暖与兴奋，能够刺激多巴胺分泌。相比于具有警告意味的红色，橙色能在不引起反感的前提下，最大化地激发用户的点击与探索欲望。
+                        </div>
+                    </div>
+                    <!-- 文字色 -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-surface flex flex-col h-full">
+                        <div class="w-full h-12 rounded-xl bg-dark shadow-sm mb-3 flex-shrink-0"></div>
+                        <h3 class="text-sm font-bold text-dark">深空蓝灰 (正文)</h3>
+                        <p class="text-xs text-gray-500 mt-1 font-mono">#0F172A</p>
+                        <div class="mt-2 text-[10px] text-gray-500 leading-relaxed flex-1">
+                            <span class="font-bold text-dark">色彩心理学：</span>深蓝灰比纯黑少了一分压抑和死板，多了一分商业精英的现代感。它不仅能提供极佳的阅读对比度，还能在潜意识中传递出平台的专业、严谨与权威。
+                        </div>
+                    </div>
+                    <!-- 背景色 -->
+                    <div class="p-4 rounded-2xl border border-gray-100 bg-surface flex flex-col h-full">
+                        <div class="w-full h-12 rounded-xl bg-[#FFFFFF] shadow-inner border border-gray-100 mb-3 flex-shrink-0"></div>
+                        <h3 class="text-sm font-bold text-dark">纯净白/浅蓝 (背景)</h3>
+                        <p class="text-xs text-gray-500 mt-1 font-mono">#FFFFFF / #F8FAFC</p>
+                        <div class="mt-2 text-[10px] text-gray-500 leading-relaxed flex-1">
+                            <span class="font-bold text-gray-700">色彩心理学：</span>大面积的留白与极浅的灰蓝能带来开阔的空间感与“呼吸感”。它能在心理上减轻商务人士面对繁杂信息时的认知压力，让体验变得纯粹、解压。
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 3 & 4: 字体排版与材质图像 -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <!-- 3. 字体与排版 -->
+            <section class="bg-white p-8 rounded-[2rem] shadow-card border border-gray-50">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="ph-fill ph-text-aa text-dark text-2xl"></i> 3. 字体与排版建议</h2>
+                <div class="space-y-5">
+                    <p class="text-sm text-gray-600 leading-relaxed"><strong>无衬线体 (Sans-serif)：</strong>全站采用现代无衬线体（中文字体：PingFang SC / 英文字体：San Francisco 或 DIN）。去除装饰感，契合效率与科技感。</p>
+                    <div class="p-5 rounded-2xl bg-surface border border-gray-100 space-y-4">
+                        <div class="flex items-end justify-between border-b border-grayBorder pb-2">
+                            <span class="text-2xl font-bold text-dark">大标题 24pt / Bold</span>
+                            <span class="text-xs text-gray-400">导航栏、重要模块头</span>
+                        </div>
+                        <div class="flex items-end justify-between border-b border-grayBorder pb-2">
+                            <span class="text-base font-bold text-dark">层级一标题 16pt / Medium</span>
+                            <span class="text-xs text-gray-400">卡片标题、列表名称</span>
+                        </div>
+                        <div class="flex items-end justify-between border-b border-grayBorder pb-2">
+                            <span class="text-sm font-normal text-gray-600">正文内容 14pt / Regular</span>
+                            <span class="text-xs text-gray-400">段落描述、输入框文字</span>
+                        </div>
+                        <div class="flex items-end justify-between pb-1">
+                            <span class="text-xs font-normal text-gray-400">辅助说明 12pt / Regular</span>
+                            <span class="text-xs text-gray-400">时间戳、提示、标签</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 材质与图像风格 -->
+            <section class="bg-white p-8 rounded-[2rem] shadow-card border border-gray-50">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="ph-fill ph-images text-primary text-2xl"></i> 4. 材质与图像风格</h2>
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-600"><strong>极致通透 (Ultra-glass) 与 软投影 (Soft-shadow)：</strong>组件大面采用白底+大圆角(16-24px)，底部导航栏使用毛玻璃透出底层风景，投影采用极低透明度、大弥散范围的灰蓝色，让卡片呈“漂浮态”。</p>
+                    <p class="text-sm text-gray-600"><strong>图像风格：</strong>明亮、高质感、自然光。商务避免死板，团建强调生机。IP形象使用高质量3D渲染，体现质感。</p>
+                    
+                    <div class="flex gap-4 h-28 mt-4">
+                        <div class="flex-1 rounded-2xl bg-cover bg-center relative overflow-hidden shadow-sm border border-gray-100" style="background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=400&auto=format&fit=crop');">
+                            <div class="absolute inset-0 bg-black/10"></div>
+                            <div class="absolute bottom-2 left-2 text-[10px] text-white font-bold px-2 py-1 ultra-glass rounded">商旅：明亮专业</div>
+                        </div>
+                        <div class="flex-1 rounded-2xl bg-cover bg-center relative overflow-hidden shadow-sm border border-gray-100" style="background-image: url('https://images.unsplash.com/photo-1533604100650-9a3c332822a7?q=80&w=400&auto=format&fit=crop');">
+                            <div class="absolute inset-0 bg-black/10"></div>
+                            <div class="absolute bottom-2 left-2 text-[10px] text-white font-bold px-2 py-1 ultra-glass rounded">团建：自然生机</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECTION 5: UI 组件全景大盘 -->
+        <section class="bg-white p-8 rounded-[2rem] shadow-card border border-gray-50">
+            <div class="flex justify-between items-center mb-8 pb-4 border-b border-gray-100">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><i class="ph-fill ph-puzzle-piece text-dark text-3xl"></i> 5. 全局 UI 组件库集锦 (UI Kit)</h2>
+                <span class="text-sm font-medium text-gray-400">Atomic Design System</span>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                
+                <!-- 列1：表单、操作与提示 -->
+                <div class="space-y-10">
+                    <!-- A. 表单与操作类 -->
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest border-l-2 border-primary pl-2">A. 表单与操作类 (Forms & Buttons)</h4>
+                        <div class="bg-surface p-6 rounded-2xl border border-gray-100 space-y-6">
+                            <!-- 按钮组 -->
+                            <div class="flex flex-wrap items-center gap-4">
+                                <button class="bg-secondary text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-accent-btn hover:bg-orange-500 transition">强转化按钮</button>
+                                <button class="bg-primary text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-btn hover:bg-blue-500 transition">主操作按钮</button>
+                                <button class="bg-white text-dark border border-gray-200 px-6 py-2.5 rounded-full text-sm font-bold shadow-sm hover:bg-gray-50 transition">次要按钮</button>
+                            </div>
+                            
+                            <!-- 输入框与搜索框 -->
+                            <div class="flex flex-col gap-3">
+                                <div class="relative">
+                                    <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                    <input type="text" placeholder="搜索目的地 / 搜索栏" class="w-full bg-white shadow-sm border border-gray-100 text-sm font-medium rounded-full pl-11 pr-4 py-3 focus:outline-none focus:border-primary transition">
+                                </div>
+                                <div class="flex gap-3">
+                                    <input type="text" placeholder="单文本框" class="flex-1 bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-primary">
+                                    <input type="number" placeholder="数字输入: 100" class="w-32 bg-white border border-gray-200 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-primary">
+                                </div>
+                                <textarea placeholder="多行文本框：请输入您的补充需求..." class="w-full bg-white border border-gray-200 text-sm rounded-xl px-4 py-3 h-20 resize-none focus:outline-none focus:border-primary"></textarea>
+                            </div>
+
+                            <!-- 选择器、单复选、步进器 -->
+                            <div class="flex flex-wrap items-center gap-6 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                <!-- Radio/Checkbox -->
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <div class="w-4 h-4 rounded-full border-2 border-primary bg-white flex items-center justify-center"><div class="w-2 h-2 bg-primary rounded-full"></div></div>
+                                    <span class="text-sm font-medium">单选</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <div class="w-4 h-4 rounded border-2 border-primary bg-primary flex items-center justify-center"><i class="ph-bold ph-check text-white text-[10px]"></i></div>
+                                    <span class="text-sm font-medium">复选</span>
+                                </label>
+                                <!-- Stepper -->
+                                <div class="flex items-center border border-gray-200 rounded-lg px-2 py-1 gap-3">
+                                    <button class="w-6 h-6 rounded bg-gray-50 flex items-center justify-center text-gray-500"><i class="ph ph-minus"></i></button>
+                                    <span class="text-sm font-bold w-4 text-center">2</span>
+                                    <button class="w-6 h-6 rounded bg-blue-50 text-primary flex items-center justify-center"><i class="ph ph-plus"></i></button>
+                                </div>
+                                <!-- Selector -->
+                                <div class="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-1.5 w-28 cursor-pointer">
+                                    <span class="text-sm font-medium">选择器</span>
+                                    <i class="ph-bold ph-caret-down text-gray-400 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- B. 操作反馈与提示类 -->
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest border-l-2 border-secondary pl-2">B. 反馈与提示类 (Feedback & Prompts)</h4>
+                        <div class="bg-surface p-6 rounded-2xl border border-gray-100 space-y-5">
+                            <!-- 轻提示 Toast & 浮层气泡 -->
+                            <div class="flex flex-wrap gap-4">
+                                <div class="inline-flex items-center gap-2 bg-dark text-white px-4 py-2.5 rounded-xl text-sm shadow-card">
+                                    <i class="ph-fill ph-check-circle text-primary text-lg"></i> 轻提示 (Toast)
+                                </div>
+                                <div class="relative inline-flex bg-white border border-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold text-dark shadow-sm">
+                                    浮层气泡 (Tooltip)
+                                    <div class="absolute -bottom-1.5 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-white border-b border-r border-gray-200 rotate-45"></div>
+                                </div>
+                            </div>
+
+                            <!-- 商标横幅 Banner -->
+                            <div class="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-xl p-3 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="ph-fill ph-speaker-high text-primary"></i>
+                                    <span class="text-sm font-bold text-dark">系统公告商标横幅 (Banner)</span>
+                                </div>
+                                <i class="ph-bold ph-x text-gray-400"></i>
+                            </div>
+
+                            <!-- 提示步骤与条页码器 -->
+                            <div class="flex flex-col gap-4 bg-white p-4 rounded-xl border border-gray-100">
+                                <!-- Steps -->
+                                <div class="flex items-center w-full">
+                                    <div class="flex flex-col items-center flex-1">
+                                        <div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold mb-1 shadow-sm">1</div>
+                                        <span class="text-[10px] text-primary font-bold">填报</span>
+                                    </div>
+                                    <div class="h-0.5 bg-primary/20 flex-1 -mt-4"></div>
+                                    <div class="flex flex-col items-center flex-1">
+                                        <div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold mb-1 shadow-sm">2</div>
+                                        <span class="text-[10px] text-primary font-bold">提示步骤</span>
+                                    </div>
+                                    <div class="h-0.5 bg-gray-200 flex-1 -mt-4"></div>
+                                    <div class="flex flex-col items-center flex-1">
+                                        <div class="w-6 h-6 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs font-bold mb-1">3</div>
+                                        <span class="text-[10px] text-gray-400">完成</span>
+                                    </div>
+                                </div>
+                                <!-- Pagination -->
+                                <div class="flex items-center justify-center gap-2 mt-2">
+                                    <div class="w-6 h-6 rounded flex items-center justify-center text-gray-400 bg-gray-50 text-xs"><i class="ph-bold ph-caret-left"></i></div>
+                                    <div class="w-6 h-6 rounded flex items-center justify-center text-white bg-primary text-xs font-bold">1</div>
+                                    <div class="w-6 h-6 rounded flex items-center justify-center text-gray-600 hover:bg-gray-100 text-xs font-medium cursor-pointer">2</div>
+                                    <span class="text-xs text-gray-400">...</span>
+                                    <div class="w-6 h-6 rounded flex items-center justify-center text-gray-600 bg-gray-50 text-xs"><i class="ph-bold ph-caret-right"></i></div>
+                                    <span class="text-xs text-gray-400 ml-2">页码器</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 列2：导航、内容、加载与缺省 -->
+                <div class="space-y-10">
+                    
+                    <!-- C. 导航类 (包含毛玻璃展示) -->
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest border-l-2 border-dark pl-2">C. 导航类 (Navigation & Glassmorphism)</h4>
+                        <div class="bg-surface p-6 rounded-2xl border border-gray-100 space-y-5">
+                            <!-- 分段导航 -->
+                            <div class="bg-gray-200/50 p-1 rounded-full flex text-sm font-bold w-max">
+                                <div class="bg-white shadow-sm rounded-full px-6 py-2 text-dark">分段式导航</div>
+                                <div class="px-6 py-2 text-gray-500">选项二</div>
+                            </div>
+
+                            <!-- 宫格式导航 (金刚区) & 列表导航 -->
+                            <div class="flex gap-4">
+                                <!-- 宫格 -->
+                                <div class="bg-white p-4 rounded-xl border border-gray-50 shadow-sm flex-1 grid grid-cols-2 gap-4 place-items-center">
+                                    <div class="flex flex-col items-center gap-1 text-primary"><i class="ph-fill ph-airplane-tilt text-2xl"></i><span class="text-[10px] font-bold text-dark">宫格导航</span></div>
+                                    <div class="flex flex-col items-center gap-1 text-primary"><i class="ph-fill ph-buildings text-2xl"></i><span class="text-[10px] font-bold text-dark">酒店</span></div>
+                                </div>
+                                <!-- 列表 -->
+                                <div class="bg-white rounded-xl border border-gray-50 shadow-sm flex-1 flex flex-col justify-center px-4 py-2">
+                                    <div class="flex justify-between items-center py-2 border-b border-gray-50"><span class="text-xs font-bold">列表导航1</span><i class="ph-bold ph-caret-right text-gray-400"></i></div>
+                                    <div class="flex justify-between items-center py-2"><span class="text-xs font-bold">列表导航2</span><i class="ph-bold ph-caret-right text-gray-400"></i></div>
+                                </div>
+                            </div>
+
+                            <!-- 工具栏、下拉菜单与抽屉占位 -->
+                            <div class="flex gap-3">
+                                <div class="flex-1 bg-white border border-gray-200 px-3 py-2 rounded-lg text-xs font-bold flex justify-between items-center shadow-sm">
+                                    下拉菜单 <i class="ph-bold ph-caret-down text-gray-400"></i>
+                                </div>
+                                <div class="flex-1 bg-white border border-gray-200 px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 shadow-sm text-primary">
+                                    <i class="ph-bold ph-list"></i> 侧边/抽屉导航
+                                </div>
+                            </div>
+
+                            <!-- 底部标签栏 Demo (毛玻璃质感展示) -->
+                            <div class="relative w-full h-36 rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=400&auto=format&fit=crop');">
+                                <div class="absolute inset-0 bg-black/10"></div>
+                                <div class="absolute top-4 left-4">
+                                    <div class="text-white text-xs font-bold drop-shadow-md mb-1">底部毛玻璃质感展示</div>
+                                    <div class="text-white/80 text-[10px] drop-shadow-md">底层图片被自然模糊透出，极具高级感</div>
+                                </div>
+                                <!-- 底部毛玻璃导航栏 -->
+                                <div class="absolute bottom-0 w-full ultra-glass flex justify-around items-center py-3 px-4">
+                                    <div class="flex flex-col items-center text-primary drop-shadow-sm"><i class="ph-fill ph-house text-xl"></i><span class="text-[10px] font-bold">首页</span></div>
+                                    <div class="relative -top-4">
+                                        <div class="w-12 h-12 bg-dark rounded-[1rem] shadow-btn flex items-center justify-center text-white border border-white/20">
+                                            <img src="2图标iccn.png" class="w-5 h-5 object-contain invert brightness-0" alt="logo shape">
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-center text-dark drop-shadow-sm"><i class="ph-bold ph-user text-xl"></i><span class="text-[10px] font-bold">我的</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- D. 内容展示、加载与缺省 -->
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest border-l-2 border-gray-400 pl-2">D. 内容展示、加载与缺省</h4>
+                        <div class="bg-surface p-6 rounded-2xl border border-gray-100 space-y-6">
+                            
+                            <!-- 标签卡片与走马灯 (精简展示) -->
+                            <div class="flex gap-4 overflow-hidden">
+                                <div class="w-32 flex-shrink-0 bg-white rounded-xl p-2 shadow-sm border border-gray-50">
+                                    <div class="w-full h-16 bg-blue-50 rounded-lg mb-2 flex items-center justify-center text-primary"><i class="ph-fill ph-image text-xl"></i></div>
+                                    <p class="text-[10px] font-bold text-dark truncate">走马灯内容</p>
+                                    <div class="mt-1 flex gap-1"><span class="text-[8px] bg-orange-50 text-secondary px-1 py-0.5 rounded">标签卡片</span></div>
+                                </div>
+                                <!-- 骨架屏 / 鱼骨加载 -->
+                                <div class="w-40 flex-shrink-0 bg-white rounded-xl p-3 shadow-sm border border-gray-50 flex flex-col justify-center">
+                                    <div class="h-3 w-1/2 rounded bg-gray-200 skeleton-shimmer mb-3"></div>
+                                    <div class="h-2 w-full rounded bg-gray-200 skeleton-shimmer mb-1.5"></div>
+                                    <div class="h-2 w-3/4 rounded bg-gray-200 skeleton-shimmer"></div>
+                                    <p class="text-[10px] text-gray-400 text-center mt-3">全局/鱼骨加载态</p>
+                                </div>
+                            </div>
+
+                            <!-- 各种加载与刷新动作 -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 bg-white rounded-xl border border-gray-50 shadow-sm text-xs text-gray-500 font-bold">
+                                <div class="flex items-center gap-1"><i class="ph-bold ph-arrow-down animate-bounce text-primary"></i> 下拉刷新</div>
+                                <div class="flex items-center gap-1"><i class="ph-bold ph-spinner animate-spin text-primary"></i> 上拉加载更多</div>
+                                <div class="text-primary cursor-pointer hover:underline">点击跳转加载...</div>
+                            </div>
+
+                            <!-- 缺省页集合 -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-50 flex flex-col items-center justify-center text-center shadow-sm">
+                                    <div class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center mb-2"><i class="ph-fill ph-folder-open text-gray-300 text-xl"></i></div>
+                                    <span class="text-[10px] font-bold text-gray-400">暂无内容 / 删除</span>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-gray-50 flex flex-col items-center justify-center text-center shadow-sm">
+                                    <div class="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mb-2"><i class="ph-fill ph-wifi-slash text-red-300 text-xl"></i></div>
+                                    <span class="text-[10px] font-bold text-gray-400">网络异常 / 搜索无果</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 6: 核心页面视觉 Demo (iOS 375px) -->
+        <section class="flex flex-col items-center space-y-8 pt-6 border-t border-gray-200">
+            <div class="flex flex-col w-full text-center mb-4">
+                <h2 class="text-3xl font-bold flex items-center justify-center gap-2 mb-2"><i class="ph-fill ph-device-mobile text-dark"></i> 6. 核心页面高保真视觉 Demo</h2>
+                <p class="text-sm text-gray-500">iOS 1倍图尺寸 (375px)，完美融合 IP 形象与极致呼吸感 UI。</p>
+            </div>
+            
+            <div class="flex gap-12 overflow-x-auto w-full justify-center pb-8 hide-scrollbar px-4">
+                
+                <!-- 手机壳 1: 首页 -->
+                <div class="relative w-[375px] h-[812px] bg-white rounded-[45px] border-[10px] border-[#0F172A] shadow-2xl overflow-hidden flex-shrink-0">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="h-12 flex items-center justify-between px-6 text-dark font-semibold text-sm pt-2 bg-white/80 backdrop-blur-md absolute top-0 w-full z-20">
+                        <span>9:41</span>
+                        <div class="flex gap-1.5 items-center">
+                            <i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-full text-lg"></i>
+                        </div>
+                    </div>
+
+                    <div class="h-full overflow-y-auto pb-24 hide-scrollbar relative bg-surface">
+                        <!-- 头部 -->
+                        <div class="bg-white pt-16 pb-6 px-5 rounded-b-[2rem] shadow-soft relative z-10">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="flex items-center gap-3">
+                                    <img src="01小智站立.jpg" class="w-10 h-10 rounded-full border border-gray-100 object-cover shadow-sm" alt="Avatar">
+                                    <div>
+                                        <h2 class="text-lg font-bold text-dark leading-none">早安，探索者</h2>
+                                        <p class="text-[10px] text-gray-400 font-bold mt-1 uppercase tracking-wider">LET'S START A NEW JOURNEY</p>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <i class="ph-bold ph-bell text-xl text-dark"></i>
+                                    <span class="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full border-2 border-white"></span>
+                                </div>
+                            </div>
+                            <div class="bg-surface border border-gray-100 rounded-2xl p-1 shadow-inner flex items-center">
+                                <div class="w-full flex items-center px-4 py-3">
+                                    <i class="ph-fill ph-sparkle text-primary mr-2 text-xl"></i>
+                                    <span class="text-sm text-gray-400 font-medium">去哪儿？小智帮你排计划...</span>
+                                </div>
+                                <button class="ml-2 bg-dark text-white w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                                    <i class="ph-bold ph-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 宫格 -->
+                        <div class="px-5 grid grid-cols-4 gap-4 mt-6 mb-8 relative z-10">
+                            <div class="flex flex-col items-center gap-2.5">
+                                <div class="w-12 h-12 rounded-2xl bg-white shadow-soft flex items-center justify-center text-primary text-2xl border border-gray-50"><i class="ph-fill ph-airplane-tilt"></i></div>
+                                <span class="text-xs font-bold text-dark">特价机票</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-2.5">
+                                <div class="w-12 h-12 rounded-2xl bg-white shadow-soft flex items-center justify-center text-primary text-2xl border border-gray-50"><i class="ph-fill ph-buildings"></i></div>
+                                <span class="text-xs font-bold text-dark">精选酒店</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-2.5">
+                                <div class="w-12 h-12 rounded-2xl bg-white shadow-soft flex items-center justify-center text-primary text-2xl border border-gray-50"><i class="ph-fill ph-tent"></i></div>
+                                <span class="text-xs font-bold text-dark">团建定制</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-2.5">
+                                <div class="w-12 h-12 rounded-2xl bg-white shadow-soft flex items-center justify-center text-primary text-2xl border border-gray-50"><i class="ph-fill ph-car-profile"></i></div>
+                                <span class="text-xs font-bold text-dark">接送专车</span>
+                            </div>
+                        </div>
+
+                        <!-- 卡片与列表 -->
+                        <div class="px-5 mb-8">
+                            <div class="bg-white rounded-[2rem] p-5 shadow-soft border border-blue-50 relative overflow-hidden flex items-center justify-between">
+                                <div class="absolute left-0 top-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+                                <div class="relative z-10 w-2/3 pr-2">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="bg-blue-50 text-primary p-1.5 rounded-lg"><i class="ph-fill ph-crown text-sm"></i></div>
+                                        <h3 class="text-base font-bold text-dark">企业免审特权</h3>
+                                    </div>
+                                    <p class="text-xs text-gray-500 leading-relaxed mb-3">本月免审批额度还剩 <span class="font-bold text-dark font-mono">¥3,500</span></p>
+                                    <div class="text-primary text-[10px] font-bold flex items-center gap-1">查看我的权益 <i class="ph-bold ph-caret-right"></i></div>
+                                </div>
+                                <div class="relative z-10 w-1/3 flex justify-end">
+                                    <img src="01小智站立.jpg" class="w-24 h-auto object-cover drop-shadow-md" style="-webkit-mask-image: linear-gradient(to top, transparent 5%, black 40%);" alt="小智 IP">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="px-5 mb-6">
+                            <h3 class="text-lg font-bold text-dark mb-4">当季灵感</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-white rounded-3xl p-2 shadow-soft border border-gray-50 flex flex-col">
+                                    <div class="relative w-full aspect-square rounded-2xl overflow-hidden mb-3">
+                                        <img src="https://images.unsplash.com/photo-1540206395-68808572332f?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Sanya">
+                                    </div>
+                                    <div class="px-1 pb-1">
+                                        <h4 class="font-bold text-dark text-sm leading-tight mb-1">海岛避寒计划</h4>
+                                        <span class="text-secondary font-bold text-sm leading-none">¥1,299<span class="text-[9px] text-gray-400 font-normal">/人</span></span>
+                                    </div>
+                                </div>
+                                <div class="bg-white rounded-3xl p-2 shadow-soft border border-gray-50 flex flex-col mt-6">
+                                    <div class="relative w-full aspect-[4/5] rounded-2xl overflow-hidden mb-3">
+                                        <img src="https://images.unsplash.com/photo-1533604100650-9a3c332822a7?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Yunnan">
+                                    </div>
+                                    <div class="px-1 pb-1">
+                                        <h4 class="font-bold text-dark text-sm leading-tight mb-1">野奢露营团建</h4>
+                                        <span class="text-secondary font-bold text-sm leading-none">¥2,800<span class="text-[9px] text-gray-400 font-normal">/人</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 底部 Navbar -->
+                    <div class="absolute bottom-0 w-full ultra-glass pb-8 pt-4 px-8 flex justify-between items-center z-30">
+                        <div class="flex flex-col items-center gap-1.5 text-dark"><i class="ph-fill ph-house text-xl"></i><span class="text-[9px] font-bold">首页</span></div>
+                        <div class="flex flex-col items-center gap-1.5 text-gray-400"><i class="ph-bold ph-calendar-check text-xl"></i><span class="text-[9px] font-bold">行程</span></div>
+                        <div class="relative -top-6">
+                            <div class="w-14 h-14 bg-dark rounded-[1.2rem] shadow-btn flex items-center justify-center text-white">
+                                <img src="2图标iccn.png" class="w-6 h-6 object-contain invert brightness-0" alt="logo shape">
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5 text-gray-400"><i class="ph-bold ph-chat-circle-dots text-xl"></i><span class="text-[9px] font-bold">消息</span></div>
+                        <div class="flex flex-col items-center gap-1.5 text-gray-400"><i class="ph-bold ph-user text-xl"></i><span class="text-[9px] font-bold">我的</span></div>
+                    </div>
+                </div>
+
+                <!-- 手机壳 2: 弹窗与操作反馈流 -->
+                <div class="relative w-[375px] h-[812px] bg-surface rounded-[45px] border-[10px] border-[#0F172A] shadow-2xl overflow-hidden flex-shrink-0">
+                    <div class="h-12 flex items-center justify-between px-6 text-dark font-semibold text-sm pt-2 bg-white absolute top-0 w-full z-20">
+                        <span>9:42</span>
+                        <div class="flex gap-1.5 items-center"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-full text-lg"></i></div>
+                    </div>
+
+                    <div class="h-full pt-12 px-4 relative z-10 flex flex-col bg-surface">
+                        <!-- NavBar -->
+                        <div class="flex items-center justify-between py-4 mb-2">
+                            <div class="w-10 h-10 flex items-center justify-start text-dark"><i class="ph-bold ph-caret-left text-xl"></i></div>
+                            <div class="flex items-center gap-2"><h2 class="text-sm font-bold text-dark">AI 助理小智</h2><div class="w-2 h-2 bg-green-500 rounded-full"></div></div>
+                            <div class="w-10 h-10 flex items-center justify-end text-dark"><i class="ph-bold ph-dots-three text-xl"></i></div>
+                        </div>
+
+                        <!-- 聊天列表 -->
+                        <div class="flex-1 overflow-y-auto hide-scrollbar space-y-6 pb-20">
+                            <div class="flex justify-end pl-12">
+                                <div class="bg-white text-dark p-4 rounded-[1.5rem] rounded-tr-sm text-sm leading-relaxed shadow-soft border border-gray-100 font-medium">
+                                    下周三去成都出差，2天1晚，预算800内。
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <img src="01小智站立.jpg" class="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0 object-cover" alt="AI">
+                                <div class="space-y-3 flex-1 pr-4">
+                                    <div class="bg-primary/10 p-4 rounded-[1.5rem] rounded-tl-sm text-dark text-sm leading-relaxed font-medium">
+                                        收到！为您找到了一家极具性价比的酒店 🔍
+                                    </div>
+                                    <div class="bg-white p-4 rounded-[1.5rem] shadow-soft">
+                                        <div class="w-full h-32 rounded-xl overflow-hidden mb-3 relative">
+                                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Hotel">
+                                        </div>
+                                        <h4 class="font-bold text-dark text-base leading-tight mb-1">成都宽窄巷子智选假日</h4>
+                                        <p class="text-xs text-gray-500 mb-4">距宽窄巷子步行 500 米 · 含双早</p>
+                                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                                            <div class="flex flex-col">
+                                                <span class="text-[10px] text-gray-400 font-bold uppercase">协议价</span>
+                                                <span class="text-dark font-bold text-lg leading-none">¥450</span>
+                                            </div>
+                                            <!-- IP橙色强操作 -->
+                                            <button class="bg-secondary text-white text-sm font-bold px-6 py-2.5 rounded-full shadow-accent-btn">立即预订</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 模拟浮层弹窗 (Modal) -->
+                        <div class="absolute inset-0 bg-dark/40 backdrop-blur-sm z-40 flex items-center justify-center">
+                            <div class="bg-white w-[300px] rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center transform scale-100 transition-transform">
+                                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
+                                    <i class="ph-fill ph-airplane-in-flight text-primary text-3xl"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-dark mb-2">确认行程生成</h3>
+                                <p class="text-sm text-gray-500 leading-relaxed mb-6">AI 将基于当前偏好生成完整行程单，生成后将扣除 1 次定制额度。</p>
+                                <div class="flex gap-3 w-full">
+                                    <button class="flex-1 bg-surface text-dark font-bold py-3 rounded-full text-sm hover:bg-gray-100">取消 (弹窗)</button>
+                                    <button class="flex-1 bg-primary text-white font-bold py-3 rounded-full text-sm shadow-btn">确认生成</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+</body>
+</html>

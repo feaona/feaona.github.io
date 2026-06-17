@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计方法 (1920x1080)</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'DIN Alternate', 'DIN Condensed', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+        }
+
+        *, *::before, *::after {
+            font-weight: 400;
+        }
+
+        /* ── 字体层级（直接在 style 块定义，优先级高于 * 重置和 Tailwind 层级） ── */
+        .canvas-1920 h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .canvas-1920 h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1f2937;
+            letter-spacing: 0.1em;
+            line-height: 1.3;
+        }
+        .canvas-1920 p {
+            font-size: 28px;
+            font-weight: 400;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+
+        /* 核心画布区域，严格限制 1920x1080 */
+        .canvas-1920 {
+            width: 1920px;
+            height: 1080px;
+            background-color: #fcfdfa;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <!-- 1920*1080 固定画布 -->
+    <div class="canvas-1920" id="main-canvas">
+        
+        <!-- ================= 左侧区域 ================= -->
+        
+        <!-- 水印文字：严格对齐第 01 页标准 -->
+        <div class="absolute top-[100px] left-[100px] flex items-baseline pointer-events-none select-none z-10 opacity-70">
+            <!-- 顺延序号为 05，颜色修改为绿色 -->
+            <span class="text-[100px] font-black text-[#ABCC58] tracking-tighter leading-none">05<span style="color:#F8D560">.</span></span>
+            <span class="text-[80px] font-black text-[#dce2c6] tracking-widest ml-4 uppercase leading-none mix-blend-multiply">Design</span>
+        </div>
+
+        <!-- 主标题 -->
+        <div class="absolute top-[240px] left-[120px] z-20">
+            <h1 class="text-[48px] font-bold text-gray-900">
+                设-计-方-法
+            </h1>
+        </div>
+
+        <!-- 左侧文本描述区块 -->
+        <div class="absolute top-[380px] left-[120px] w-[580px] z-20">
+            
+            <!-- 风格定义 (圆点修改为绿色) -->
+            <div class="mb-[60px]">
+                <div class="flex items-center mb-5">
+                    <span class="w-4 h-4 rounded-full bg-[#ABCC58] mr-4 shadow-sm"></span>
+                    <h2 class=”text-[36px] font-bold text-gray-800 tracking-widest”>风格定义</h2>
+                </div>
+                <p class=”text-[28px] text-gray-600 leading-[1.8] tracking-wide”>
+                    提前通过会议沟通达成共识，活动页面围绕”踏春出游季”主题进行设计，融入3D IP形象与大自然风景元素，营造生机勃勃的春日氛围。
+                </p>
+            </div>
+            
+            <!-- 活动难点 -->
+            <div>
+                <div class="flex items-center mb-5">
+                    <span class="w-4 h-4 rounded-full bg-[#F8D560] mr-4 shadow-sm"></span>
+                    <h2 class="text-[36px] font-bold text-gray-800 tracking-widest">活动难点</h2>
+                </div>
+                <p class="text-[28px] text-gray-600 leading-[1.8] tracking-wide">
+                    涵盖主会场及三大分会场，营销玩法多样（抽奖、秒杀、领券等），需要建立高度统一的视觉规范与组件库以保证高效复用，涉及页面多达12张。
+                </p>
+            </div>
+
+        </div>
+
+        <!-- 设计创意文字标签 (居中对齐上方的转盘) -->
+        <div class="absolute top-[790px] left-[780px] w-[520px] text-center z-20">
+            <span class="text-[28px] font-medium text-gray-700 tracking-widest">设计创意</span>
+        </div>
+
+        <!-- 底层连接虚线 (起点对齐转盘左边缘，终点刚好到"设计创意"四个字结束的位置) -->
+        <div class="absolute top-[840px] left-[780px] flex items-center w-[320px] z-10">
+            <div class="w-full border-b-[3px] border-dashed border-[#F8D560] opacity-60"></div>
+        </div>
+
+
+        <!-- ================= 右侧视觉图形区域 ================= -->
+        
+        <!-- 1. 设计创意 - 3D大转盘展示形式 (整体下移对齐) -->
+        <div class="absolute top-[240px] left-[780px] w-[520px] h-[520px] z-20 flex flex-col items-center justify-center" style="transition: transform 0.4s ease; cursor: pointer;" onmouseenter="this.style.transform='scale(1.03)'" onmouseleave="this.style.transform='scale(1)'">
+
+            <!-- 转盘主体 -->
+            <div class="relative w-[520px] h-[520px] rounded-full bg-[#99B84E] border-[14px] border-[#ABCC58] shadow-[0_20px_40px_rgba(0,0,0,0.2)] flex items-center justify-center z-20">
+                
+                <!-- 外圈跑马灯辅助虚线 -->
+                <div class="absolute inset-0 rounded-full border-[6px] border-dashed border-[#F3F8E2] opacity-30 m-[10px]"></div>
+                
+                <!-- 12 个环绕发光小灯泡 -->
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(0deg);"><div class="w-3.5 h-3.5 bg-white rounded-full mt-2.5 shadow-[0_0_10px_white]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(30deg);"><div class="w-3.5 h-3.5 bg-[#D5E898] rounded-full mt-2.5 shadow-[0_0_8px_#D5E898]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(60deg);"><div class="w-3.5 h-3.5 bg-white rounded-full mt-2.5 shadow-[0_0_10px_white]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(90deg);"><div class="w-3.5 h-3.5 bg-[#D5E898] rounded-full mt-2.5 shadow-[0_0_8px_#D5E898]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(120deg);"><div class="w-3.5 h-3.5 bg-white rounded-full mt-2.5 shadow-[0_0_10px_white]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(150deg);"><div class="w-3.5 h-3.5 bg-[#D5E898] rounded-full mt-2.5 shadow-[0_0_8px_#D5E898]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(180deg);"><div class="w-3.5 h-3.5 bg-white rounded-full mt-2.5 shadow-[0_0_10px_white]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(210deg);"><div class="w-3.5 h-3.5 bg-[#D5E898] rounded-full mt-2.5 shadow-[0_0_8px_#D5E898]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(240deg);"><div class="w-3.5 h-3.5 bg-white rounded-full mt-2.5 shadow-[0_0_10px_white]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(270deg);"><div class="w-3.5 h-3.5 bg-[#D5E898] rounded-full mt-2.5 shadow-[0_0_8px_#D5E898]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(300deg);"><div class="w-3.5 h-3.5 bg-white rounded-full mt-2.5 shadow-[0_0_10px_white]"></div></div>
+                <div class="absolute inset-0 flex justify-center" style="transform: rotate(330deg);"><div class="w-3.5 h-3.5 bg-[#D5E898] rounded-full mt-2.5 shadow-[0_0_8px_#D5E898]"></div></div>
+                
+                <!-- 内层 8 等分扇形切片 -->
+                <div class="w-[430px] h-[430px] rounded-full relative overflow-hidden shadow-inner border-4 border-[#99B84E]" style="background: conic-gradient(from -22.5deg, #FFFDF8 0 45deg, #D5E898 45deg 90deg, #FFFDF8 90deg 135deg, #D5E898 135deg 180deg, #FFFDF8 180deg 225deg, #D5E898 225deg 270deg, #FFFDF8 270deg 315deg, #D5E898 315deg 360deg);">
+                    
+                    <!-- 扇形内的文案：两行排版，增加外边距避免重叠，统一方向 -->
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(0deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">3D<br>插画</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(45deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">自然<br>清新</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(90deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">互动<br>体验</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(135deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">视觉<br>统一</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(180deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">组件<br>复用</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(225deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">动效<br>引导</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(270deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">趣味<br>元素</div></div>
+                    <div class="absolute inset-0 flex justify-center" style="transform: rotate(315deg);"><div class="pt-[50px] font-black text-[#638026] text-[20px] leading-[1.3] tracking-widest drop-shadow-sm text-center">氛围<br>营造</div></div>
+                    
+                </div>
+
+                <!-- 中心抽奖按钮 -->
+                <div class="absolute w-[160px] h-[160px] z-30 flex items-center justify-center">
+                    <!-- 顶部指针 -->
+                    <div class="absolute top-[-25px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[16px] border-r-[16px] border-b-[32px] border-transparent border-b-[#99B84E] drop-shadow-md"></div>
+                    
+                    <!-- 按钮主体 -->
+                    <div class="w-full h-full bg-[#fcfdfa] rounded-full shadow-[0_12px_25px_rgba(0,0,0,0.2)] flex items-center justify-center border-[6px] border-[#ABCC58] relative z-10 hover:scale-105 transition-transform duration-300 cursor-pointer">
+                        <div class="w-[124px] h-[124px] bg-gradient-to-b from-[#ABCC58] to-[#99B84E] rounded-full flex flex-col items-center justify-center shadow-inner">
+                            <!-- 内部线环装饰 -->
+                            <div class="w-[70px] h-[70px] border-[4px] border-[#D5E898] rounded-full opacity-40"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 项目把控 -->
+        <div class="absolute top-[520px] left-[1420px] w-[380px] h-[380px] bg-[#ABCC58] rounded-full z-20 shadow-xl flex flex-col justify-center pl-[80px]" style="transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onmouseenter="this.style.transform='scale(1.05)';this.style.boxShadow='0 30px 60px rgba(0,0,0,0.25)'" onmouseleave="this.style.transform='scale(1)';this.style.boxShadow=''">
+            <div class="text-white text-[32px] leading-[2.4] tracking-widest font-medium">
+                <p>设计：1人 4天</p>
+                <p>运营：2人 5天</p>
+                <p>页面：12张</p>
+            </div>
+        </div>
+
+        <!-- 项目把控文字标签 -->
+        <div class="absolute top-[940px] left-[1530px] z-20">
+            <span class="text-[28px] font-medium text-gray-700 tracking-widest">项目把控</span>
+        </div>
+
+    </div>
+
+    <!-- 兼容性完美的 JS 动态缩放控制 -->
+    <script>
+        function fitToScreen() {
+            const canvas = document.getElementById('main-canvas');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            canvas.style.transform = `scale(${scale})`;
+        }
+        fitToScreen();
+        window.addEventListener('resize', fitToScreen);
+    </script>
+</body>
+</html>

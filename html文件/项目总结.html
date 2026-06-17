@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目总结 - 智造芯连 CRM</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: transparent;
+        }
+        
+    </style>
+</head>
+<body class="flex h-screen w-full overflow-hidden text-gray-800">
+
+    <!-- 左侧内容区 -->
+    <div class="w-[45%] h-full bg-white flex flex-col py-8 px-8 xl:px-14 overflow-hidden relative z-10">
+
+        <!-- 小标题 -->
+        <div class="mb-5 flex-shrink-0">
+            <h2 class="text-2xl font-bold text-gray-700 tracking-wide ml-2">反馈与验证</h2>
+        </div>
+
+        <!-- 描述段落 -->
+        <p class="leading-relaxed mb-5 text-justify" style="font-size:13px;font-weight:300;color:#4b5563;">
+            在完成"智造芯连 CRM"核心模块设计后，我们邀请了制造企业一线的销售、研发及交付人员对工作台及客户模块进行可用性测试，并在灰度期间收集大家的建议反馈，快速跟进迭代了CPQ配置与MCR权力地图模块。
+        </p>
+
+        <!-- 踩过的坑 -->
+        <div class="mb-4">
+            <h3 class="text-[15px] font-bold text-gray-800 mb-3 flex items-center">
+                <span class="text-red-500 text-xl mr-2 leading-none">•</span> 踩过的坑
+            </h3>
+            <p class="leading-relaxed text-justify" style="font-size:13px;font-weight:300;color:#4b5563;">
+                追求极致可视化的初心却增加了部分老用户的认知成本（如复杂的拓扑图）。B端产品改版一定要平衡用户原本的使用习惯。避免陷入单一的"酷炫"需求中，需要带入更全局的视角来完善产品的体系化建设，站在业务流转和企业的角度多维度思考。
+            </p>
+        </div>
+
+        <!-- 可复用的经验 -->
+        <div class="mb-5">
+            <h3 class="text-[15px] font-bold text-gray-800 mb-3 flex items-center">
+                <span class="text-blue-500 text-xl mr-2 leading-none">•</span> 可复用的经验
+            </h3>
+            <p class="leading-relaxed text-justify" style="font-size:13px;font-weight:300;color:#4b5563;">
+                多角色协同的产销系统，必须按用户角色细分场景和目标（如销售看漏斗，研发看阶段条），分别对应不同的UI设计策略，但在底层数据上保持高度连接。
+            </p>
+        </div>
+
+        <!-- 数据指标部分 -->
+        <div class="mt-0">
+            <h3 class="text-[15px] font-bold text-gray-800 mb-4">核心模块数据获取与流转率</h3>
+
+            <div class="grid grid-cols-2 gap-x-12 gap-y-5">
+                <!-- Data 1 -->
+                <div>
+                    <div class="text-[13px] text-gray-500 mb-2 font-medium">MCR地图使用率</div>
+                    <div class="flex items-baseline">
+                        <span class="text-[32px] font-bold text-blue-600 mr-2 font-sans tracking-tight">32.4%</span>
+                        <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l10 16H2Z"/></svg>
+                    </div>
+                </div>
+                
+                <!-- Data 2 -->
+                <div>
+                    <div class="text-[13px] text-gray-500 mb-2 font-medium">CPQ报价生成率</div>
+                    <div class="flex items-baseline">
+                        <span class="text-[32px] font-bold text-blue-600 mr-2 font-sans tracking-tight">12.7%</span>
+                        <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l10 16H2Z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Data 3 -->
+                <div>
+                    <div class="text-[13px] text-gray-500 mb-2 font-medium">跨部门协同满意度</div>
+                    <div class="flex items-baseline">
+                        <span class="text-[32px] font-bold text-blue-600 mr-2 font-sans tracking-tight">43.2%</span>
+                        <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l10 16H2Z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Data 4 -->
+                <div>
+                    <div class="text-[13px] text-gray-500 mb-2 font-medium">样品打样返工率</div>
+                    <div class="flex items-baseline">
+                        <span class="text-[32px] font-bold text-blue-600 mr-2 font-sans tracking-tight">21%</span>
+                        <svg class="w-3.5 h-3.5 text-red-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20L2 4h20Z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 右侧图片区 -->
+    <div class="w-[55%] h-full bg-[#070710] relative overflow-hidden">
+        <img src="../image/项目总结.webp" alt="项目总结" class="absolute inset-0 w-full h-full object-cover">
+    </div>
+
+</body>
+</html>

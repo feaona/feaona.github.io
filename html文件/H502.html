@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目背景 (1920x1080)</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'DIN Alternate', 'DIN Condensed', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+        }
+
+        *, *::before, *::after {
+            font-weight: 400;
+        }
+
+        .canvas-1920 {
+            width: 1920px;
+            height: 1080px;
+            background-color: #fcfdfa;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+
+        /* 顶部绿色渐变色块 */
+        .top-green-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 380px;
+            background: linear-gradient(to left, #ABCC58 0%, #d4e899 55%, #eef6cc 100%);
+            opacity: 0.88;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .mockup-phone {
+            border: 12px solid #ffffff;
+            border-radius: 44px;
+            background-color: #f3f4f6;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: absolute;
+            cursor: pointer;
+            transition: box-shadow 0.35s ease;
+        }
+
+        .mockup-phone:hover {
+            box-shadow: 0 30px 55px rgba(0, 0, 0, 0.22);
+        }
+
+        .mockup-phone img {
+            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mockup-phone:hover img {
+            transform: scale(1.07);
+        }
+
+        /* 白色刘海屏，与04页面一致 */
+        .mockup-phone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background-color: #ffffff;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas-1920" id="main-canvas">
+
+        <!-- 顶部绿色色块 -->
+        <div class="top-green-section"></div>
+
+        <!-- 左侧手机：375×812，长图可滚动 -->
+        <div class="mockup-phone" style="width: 375px; height: 812px; right: 510px; top: 134px; z-index: 20;">
+            <div style="width: 100%; height: 100%; overflow-y: scroll; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                <img src="../image/H5CT1.webp" alt="主会场页面" style="width: 100%; height: auto; display: block;">
+            </div>
+        </div>
+
+        <!-- 右侧手机：375×812，长图可滚动 -->
+        <div class="mockup-phone" style="width: 375px; height: 812px; right: 80px; top: 134px; z-index: 30;">
+            <div style="width: 100%; height: 100%; overflow-y: scroll; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+                <img src="../image/H5CRHD.webp" alt="抽奖页面" style="width: 100%; height: auto; display: block;">
+            </div>
+        </div>
+
+        <!-- 水印文字（画布级，叠在绿色区域上方） -->
+        <div class="absolute top-[100px] left-[100px] flex items-baseline pointer-events-none select-none z-20 opacity-70">
+            <span class="text-[100px] font-black text-[#ABCC58] tracking-tighter leading-none">02<span style="color:#F8D560">.</span></span>
+            <span class="text-[80px] font-black text-[#dce2c6] tracking-widest ml-4 uppercase leading-none mix-blend-multiply">Design</span>
+        </div>
+
+        <!-- 主标题（叠在绿色区域上方） -->
+        <div class="absolute top-[240px] left-[120px] z-20">
+            <h1 class="text-[48px] font-black text-gray-900">
+                项-目-背-景
+            </h1>
+        </div>
+
+        <!-- 正文段落（绿色区域以下，白色背景） -->
+        <div class="absolute top-[460px] left-[120px] w-[1000px] z-20">
+            <p class="text-gray-600 text-[28px] leading-[1.8] w-[820px] text-justify tracking-[0.02em]">
+                结合春季回暖的"踏春出游季"与五一黄金周的"大放价"旅游旺季点，平台策划了一场综合性的线上营销活动。旨在通过发放旅游基金、酒店特惠、商城秒杀等利益点，刺激旅游出行欲望与消费购物需求，同时拉动平台整体的活跃度与GMV转化。
+            </p>
+        </div>
+
+        <!-- 底部活动亮点（白色区域） -->
+        <div class="absolute z-10" style="bottom: 140px; left: 120px;">
+            <p class="text-[28px] font-medium mb-[18px]" style="color: rgba(0,0,0,0.70); line-height: 1;">
+                <span class="font-black mr-2" style="color: #F8D560;">✦</span>主会场引流：承载核心利益点，引导用户跳转。
+            </p>
+            <p class="text-[28px] font-medium mb-[18px]" style="color: rgba(0,0,0,0.70); line-height: 1;">
+                <span class="font-black mr-2" style="color: #F8D560;">✦</span>互动抽奖：转盘玩法，积分抽奖，提升用户粘性。
+            </p>
+            <p class="text-[28px] font-medium mb-[18px]" style="color: rgba(0,0,0,0.70); line-height: 1;">
+                <span class="font-black mr-2" style="color: #F8D560;">✦</span>旅游特惠：热门酒店立减、满减券及预订权益。
+            </p>
+            <p class="text-[28px] font-medium mb-[18px]" style="color: rgba(0,0,0,0.70); line-height: 1;">
+                <span class="font-black mr-2" style="color: #F8D560;">✦</span>电商促销：结合场景商品秒杀及会员福利。
+            </p>
+            <p class="text-[28px] font-medium" style="color: rgba(0,0,0,0.70); line-height: 1;">
+                <span class="font-black mr-2" style="color: #F8D560;">✦</span>UGC社交：鼓励用户分享旅行照片，裂变传播与曝光。
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        function fitToScreen() {
+            const canvas = document.getElementById('main-canvas');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            canvas.style.transform = `scale(${scale})`;
+        }
+        fitToScreen();
+        window.addEventListener('resize', fitToScreen);
+    </script>
+</body>
+</html>

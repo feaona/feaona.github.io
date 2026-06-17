@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量产订单履约追踪 - 交互设计方案</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #080e1a;
+            color: rgba(255,255,255,0.85);
+            padding: 52px 48px 60px;
+            min-height: 100vh;
+        }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.92);
+            line-height: 1.28;
+            letter-spacing: -.5px;
+            margin-bottom: 10px;
+        }
+        .section-title strong { color: #1A9FDA; }
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(26,159,218,0.1);
+            border: 1px solid rgba(26,159,218,0.22);
+            padding: 3px 12px;
+            border-radius: 999px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: rgba(26,159,218,0.85);
+            margin-bottom: 10px;
+        }
+        .section-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.35);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 28px;
+            align-items: flex-start;
+        }
+        .left-col {
+            width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .right-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+        }
+        .right-col img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .highlight-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px;
+            padding: 16px 16px 16px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-accent {
+            position: absolute;
+            left: 0; top: 16px; bottom: 16px;
+            width: 3px;
+            border-radius: 0 2px 2px 0;
+        }
+        .card-snippet {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 62px;
+            gap: 8px;
+        }
+        .card-title {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.88);
+            margin-bottom: 5px;
+        }
+        .card-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.36);
+            line-height: 1.65;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="section-title">量产<strong>履约追踪</strong> 交互设计方案</h1>
+    <div class="section-badge">页面 04：订单履约与基线追踪</div>
+    <p class="section-desc">顶部提炼核心 KPI，基于业务流转节点切分状态标签，创新引入生产与回款双轨进度条，全盘掌握履约健康度与资金回收状态。</p>
+
+    <div class="main-layout">
+
+        <div class="left-col">
+
+            <!-- Card 1: KPI看板 -->
+            <div class="highlight-card">
+                <div class="card-accent" style="background:#ef4444"></div>
+                <div class="card-snippet" style="gap:10px">
+                    <!-- Alert card -->
+                    <div style="flex:1;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;height:48px">
+                        <div style="display:flex;align-items:center;gap:4px;color:#fca5a5;margin-bottom:2px">
+                            <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span style="font-size:9px;font-weight:600">逾期/预警</span>
+                        </div>
+                        <span style="font-size:20px;font-weight:700;color:#fca5a5;line-height:1">2</span>
+                    </div>
+                    <!-- Donut chart -->
+                    <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:center;gap:8px;height:48px">
+                        <svg viewBox="0 0 36 36" width="36" height="36" style="transform:rotate(-90deg)">
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6"/>
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#1A9FDA" stroke-width="6" stroke-dasharray="88" stroke-dashoffset="30"/>
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" stroke-width="6" stroke-dasharray="88" stroke-dashoffset="65"/>
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#ef4444" stroke-width="6" stroke-dasharray="88" stroke-dashoffset="80"/>
+                        </svg>
+                        <div style="display:flex;flex-direction:column;gap:3px">
+                            <div style="width:10px;height:3px;background:#ef4444;border-radius:1px"></div>
+                            <div style="width:10px;height:3px;background:#1A9FDA;border-radius:1px"></div>
+                            <div style="width:10px;height:3px;background:#10b981;border-radius:1px"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-title">关键指标全局看板</div>
+                <p class="card-desc">顶部提炼核心业务 KPI，高亮逾期与异常卡片，结合环形图直观洞察订单状态分布，全盘掌握履约健康度。</p>
+            </div>
+
+            <!-- Card 2: 状态筛选 -->
+            <div class="highlight-card">
+                <div class="card-accent" style="background:#1A9FDA"></div>
+                <div class="card-snippet" style="flex-direction:column;align-items:flex-start;padding:0;overflow:hidden">
+                    <div style="display:flex;align-items:flex-end;gap:0;width:100%;border-bottom:1px solid rgba(255,255,255,0.08);padding:8px 12px 0">
+                        <div style="display:flex;align-items:center;gap:5px;padding-bottom:7px;border-bottom:2px solid #1A9FDA;margin-right:14px">
+                            <span style="font-size:11px;font-weight:700;color:#1A9FDA">全部</span>
+                            <span style="background:rgba(26,159,218,0.2);color:#7dd3fc;font-size:8px;font-weight:700;padding:1px 5px;border-radius:999px">8</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:5px;padding-bottom:9px;margin-right:14px">
+                            <span style="font-size:11px;color:rgba(255,255,255,0.35)">生产中</span>
+                            <span style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.3);font-size:8px;font-weight:700;padding:1px 5px;border-radius:999px">2</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:5px;padding-bottom:9px">
+                            <span style="font-size:11px;color:rgba(255,255,255,0.35)">逾期预警</span>
+                            <span style="background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.3);font-size:8px;font-weight:700;padding:1px 5px;border-radius:999px">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-title">全生命周期状态流</div>
+                <p class="card-desc">基于真实业务流转节点切分订单状态标签，提供带数量角标的快捷场景筛选，快速定位流转卡点。</p>
+            </div>
+
+            <!-- Card 3: 双轨进度 -->
+            <div class="highlight-card">
+                <div class="card-accent" style="background:#10b981"></div>
+                <div class="card-snippet">
+                    <div style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:8px 10px;display:flex;align-items:center;gap:10px">
+                        <!-- Info -->
+                        <div style="display:flex;flex-direction:column;gap:4px;width:30%">
+                            <div style="width:48px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px"></div>
+                            <div style="width:60px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px"></div>
+                        </div>
+                        <!-- Status badge -->
+                        <div style="width:20%">
+                            <span style="display:inline-flex;align-items:center;gap:3px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;font-size:8.5px;font-weight:600;padding:2px 6px;border-radius:4px">
+                                <span style="width:4px;height:4px;border-radius:50%;background:#ef4444;flex-shrink:0"></span>已逾期
+                            </span>
+                        </div>
+                        <!-- Dual progress -->
+                        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+                            <div style="display:flex;align-items:center;gap:6px">
+                                <span style="font-size:8px;font-weight:700;color:#fca5a5;width:24px;text-align:right">78%</span>
+                                <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden">
+                                    <div style="width:78%;height:100%;background:#ef4444;border-radius:2px"></div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:6px">
+                                <span style="font-size:8px;font-weight:700;color:#7dd3fc;width:24px;text-align:right">30%</span>
+                                <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden">
+                                    <div style="width:30%;height:100%;background:#1A9FDA;border-radius:2px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-title">双轨进度可视呈现</div>
+                <p class="card-desc">创新引入「生产进度」与「回款进度」双轨条形图，色彩直观映射交付安全指数与资金回收状态。</p>
+            </div>
+
+        </div>
+
+        <!-- Right: image -->
+        <div class="right-col">
+            <img src="../image/L2C/4量产基线.webp" alt="量产订单履约追踪界面">
+        </div>
+
+    </div>
+
+</body>
+</html>

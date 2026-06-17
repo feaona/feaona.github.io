@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电子结构件全生命周期智能协同大屏</title>
+  <script src="../lib/tailwind.cdn.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  <style>
+    body, html { margin:0; padding:0; width:100%; height:100%; background:#02060C; overflow:hidden; }
+    .apple-system-font {
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .bg-grid {
+      background-color:#02060C;
+      background-image:linear-gradient(rgba(27,79,147,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(27,79,147,.15) 1px,transparent 1px);
+      background-size:40px 40px; background-position:center center;
+    }
+    @keyframes scroll { 0%{transform:translateY(0)} 100%{transform:translateY(calc(-50% - 6px))} }
+    @keyframes scan  { 0%{transform:translateX(-100%) skewX(-20deg)} 100%{transform:translateX(400%) skewX(-20deg)} }
+    .shadow-text { text-shadow:0 0 15px rgba(0,209,255,.7); }
+    .animate-scroll { animation:scroll 15s linear infinite; will-change:transform; }
+    .scroll-container:hover .animate-scroll { animation-play-state:paused; }
+    .animate-scan { animation:scan 2s ease-in-out infinite; }
+    ::-webkit-scrollbar { width:0; background:transparent; }
+  </style>
+</head>
+<body class="apple-system-font">
+
+<div class="w-screen h-screen bg-[#02060C] overflow-hidden flex items-center justify-center">
+  <!-- 1920×1080 缩放容器 -->
+  <div id="scale-root" class="flex flex-col p-6 box-border bg-grid" style="width:1920px;height:1080px;position:absolute;transform-origin:center center">
+
+    <!-- 顶部光晕 -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[300px] pointer-events-none z-0"
+         style="background:radial-gradient(ellipse at top,rgba(0,209,255,.12),transparent 70%)"></div>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-4 relative z-10 px-4" style="height:100px;flex-shrink:0">
+      <div class="w-[28%] flex items-center gap-12 pl-6">
+        <span class="text-[#00D1FF] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-white transition-colors" style="text-shadow:0 0 8px rgba(0,209,255,.8)">首页大盘</span>
+        <span class="text-[#87a1c4] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-[#00D1FF] transition-colors">项目管控</span>
+      </div>
+      <div class="w-[44%] text-center">
+        <h1 class="text-[44px] font-black text-transparent bg-clip-text tracking-[0.15em]"
+            style="background-image:linear-gradient(to bottom,#fff,#00D1FF);-webkit-background-clip:text;filter:drop-shadow(0 0 12px rgba(0,209,255,.6));white-space:nowrap">
+          电子结构件全生命周期智能协同
+        </h1>
+        <p class="text-[#00D1FF] tracking-[0.5em] text-sm mt-2 opacity-80 uppercase font-medium">Global Structural Components Visual Center</p>
+      </div>
+      <div class="w-[28%] flex items-center justify-end gap-12 pr-6">
+        <span class="text-[#87a1c4] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-[#00D1FF] transition-colors">产能中心</span>
+        <span class="text-[#87a1c4] text-2xl font-bold tracking-[0.1em] cursor-pointer hover:text-[#00D1FF] transition-colors">质量追溯</span>
+      </div>
+    </header>
+
+    <!-- Main grid -->
+    <main class="flex-1 grid grid-cols-12 gap-6 relative z-10" style="min-height:0">
+
+      <!-- ── 左栏 col-span-3 ── -->
+      <div class="col-span-3 flex flex-col gap-6 h-full">
+
+        <!-- 漏斗 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:1.2;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">硬件唯一销售漏斗</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <div id="funnel-chart" class="w-full h-full"></div>
+          </div>
+        </div>
+
+        <!-- CPQ 报价表 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:1;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">CPQ智能报价实况 (Non-Standard)</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <div class="w-full h-full flex flex-col pt-2">
+              <div class="grid text-[#87a1c4] text-[15px] p-3 rounded mb-3 font-semibold text-center" style="grid-template-columns:2fr 1fr 1fr 1fr;background:rgba(27,79,147,.4);flex-shrink:0">
+                <div class="text-left pl-2">定制件项目</div><div>工艺路线</div><div>BOM耗时</div><div>毛利</div>
+              </div>
+              <div class="flex-1 overflow-hidden relative scroll-container">
+                <div class="absolute w-full animate-scroll flex flex-col gap-3" id="scroll-table"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 雷达 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:1.1;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">360°客户健康度画像</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <div id="radar-chart" class="w-full h-full"></div>
+          </div>
+        </div>
+
+      </div><!-- /左栏 -->
+
+      <!-- ── 中栏 col-span-6 ── -->
+      <div class="col-span-6 flex flex-col gap-6 h-full">
+
+        <!-- KPI 数据条 -->
+        <div class="flex justify-around items-center rounded-lg py-6 px-4 backdrop-blur-sm" style="height:140px;flex-shrink:0;background:rgba(8,19,36,.8);border:1px solid #1B4F93;box-shadow:0 0 20px rgba(0,209,255,.15)">
+          <div class="flex flex-col items-center">
+            <span class="text-[#87a1c4] text-lg mb-2 font-medium tracking-wide">年度累计营业额 (万)</span>
+            <div class="flex items-baseline gap-3">
+              <span class="text-[56px] leading-none font-black text-[#00D1FF] font-mono shadow-text">¥<span id="revenue-count">0</span></span>
+              <span class="text-base font-bold text-[#F5A623]" style="text-shadow:0 0 5px rgba(245,166,35,.8)">▲ 15.2%</span>
+            </div>
+          </div>
+          <div class="w-px h-20" style="background:linear-gradient(to bottom,transparent,#1B4F93,transparent)"></div>
+          <div class="flex flex-col items-center">
+            <span class="text-[#87a1c4] text-lg mb-2 font-medium tracking-wide">综合良品率</span>
+            <span class="text-[56px] leading-none font-bold text-white font-mono"><span id="yield-count">0.0</span><span class="text-3xl ml-1 text-gray-400">%</span></span>
+          </div>
+          <div class="w-px h-20" style="background:linear-gradient(to bottom,transparent,#1B4F93,transparent)"></div>
+          <div class="flex flex-col items-center">
+            <span class="text-[#87a1c4] text-lg mb-2 font-medium tracking-wide">交付中项目数</span>
+            <span class="text-[56px] leading-none font-bold font-mono text-[#F5A623]" style="text-shadow:0 0 8px rgba(245,166,35,.5)"><span id="project-count">0</span><span class="text-2xl ml-2 text-[#87a1c4] font-sans">件</span></span>
+          </div>
+        </div>
+
+        <!-- 地图 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:2.5;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">全球订单交付网格枢纽</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <!-- 图例 -->
+            <div class="absolute top-5 right-6 z-10 flex gap-6 px-4 py-2 rounded" style="background:rgba(5,15,36,.8);border:1px solid rgba(27,79,147,.5)">
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></span><span class="text-[14px] text-gray-300">正常(&gt;95%)</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#1B4F93]" style="box-shadow:0 0 8px #1B4F93"></span><span class="text-[14px] text-gray-300">关注(90-95%)</span></div>
+              <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#F5A623]" style="box-shadow:0 0 8px #F5A623"></span><span class="text-[14px] font-bold text-[#F5A623]">预警(&lt;90%)</span></div>
+            </div>
+            <div id="map-chart" class="w-full h-full relative z-10"></div>
+          </div>
+        </div>
+
+        <!-- 趋势 + 预测 -->
+        <div class="flex gap-6" style="flex:1.5">
+          <div class="relative flex flex-col rounded-lg backdrop-blur-sm flex-1" style="background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+            <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+            <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+            <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+            <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+              <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+              <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">营业额与毛利趋势</h3>
+            </div>
+            <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+              <div id="trend-chart" class="w-full h-full"></div>
+            </div>
+          </div>
+          <div class="relative flex flex-col rounded-lg backdrop-blur-sm flex-1" style="background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+            <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+            <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+            <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+            <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+              <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+              <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">滚动销售预测 VS 产能</h3>
+            </div>
+            <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+              <div id="water-chart" class="w-full h-full"></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /中栏 -->
+
+      <!-- ── 右栏 col-span-3 ── -->
+      <div class="col-span-3 flex flex-col gap-6 h-full">
+
+        <!-- 样品推进器 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:1;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">样品全生命周期推进器</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <div class="flex flex-col h-full justify-evenly px-2 pt-2" id="stage-list"></div>
+          </div>
+        </div>
+
+        <!-- 饼图 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:1;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">订单全生命周期追踪</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <div id="pie-chart" class="w-full h-full"></div>
+          </div>
+        </div>
+
+        <!-- 散点 -->
+        <div class="relative flex flex-col rounded-lg backdrop-blur-sm" style="flex:1.1;background:rgba(5,15,36,.9);border:1px solid #1B4F93;box-shadow:0 0 15px rgba(0,209,255,.1)">
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00D1FF] rounded-tl-sm z-10"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#00D1FF] rounded-tr-sm z-10"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#00D1FF] rounded-bl-sm z-10"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00D1FF] rounded-br-sm z-10"></div>
+          <div class="h-12 flex items-center px-5 border-b" style="border-color:rgba(27,79,147,.6);background:linear-gradient(to right,rgba(27,79,147,.3),transparent);flex-shrink:0">
+            <div class="w-1 h-5 mr-3 bg-[#00D1FF]" style="box-shadow:0 0 8px #00D1FF"></div>
+            <h3 class="text-[#e2f1ff] font-semibold text-lg tracking-wider">智能风险预警雷达 (拦截池)</h3>
+          </div>
+          <div class="flex-1 p-4 relative overflow-hidden flex flex-col">
+            <div class="absolute z-10 flex gap-4 text-[14px] text-[#87a1c4] font-medium px-3 py-1 rounded" style="top:56px;left:24px;background:rgba(5,15,36,.6)">
+              <span class="text-[#FF5722]" style="text-shadow:0 0 3px #FF5722">●</span> 逾期
+              <span class="text-[#F5A623] ml-4" style="text-shadow:0 0 3px #F5A623">●</span> 临期
+              <span class="text-[#00D1FF] ml-4" style="text-shadow:0 0 3px #00D1FF">●</span> 正常
+            </div>
+            <div id="scatter-chart" class="w-full h-full"></div>
+          </div>
+        </div>
+
+      </div><!-- /右栏 -->
+    </main>
+  </div><!-- /scale-root -->
+</div>
+
+<script>
+const FONT = '-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif';
+
+/* ── 等比缩放 ── */
+function applyScale() {
+  var el = document.getElementById('scale-root');
+  var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+  el.style.transform = 'scale(' + s + ')';
+}
+applyScale();
+window.addEventListener('resize', applyScale);
+
+/* ── 数字滚动动画 ── */
+function countUp(elId, end, duration, decimals) {
+  var el = document.getElementById(elId);
+  var start = performance.now();
+  (function tick(now) {
+    var p = Math.min((now - start) / duration, 1);
+    var ep = 1 - Math.pow(1 - p, 4);
+    var v = end * ep;
+    el.textContent = Number(v.toFixed(decimals)).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = Number(end.toFixed(decimals)).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  })(start);
+}
+countUp('revenue-count', 14250, 2500, 0);
+countUp('yield-count',   98.4,  2500, 1);
+countUp('project-count', 1342,  2500, 0);
+
+/* ── CPQ 滚动表格 ── */
+var scrollData = [
+  { project:'X系列手机中框',      process:'CNC+阳极',      time:'12s', margin:'32%' },
+  { project:'新能源车架压铸件',    process:'铝合金压铸',    time:'45s', margin:'48%' },
+  { project:'智能穿戴表壳',        process:'粉末冶金(MIM)', time:'8s',  margin:'45%' },
+  { project:'无人机碳纤维臂',      process:'复合材料成型',  time:'18s', margin:'38%' },
+  { project:'服务器散热模组',       process:'冲压+铜管',    time:'22s', margin:'25%' },
+  { project:'医疗器械屏蔽罩',      process:'精密冲压',      time:'5s',  margin:'51%' },
+  { project:'折叠屏转轴组件',      process:'MIM+液态金属', time:'15s', margin:'55%' },
+];
+(function(){
+  var tb = document.getElementById('scroll-table');
+  var rows = scrollData.concat(scrollData);
+  rows.forEach(function(item){
+    var hi = parseInt(item.margin) >= 40;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:12px 8px;background:#0A162B;border:1px solid rgba(27,79,147,.5);border-radius:4px;align-items:center;text-align:center;gap:0';
+    row.innerHTML =
+      '<div style="color:#00D1FF;font-size:15px;font-weight:500;text-align:left;padding-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + item.project + '</div>' +
+      '<div style="font-size:14px;color:#a0aec0;overflow:hidden;text-overflow:ellipsis">' + item.process + '</div>' +
+      '<div style="color:#00D1FF;font-family:monospace;font-size:16px">' + item.time + '</div>' +
+      '<div style="font-family:monospace;font-size:17px;font-weight:bold;' + (hi ? 'color:#F5A623;text-shadow:0 0 8px rgba(245,166,35,.8)' : 'color:#d1d5db') + '">' + item.margin + '</div>';
+    tb.appendChild(row);
+  });
+})();
+
+/* ── 样品阶段进度条 ── */
+var stages = [
+  { stage:'样品申请',            progress:100, active:false, yld:'-'   },
+  { stage:'研发制作 (CNC/模具)', progress:100, active:false, yld:'99%' },
+  { stage:'小试与客户反馈',      progress:75,  active:true,  yld:'92%' },
+  { stage:'中试验证',            progress:0,   active:false, yld:'-'   },
+  { stage:'量产结案',            progress:0,   active:false, yld:'-'   },
+];
+(function(){
+  var sl = document.getElementById('stage-list');
+  stages.forEach(function(item){
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:12px';
+    var header = document.createElement('div');
+    header.style.cssText = 'display:flex;justify-content:space-between;font-size:15px';
+    header.innerHTML =
+      '<span style="' + (item.active ? 'color:#00D1FF;font-weight:bold;letter-spacing:.05em;font-size:16px' : 'color:#87a1c4;font-weight:500') + '">' + item.stage + '</span>' +
+      '<span style="color:#87a1c4">良率: <span style="font-family:monospace;' + (item.active ? 'color:#F5A623;font-weight:bold;font-size:18px;text-shadow:0 0 5px #F5A623' : '') + '">' + item.yld + '</span></span>';
+    var barBg = document.createElement('div');
+    barBg.style.cssText = 'width:100%;height:14px;background:#050f24;border-radius:9999px;overflow:hidden;position:relative;border:1px solid rgba(27,79,147,.6)';
+    var barFill = document.createElement('div');
+    barFill.style.cssText = 'height:100%;border-radius:9999px;width:0;transition:width 1s ease-in-out;' +
+      (item.active ? 'background:linear-gradient(to right,#00D1FF,#1B4F93);box-shadow:0 0 12px #00D1FF' : 'background:#1B4F93');
+    barBg.appendChild(barFill);
+    if (item.active) {
+      var scan = document.createElement('div');
+      scan.className = 'animate-scan';
+      scan.style.cssText = 'position:absolute;top:0;left:0;height:100%;width:48px;background:rgba(255,255,255,.4);transform:skewX(-20deg);box-shadow:0 0 10px rgba(255,255,255,.5)';
+      barBg.appendChild(scan);
+    }
+    wrap.appendChild(header);
+    wrap.appendChild(barBg);
+    sl.appendChild(wrap);
+    setTimeout(function(){ barFill.style.width = item.progress + '%'; }, 100);
+  });
+})();
+
+/* ── ECharts 初始化 ── */
+window.addEventListener('load', function() {
+
+  /* 1. 硬件唯一销售漏斗 */
+  (function(){
+    var c = echarts.init(document.getElementById('funnel-chart'));
+    c.setOption({
+      textStyle:{fontFamily:FONT},
+      tooltip:{trigger:'item',formatter:'{b} : {c}%'},
+      series:[{
+        name:'转化率',type:'funnel',
+        left:'10%',top:'5%',bottom:'5%',width:'80%',
+        min:0,max:100,minSize:'20%',maxSize:'100%',
+        sort:'descending',gap:6,
+        label:{show:true,position:'inside',formatter:'{b} {c}%',fontSize:16,fontWeight:'bold',color:'#fff',textShadowColor:'rgba(0,0,0,.8)',textShadowBlur:4},
+        itemStyle:{borderColor:'transparent',borderWidth:0,shadowBlur:10,shadowOffsetX:0,shadowOffsetY:5,shadowColor:'rgba(0,0,0,.5)'},
+        data:[
+          {value:100,name:'报备',itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#1B4F93'},{offset:1,color:'#2A73D4'}])}},
+          {value:80, name:'报价',itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#2A73D4'},{offset:1,color:'#00D1FF'}])}},
+          {value:65, name:'制样',itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#00D1FF'},{offset:1,color:'#5CE1E6'}])}},
+          {value:40, name:'试产',itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#F5A623'},{offset:1,color:'#FFC857'}])}},
+          {value:25, name:'量产',itemStyle:{color:new echarts.graphic.LinearGradient(0,0,1,0,[{offset:0,color:'#FF5722'},{offset:1,color:'#F5A623'}])}}
+        ]
+      }]
+    });
+  })();
+
+  /* 2. 360° 客户健康度雷达 */
+  (function(){
+    var c = echarts.init(document.getElementById('radar-chart'));
+    c.setOption({
+      textStyle:{fontFamily:FONT},
+      tooltip:{},
+      legend:{data:['A客户(TOP)','B客户(成长)'],bottom:0,textStyle:{color:'#87a1c4',fontSize:13},itemWidth:16,itemHeight:16,itemGap:20},
+      radar:{
+        indicator:[
+          {name:'付款信用',max:100},{name:'订单频次',max:100},{name:'NPS评分',max:100},
+          {name:'增长潜力',max:100},{name:'投诉率(逆)',max:100},{name:'品类深度',max:100}
+        ],
+        shape:'circle',splitNumber:4,
+        axisName:{color:'#87a1c4',fontSize:14,fontFamily:FONT},
+        splitLine:{lineStyle:{color:'rgba(27,79,147,.4)'}},
+        splitArea:{areaStyle:{color:['rgba(27,79,147,.05)','rgba(27,79,147,.1)']}},
+        axisLine:{lineStyle:{color:'rgba(27,79,147,.6)'}}
+      },
+      series:[{
+        name:'客户对比',type:'radar',
+        data:[
+          {value:[95,80,88,92,90,75],name:'A客户(TOP)',areaStyle:{color:'rgba(0,209,255,.15)'},lineStyle:{color:'#00D1FF',width:2},itemStyle:{color:'#00D1FF'}},
+          {value:[70,65,72,85,60,55],name:'B客户(成长)',areaStyle:{color:'rgba(245,166,35,.1)'},lineStyle:{color:'#F5A623',width:2},itemStyle:{color:'#F5A623'}}
+        ]
+      }]
+    });
+  })();
+
+  /* 3. 营业额与毛利趋势 */
+  (function(){
+    var c = echarts.init(document.getElementById('trend-chart'));
+    var months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    c.setOption({
+      textStyle:{fontFamily:FONT},
+      tooltip:{trigger:'axis',axisPointer:{type:'cross',label:{backgroundColor:'#6a7985'}}},
+      legend:{data:['营业额(万)','毛利率(%)'],top:0,textStyle:{color:'#87a1c4',fontSize:12},itemWidth:14,itemHeight:14},
+      grid:{left:'3%',right:'6%',bottom:'3%',top:'28%',containLabel:true},
+      xAxis:{type:'category',boundaryGap:false,data:months,axisLine:{lineStyle:{color:'#1B4F93'}},axisLabel:{color:'#a0aec0',fontSize:12}},
+      yAxis:[
+        {type:'value',name:'万',splitLine:{lineStyle:{color:'#1B4F93',type:'dashed'}},axisLabel:{color:'#a0aec0',fontSize:12}},
+        {type:'value',name:'%',min:20,max:60,splitLine:{show:false},axisLabel:{color:'#a0aec0',fontSize:12,formatter:'{value}%'}}
+      ],
+      series:[
+        {name:'营业额(万)',type:'line',smooth:true,yAxisIndex:0,
+         data:[850,920,880,1100,1050,1320,1280,1150,1400,1350,1500,1620],
+         lineStyle:{color:'#00D1FF',width:2},
+         areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(0,209,255,.3)'},{offset:1,color:'rgba(0,209,255,0)'}])},
+         itemStyle:{color:'#00D1FF'},symbol:'circle',symbolSize:6},
+        {name:'毛利率(%)',type:'line',smooth:true,yAxisIndex:1,
+         data:[38,40,36,42,39,45,43,41,46,44,47,48],
+         lineStyle:{color:'#F5A623',width:2,type:'dashed'},
+         itemStyle:{color:'#F5A623'},symbol:'diamond',symbolSize:7}
+      ]
+    });
+  })();
+
+  /* 4. 滚动销售预测 VS 产能（柱状图） */
+  (function(){
+    var c = echarts.init(document.getElementById('water-chart'));
+    var quarters=['Q1','Q2','Q3','Q4','Q1(预)','Q2(预)'];
+    c.setOption({
+      textStyle:{fontFamily:FONT},
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+      legend:{data:['销售预测(万)','实际产能(万)'],top:0,textStyle:{color:'#87a1c4',fontSize:12},itemWidth:14,itemHeight:14},
+      grid:{left:'3%',right:'4%',bottom:'3%',top:'28%',containLabel:true},
+      xAxis:{type:'category',data:quarters,axisLine:{lineStyle:{color:'#1B4F93'}},axisLabel:{color:'#a0aec0',fontSize:13}},
+      yAxis:{type:'value',splitLine:{lineStyle:{color:'#1B4F93',type:'dashed'}},axisLabel:{color:'#a0aec0',fontSize:12}},
+      series:[
+        {name:'销售预测(万)',type:'bar',barWidth:'35%',
+         data:[2800,3200,3500,3800,4100,4500],
+         itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#00D1FF'},{offset:1,color:'rgba(0,209,255,.2)'}]),borderRadius:[4,4,0,0]},
+         showBackground:true,backgroundStyle:{color:'rgba(27,79,147,.1)'}},
+        {name:'实际产能(万)',type:'bar',barWidth:'35%',
+         data:[2600,3100,3400,3750,null,null],
+         itemStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'#F5A623'},{offset:1,color:'rgba(245,166,35,.2)'}]),borderRadius:[4,4,0,0]}}
+      ]
+    });
+  })();
+
+  /* 5. 世界地图 */
+  (function(){
+    var c = echarts.init(document.getElementById('map-chart'));
+    fetch('https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/json/world.json')
+      .then(function(r){return r.json();})
+      .then(function(worldJson){
+        echarts.registerMap('world', worldJson);
+        var data=[
+          {name:'北美区', value:[-100,40], completion:98,  status:'正常'},
+          {name:'欧洲区', value:[15,50],   completion:95,  status:'正常'},
+          {name:'大中华区',value:[114,22], completion:100, status:'枢纽优秀'},
+          {name:'东南亚', value:[103,1],   completion:88,  status:'异常'},
+          {name:'拉美区', value:[-60,-10], completion:92,  status:'关注'}
+        ];
+        c.setOption({
+          textStyle:{fontFamily:FONT},
+          backgroundColor:'transparent',
+          tooltip:{trigger:'item',formatter:function(p){
+            return p.seriesType==='effectScatter'?('<div style="font-size:14px;padding:4px">'+p.data.name+'<br><span style="color:#00D1FF;font-weight:bold">完成率: '+p.data.completion+'%</span><br>状态: '+p.data.status+'</div>'):'';
+          }},
+          geo:{
+            map:'world',roam:true,zoom:1.2,scaleLimit:{min:1,max:5},
+            label:{emphasis:{show:false}},
+            itemStyle:{
+              normal:{areaColor:'#051124',borderColor:'#1B4F93',borderWidth:1,shadowColor:'rgba(0,209,255,.2)',shadowBlur:8},
+              emphasis:{areaColor:'#1B4F93',borderColor:'#00D1FF',borderWidth:1.5}
+            }
+          },
+          series:[
+            {
+              type:'effectScatter',coordinateSystem:'geo',
+              symbolSize:function(val,p){return p.data.name==='大中华区'?22:p.data.completion/6;},
+              showEffectOn:'render',
+              rippleEffect:{brushType:'stroke',scale:4,period:3},
+              itemStyle:{
+                color:function(p){return p.data.completion>=95?'#00D1FF':p.data.completion>=90?'#1B4F93':'#F5A623';},
+                shadowBlur:15,shadowColor:'#00D1FF'
+              },
+              data:data,
+              label:{
+                show:true,position:'right',
+                formatter:function(p){return '{title|'+p.data.name+'}\n{rate|'+p.data.completion+'%}';},
+                rich:{
+                  title:{color:'#fff',fontSize:14,textShadowBlur:2,textShadowColor:'#000',padding:[0,0,4,0]},
+                  rate:{color:'#00D1FF',fontSize:16,fontWeight:'bold'}
+                }
+              }
+            },
+            {
+              type:'lines',coordinateSystem:'geo',zlevel:1,
+              effect:{show:true,period:5,trailLength:.2,symbol:'arrow',symbolSize:6},
+              lineStyle:{color:'rgba(0,209,255,.7)',width:1.5,curveness:.3,shadowColor:'rgba(0,209,255,.5)',shadowBlur:5},
+              data:[
+                {coords:[[114,22],[-100,40]]},{coords:[[114,22],[15,50]]},
+                {coords:[[114,22],[103,1]]},{coords:[[114,22],[-60,-10]]}
+              ]
+            }
+          ]
+        });
+      })
+      .catch(function(e){console.warn('地图加载失败:',e);});
+  })();
+
+  /* 6. 订单全生命周期饼图 */
+  (function(){
+    var c = echarts.init(document.getElementById('pie-chart'));
+    c.setOption({
+      textStyle:{fontFamily:FONT},
+      graphic:[{
+        type:'group',bounding:'raw',left:'35%',top:'middle',
+        children:[
+          {type:'text',z:100,style:{fill:'#00D1FF',text:'总计订单',fontSize:16,fontWeight:'bold',fontFamily:FONT,textAlign:'center',textVerticalAlign:'bottom',textShadowBlur:10,textShadowColor:'rgba(0,209,255,.5)',y:-3}},
+          {type:'text',z:100,style:{fill:'#00D1FF',text:'3,147',fontSize:20,fontWeight:'bold',fontFamily:FONT,textAlign:'center',textVerticalAlign:'top',textShadowBlur:10,textShadowColor:'rgba(0,209,255,.5)',y:3}}
+        ]
+      }],
+      tooltip:{trigger:'item',formatter:'{b}: {c} ({d}%)'},
+      legend:{orient:'vertical',right:'5%',top:'middle',textStyle:{color:'#87a1c4',fontSize:13},itemWidth:16,itemHeight:16,itemGap:20},
+      series:[{
+        name:'订单状态',type:'pie',
+        radius:['60%','80%'],center:['35%','50%'],
+        avoidLabelOverlap:false,
+        itemStyle:{borderRadius:6,borderColor:'#050f24',borderWidth:3},
+        label:{show:false},
+        data:[
+          {value:1048,name:'生产中',itemStyle:{color:'#00D1FF'}},
+          {value:735, name:'已发货',itemStyle:{color:'#1B4F93'}},
+          {value:580, name:'研发中',itemStyle:{color:'#5CE1E6'}},
+          {value:484, name:'排产中',itemStyle:{color:'#F5A623'}},
+          {value:300, name:'异常挂起',itemStyle:{color:'#FF5722'}}
+        ]
+      }]
+    });
+  })();
+
+  /* 7. 智能风险预警散点图 */
+  (function(){
+    var c = echarts.init(document.getElementById('scatter-chart'));
+    var data=[
+      [80,90,25,'铝件氧化不良','异常'],[60,50,18,'物料迟交','临期'],[95,85,30,'机台故障延期','逾期'],
+      [40,70,20,'公差超标退回','异常'],[70,40,15,'客户图纸变更','临期'],[85,60,22,'包材缺货','逾期'],
+      [30,30,12,'工艺优化','正常'],[20,50,15,'标签打印出错','正常']
+    ];
+    c.setOption({
+      textStyle:{fontFamily:FONT},
+      grid:{left:'12%',right:'8%',bottom:'18%',top:'15%'},
+      tooltip:{formatter:function(p){return '<div style="padding:4px"><b>'+p.data[3]+'</b><br>状态: '+p.data[4]+'<br>紧急度: '+p.data[0]+'<br>影响度: '+p.data[1]+'</div>';}},
+      xAxis:{name:'紧急度',nameTextStyle:{color:'#a0aec0',padding:[0,0,0,10]},splitLine:{show:false},axisLine:{lineStyle:{color:'#1B4F93'}},axisLabel:{color:'#a0aec0',fontSize:13}},
+      yAxis:{name:'影响度',nameTextStyle:{color:'#a0aec0',padding:[0,0,10,0]},splitLine:{lineStyle:{color:'#1B4F93',type:'dashed'}},axisLabel:{color:'#a0aec0',fontSize:13}},
+      series:[{
+        type:'scatter',symbolSize:function(d){return d[2];},
+        itemStyle:{
+          color:function(p){return p.data[4]==='逾期'?'rgba(255,87,34,.9)':p.data[4]==='临期'?'rgba(245,166,35,.9)':'rgba(0,209,255,.8)';},
+          shadowBlur:10,
+          shadowColor:function(p){return p.data[4]==='逾期'?'#FF5722':p.data[4]==='临期'?'#F5A623':'#00D1FF';}
+        },
+        data:data
+      }]
+    });
+  })();
+
+});
+</script>
+</body>
+</html>

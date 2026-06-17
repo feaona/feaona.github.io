@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>核心业务流程: 线索到量产 (L2C & NPI) - 科技泳道版</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 重置与基础设置 */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0a0d14; /* 深色科技背景 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 隐藏原生滚动条(可选)，但保留滚动功能 */
+        /* ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0d14; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; } */
+
+        /* 科技感网格背景 */
+        .bg-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0; pointer-events: none;
+        }
+
+        /* 光晕特效 */
+        .glow-bg {
+            position: fixed; top: -10%; left: -5%;
+            width: 50vw; height: 50vh;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            z-index: 0; pointer-events: none;
+        }
+
+        /* 主容器，最大宽度限制且居中 */
+        .main-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 文本渐变 */
+        .text-gradient-cyan {
+            color: #ffffff;
+        }
+
+        /* 泳道区域包装 */
+        .swimlane-wrapper {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            margin-top: 30px;
+            overflow: hidden; /* 圆角裁切 */
+        }
+
+        /* 泳道表头 */
+        .lane-header {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            background: rgba(15, 20, 31, 0.8);
+            position: relative;
+            z-index: 20;
+            min-width: 1000px; /* 防止挤压 */
+        }
+        .lane-header-cell {
+            padding: 18px 12px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border-right: 1px dashed rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .lane-header-cell:last-child { border-right: none; }
+        
+        /* 顶部边框高亮 */
+        .lane-header-cell.orange::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #f97316; }
+        .lane-header-cell.blue::before   { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #3b82f6; }
+        .lane-header-cell.green::before  { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #10b981; }
+        .lane-header-cell.purple::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #8b5cf6; }
+
+        /* 泳道横向滚动保护 */
+        .swimlane-scroll-area {
+            overflow-x: auto;
+            overflow-y: hidden;
+            width: 100%;
+        }
+
+        /* 泳道主体网格 */
+        .swimlane-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            position: relative;
+            min-width: 1000px; /* 与表头对齐的最小宽度 */
+            min-height: 1250px; /* 给节点留足垂直空间 */
+        }
+        
+        /* 泳道列背景 */
+        .swimlane-col { border-right: 1px dashed rgba(255,255,255,0.05); }
+        .swimlane-col:last-child { border-right: none; }
+        .swimlane-col:nth-child(odd) { background: rgba(255,255,255,0.005); }
+
+        /* ======== 节点通用样式 ======== */
+        .node-card {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background: #0f141f;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            z-index: 10;
+            transition: all 0.25s ease;
+        }
+        .node-card:hover {
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+            background: #151b29;
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* 节点角色主题边框 */
+        .border-orange { border-top: 2px solid #f97316; }
+        .border-blue   { border-top: 2px solid #3b82f6; }
+        .border-green  { border-top: 2px solid #10b981; }
+        .border-purple { border-top: 2px solid #8b5cf6; }
+        .node-auto     { border: 1px dashed rgba(139,92,246,0.5); border-top: 2px solid #8b5cf6; background: rgba(139,92,246,0.05); }
+        .node-auto:hover { background: rgba(139,92,246,0.1); }
+
+        /* 起始/结束节点 */
+        .node-start-end {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 24px; border-radius: 30px;
+            font-size: 13px; font-weight: bold; z-index: 10;
+            color: #fff; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* 菱形判断节点 */
+        .node-diamond {
+            position: absolute; left: 50%;
+            width: 48px; height: 48px;
+            background: rgba(239,68,68,0.05);
+            border: 1px solid rgba(239,68,68,0.5);
+            transform: translateX(-50%) rotate(45deg);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; border-radius: 6px;
+        }
+        .diamond-content { transform: rotate(-45deg); color: #ef4444; font-size: 18px; }
+
+        /* 节点内部元素 */
+        .icon-pill {
+            width: 32px; height: 32px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 12px; flex-shrink: 0; font-size: 14px;
+            border: 1px solid currentColor;
+        }
+        .icon-orange { background: rgba(249,115,22,0.1); color: #fb923c; border-color: rgba(249,115,22,0.2); }
+        .icon-blue   { background: rgba(59,130,246,0.1); color: #60a5fa; border-color: rgba(59,130,246,0.2); }
+        .icon-green  { background: rgba(16,185,129,0.1); color: #34d399; border-color: rgba(16,185,129,0.2); }
+        .icon-purple { background: rgba(139,92,246,0.1); color: #c084fc; border-color: rgba(139,92,246,0.2); }
+
+        .node-text-wrap { display: flex; flex-direction: column; justify-content: center; }
+        .node-title { font-size: 14px; font-weight: bold; color: rgba(255,255,255,0.9); line-height: 1.2; }
+        .node-sub   { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+        /* SVG画布层，需完全覆盖网格 */
+        #svg-canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 固定背景 -->
+    <div class="bg-grid"></div>
+    <div class="glow-bg"></div>
+
+    <!-- 主体内容流式布局 -->
+    <div class="main-wrapper">
+        
+        <!-- Header (还原图二样式) -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-2">
+            <div>
+                <div class="inline-flex items-center px-3 py-1 rounded-full border border-green-500/30 bg-green-500/10 mb-4">
+                    <div class="w-1.5 h-1.5 rounded-full bg-green-400 mr-2 shadow-[0_0_8px_#4ade80]"></div>
+                    <span class="text-green-400 text-[10px] font-bold tracking-[0.2em] uppercase">PHASE 02 · CORE BUSINESS FLOW</span>
+                </div>
+                <div class="mb-2">
+                    <h1 class="text-3xl font-semibold tracking-wide">
+                        <span class="text-gradient-cyan">线索到量产泳道图 (L2C & NPI)</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- 图例 -->
+            <div class="flex items-center gap-5 bg-[#0f141f] px-5 py-3 rounded-full border border-gray-700/50">
+                <div class="flex items-center gap-2"><div class="w-6 h-0.5 bg-gray-400"></div><span class="text-gray-400 text-xs">标准流程</span></div>
+                <div class="flex items-center gap-2"><div class="w-6 h-0 border-t-2 border-dashed border-orange-500"></div><span class="text-gray-400 text-xs">驳回/重试</span></div>
+                <div class="flex items-center gap-2"><div class="w-4 h-4 border border-dashed border-purple-500 bg-purple-500/10 rounded-sm"></div><span class="text-gray-400 text-xs">系统自动化</span></div>
+            </div>
+        </div>
+
+        <!-- 泳道区域 (带横向滚动) -->
+        <div class="swimlane-wrapper shadow-2xl shadow-black/50">
+            <div class="swimlane-scroll-area">
+                
+                <!-- 表头 -->
+                <div class="lane-header">
+                    <div class="lane-header-cell orange text-orange-400"><i class="fa-regular fa-handshake"></i> 客户 (Client)</div>
+                    <div class="lane-header-cell blue text-blue-400"><i class="fa-regular fa-user"></i> 销售端 (CRM)</div>
+                    <div class="lane-header-cell green text-green-400"><i class="fa-solid fa-users-gear"></i> 工程/车间 (Dept)</div>
+                    <div class="lane-header-cell purple text-purple-400"><i class="fa-solid fa-display"></i> 系统自动化 (System)</div>
+                </div>
+
+                <!-- 泳道网格与节点 -->
+                <div class="swimlane-grid">
+                    <svg id="svg-canvas"></svg>
+
+                    <!-- 分隔线背景列 -->
+                    <div class="swimlane-col col-start-1 row-start-1"></div>
+                    <div class="swimlane-col col-start-2 row-start-1"></div>
+                    <div class="swimlane-col col-start-3 row-start-1"></div>
+                    <div class="swimlane-col col-start-4 row-start-1"></div>
+
+                    <!-- === 节点群 (放开高度限制，垂直分布更宽裕) === -->
+                    <!-- Row 1 -->
+                    <div id="node-start" class="node-start-end text-orange-400 border-orange-500/30" style="top:40px;left:12.5%;">
+                        <i class="fa-solid fa-circle-play"></i> 发起新产品需求
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div id="node-lead" class="node-card border-blue" style="top:130px;left:37.5%;">
+                        <div class="icon-pill icon-blue"><i class="fa-solid fa-magnet"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">线索捕获</div><div class="node-sub">录入研发线索</div></div>
+                    </div>
+                    <div id="node-credit" class="node-card node-auto" style="top:130px;left:87.5%;">
+                        <div class="icon-pill icon-purple"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">企查查API校验</div><div class="node-sub">资信预警/防撞单</div></div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div id="node-dec-credit" class="node-diamond" style="top:230px;left:37.5%;">
+                        <div class="diamond-content"><i class="fa-solid fa-code-branch"></i></div>
+                    </div>
+
+                    <!-- Row 4 -->
+                    <div id="node-opp" class="node-card border-blue" style="top:330px;left:37.5%;">
+                        <div class="icon-pill icon-blue"><i class="fa-solid fa-folder-open"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">建立商机</div><div class="node-sub">上传图纸及文档</div></div>
+                    </div>
+                    <div id="node-bom" class="node-card border-green" style="top:330px;left:62.5%;">
+                        <div class="icon-pill icon-green"><i class="fa-solid fa-gears"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">技术核价拆解</div><div class="node-sub">拆解BOM算模具工时</div></div>
+                    </div>
+
+                    <!-- Row 5 -->
+                    <div id="node-quote" class="node-card border-blue" style="top:430px;left:37.5%;">
+                        <div class="icon-pill icon-blue"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">输出报价单</div><div class="node-sub">发送客户审批</div></div>
+                    </div>
+                    <div id="node-cpq" class="node-card node-auto" style="top:430px;left:87.5%;">
+                        <div class="icon-pill icon-purple"><i class="fa-solid fa-calculator"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">智能CPQ</div><div class="node-sub">自动计算阶梯报价</div></div>
+                    </div>
+
+                    <!-- Row 6 -->
+                    <div id="node-dec-quote" class="node-diamond" style="top:530px;left:12.5%;">
+                        <div class="diamond-content"><i class="fa-solid fa-code-branch"></i></div>
+                    </div>
+
+                    <!-- Row 7 -->
+                    <div id="node-sample-req" class="node-card border-blue" style="top:630px;left:37.5%;">
+                        <div class="icon-pill icon-blue"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">打样申请</div><div class="node-sub">下达打样任务</div></div>
+                    </div>
+                    <div id="node-sample-make" class="node-card border-green" style="top:630px;left:62.5%;">
+                        <div class="icon-pill icon-green"><i class="fa-solid fa-industry"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">车间打样</div><div class="node-sub">进度看板透明化</div></div>
+                    </div>
+
+                    <!-- Row 8 -->
+                    <div id="node-test" class="node-card border-orange" style="top:730px;left:12.5%;">
+                        <div class="icon-pill icon-orange"><i class="fa-solid fa-vial-circle-check"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">收样与测试</div><div class="node-sub">录入测试结论</div></div>
+                    </div>
+
+                    <!-- Row 9 -->
+                    <div id="node-dec-test" class="node-diamond" style="top:830px;left:12.5%;">
+                        <div class="diamond-content"><i class="fa-solid fa-code-branch"></i></div>
+                    </div>
+
+                    <!-- Row 10 -->
+                    <div id="node-sign" class="node-card border-orange" style="top:930px;left:12.5%;">
+                        <div class="icon-pill icon-orange"><i class="fa-solid fa-file-signature"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">签批承认书</div><div class="node-sub">电子契约确权</div></div>
+                    </div>
+                    <div id="node-baseline" class="node-card node-auto" style="top:930px;left:87.5%;">
+                        <div class="icon-pill icon-purple"><i class="fa-solid fa-lock"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">数字基线锁定</div><div class="node-sub">定点并锁定BOM</div></div>
+                    </div>
+
+                    <!-- Row 11 -->
+                    <div id="node-po" class="node-card border-orange" style="top:1030px;left:12.5%;">
+                        <div class="icon-pill icon-orange"><i class="fa-solid fa-file-contract"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">抛转订单</div><div class="node-sub">提供Forecast/PO</div></div>
+                    </div>
+                    <div id="node-erp" class="node-card node-auto" style="top:1030px;left:87.5%;">
+                        <div class="icon-pill icon-purple"><i class="fa-solid fa-microchip"></i></div>
+                        <div class="node-text-wrap"><div class="node-title">解析与流转</div><div class="node-sub">推送至ERP排产</div></div>
+                    </div>
+
+                    <!-- Row 12 -->
+                    <div id="node-end" class="node-start-end text-green-400 border-green-500/30" style="top:1130px;left:87.5%;">
+                        <i class="fa-solid fa-check-circle"></i> 正式量产交付
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 连线绘制脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const svg = document.getElementById('svg-canvas');
+
+            // 精确计算节点相对于 .swimlane-grid 的坐标 (即使页面滚动或有Padding也能精准计算)
+            function getRect(id) {
+                const el = document.getElementById(id);
+                const parent = document.querySelector('.swimlane-grid');
+                if (!el || !parent) return null;
+                
+                const elRect = el.getBoundingClientRect();
+                const parentRect = parent.getBoundingClientRect();
+
+                return {
+                    top:    elRect.top    - parentRect.top,
+                    bottom: elRect.bottom - parentRect.top,
+                    left:   elRect.left   - parentRect.left,
+                    right:  elRect.right  - parentRect.left,
+                    cx:     elRect.left   - parentRect.left + elRect.width / 2,
+                    cy:     elRect.top    - parentRect.top  + elRect.height / 2,
+                    width:  elRect.width,
+                    height: elRect.height
+                };
+            }
+
+            function createPath(d, type = 'solid') {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', d);
+                const isDashed = type === 'dashed';
+                const color = isDashed ? '#f97316' : 'rgba(255,255,255,0.2)'; // 异常为橙色虚线，正常为灰白实线
+                path.setAttribute('stroke', color);
+                path.setAttribute('stroke-width', isDashed ? '2' : '1.5');
+                path.setAttribute('fill', 'none');
+                if (isDashed) path.setAttribute('stroke-dasharray', '6,4');
+                path.setAttribute('marker-end', isDashed ? 'url(#arrow-dashed)' : 'url(#arrow-solid)');
+                return path;
+            }
+
+            function createText(x, y, textStr, isSuccess = true) {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                
+                // 给文字添加黑色小背景框，避免被网格线或线条穿透影响阅读
+                const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                const width = textStr.length * 13 + 16;
+                bg.setAttribute('x', x - width/2);
+                bg.setAttribute('y', y - 12);
+                bg.setAttribute('width', width);
+                bg.setAttribute('height', 20);
+                bg.setAttribute('fill', '#0f141f'); // 与卡片底色一致
+                bg.setAttribute('rx', '4');
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', y + 3);
+                text.setAttribute('fill', isSuccess ? '#34d399' : '#fb923c'); // 成功绿，驳回橙
+                text.setAttribute('font-size', '11');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = textStr;
+
+                g.appendChild(bg);
+                g.appendChild(text);
+                return g;
+            }
+
+            function makeMarker(id, color) {
+                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                marker.setAttribute('id', id);
+                marker.setAttribute('viewBox', '0 0 10 10');
+                marker.setAttribute('refX', '8');
+                marker.setAttribute('refY', '5');
+                marker.setAttribute('markerWidth', '5');
+                marker.setAttribute('markerHeight', '5');
+                marker.setAttribute('orient', 'auto-start-reverse');
+                const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                p.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+                p.setAttribute('fill', color);
+                marker.appendChild(p);
+                return marker;
+            }
+
+            function drawConnections() {
+                // 清空并重新生成定义
+                svg.innerHTML = '';
+                const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                defs.appendChild(makeMarker('arrow-solid', 'rgba(255,255,255,0.3)'));
+                defs.appendChild(makeMarker('arrow-dashed', '#f97316'));
+                svg.appendChild(defs);
+
+                // 核心连线算法 (支持各种折线路径)
+                function connect(id1, id2, routing = 'down', type = 'solid', label = '') {
+                    const r1 = getRect(id1);
+                    const r2 = getRect(id2);
+                    if (!r1 || !r2) return;
+
+                    let d = '', textPoint = null;
+
+                    if (routing === 'down') {
+                        d = `M ${r1.cx} ${r1.bottom} L ${r2.cx} ${r2.top - 2}`;
+                        textPoint = { x: r1.cx + 20, y: (r1.bottom + r2.top) / 2 };
+                    } else if (routing === 'right') {
+                        d = `M ${r1.right} ${r1.cy} L ${r2.left - 2} ${r2.cy}`;
+                        textPoint = { x: (r1.right + r2.left) / 2, y: r1.cy - 12 };
+                    } else if (routing === 'left') {
+                        d = `M ${r1.left} ${r1.cy} L ${r2.right + 2} ${r2.cy}`;
+                    } else if (routing === 'right-down-left') {
+                        d = `M ${r1.right} ${r1.cy} L ${r2.cx} ${r1.cy} L ${r2.cx} ${r2.top - 2}`;
+                    } else if (routing === 'down-L-right') {
+                        d = `M ${r1.cx} ${r1.bottom} L ${r1.cx} ${r2.cy} L ${r2.left - 2} ${r2.cy}`;
+                    } else if (routing === 'down-L-left') {
+                        d = `M ${r1.cx} ${r1.bottom} L ${r1.cx} ${r2.cy} L ${r2.right + 2} ${r2.cy}`;
+                        textPoint = { x: r1.cx - 20, y: r1.bottom + 20 };
+                    } else if (routing === 'left-up-right') {
+                        d = `M ${r1.left} ${r1.cy} L ${r1.left - 25} ${r1.cy} L ${r1.left - 25} ${r2.cy} L ${r2.left - 2} ${r2.cy}`;
+                        textPoint = { x: r1.left - 15, y: r1.cy - 12 };
+                    } else if (routing === 'right-up-left') {
+                        d = `M ${r1.right} ${r1.cy} L ${r1.right + 25} ${r1.cy} L ${r1.right + 25} ${r2.cy} L ${r2.right + 2} ${r2.cy}`;
+                        textPoint = { x: r1.right + 15, y: r1.cy - 12 };
+                    }
+
+                    svg.appendChild(createPath(d, type));
+                    
+                    if (label && textPoint) {
+                        const isSuccess = !label.includes('驳回') && !label.includes('不通过');
+                        svg.appendChild(createText(textPoint.x, textPoint.y, label, isSuccess));
+                    }
+                }
+
+                // 节点业务逻辑映射
+                connect('node-start',      'node-lead',        'right-down-left');
+                connect('node-lead',       'node-credit',      'right');
+                connect('node-credit',     'node-dec-credit',  'down-L-left',   'dashed');
+                connect('node-dec-credit', 'node-opp',         'down',           'solid', '通过');
+                connect('node-opp',        'node-bom',         'right');
+                connect('node-bom',        'node-cpq',         'down-L-right');
+                connect('node-cpq',        'node-quote',       'down-L-left',   'dashed');
+                connect('node-quote',      'node-dec-quote',   'down-L-left');
+                connect('node-dec-quote',  'node-sample-req',  'right-down-left','solid', '确认接受');
+                connect('node-dec-quote',  'node-bom',         'left-up-right',  'dashed','驳回议价');
+                connect('node-sample-req', 'node-sample-make', 'right');
+                connect('node-sample-make','node-test',        'down-L-left');
+                connect('node-test',       'node-dec-test',    'down');
+                connect('node-dec-test',   'node-sign',        'down',           'solid', '测试Pass');
+                connect('node-dec-test',   'node-sample-req',  'right-up-left',  'dashed','不通过重打');
+                connect('node-sign',       'node-baseline',    'right-down-left');
+                connect('node-baseline',   'node-po',          'down-L-left');
+                connect('node-po',         'node-erp',         'right-down-left');
+                connect('node-erp',        'node-end',         'down');
+            }
+
+            // 初始化渲染，添加延时以确保字体和卡片尺寸已彻底被DOM挂载
+            setTimeout(drawConnections, 100);
+
+            // 当浏览器尺寸变化时，动态重绘SVG连线
+            window.addEventListener('resize', () => {
+                requestAnimationFrame(drawConnections);
+            });
+        });
+    </script>
+</body>
+</html>

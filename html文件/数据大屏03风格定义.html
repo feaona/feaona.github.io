@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03风格定义 - 结构件项目</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #000;
+            height: 100vh; width: 100vw;
+            overflow: hidden; position: relative;
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', STHeiti, 'Microsoft Yahei', sans-serif;
+        }
+
+        #scale-wrapper {
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 1920px; height: 1080px;
+            transform-origin: center center;
+            background: url('../image/大数据背景无齿轮.webp') center center / cover no-repeat;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            transform: translate(-50%, -50%);
+        }
+
+        .blueprint-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+        }
+
+        /* ── 顶部标题（与 01/02 完全一致） ── */
+        .header {
+            position: absolute;
+            top: 60px; left: 60px;
+            z-index: 10;
+            display: flex; align-items: baseline; flex-wrap: wrap;
+            width: 760px;
+        }
+        .header-num {
+            font-size: 86px; font-weight: 800;
+            color: #00e5ff;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+            line-height: 1; letter-spacing: 2px;
+        }
+        .header-title {
+            font-size: 54px; font-weight: 600;
+            color: #ffffff;
+            margin-left: 15px; letter-spacing: 4px; line-height: 1;
+        }
+        .header-underline {
+            width: 480px; height: 6px;
+            background: linear-gradient(90deg, #00e5ff, rgba(0, 229, 255, 0));
+            margin-top: 15px; position: relative;
+            box-shadow: 0 0 10px #00e5ff;
+        }
+        .header-underline::before {
+            content: '';
+            position: absolute; left: 0; top: -2px;
+            width: 30px; height: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px #00e5ff;
+        }
+
+        /* ── 主内容区（铺满全幅，右侧不再为齿轮留白） ── */
+        .content-area {
+            position: absolute;
+            top: 280px; left: 60px; right: 60px;
+            z-index: 10;
+            display: flex; flex-direction: column;
+            gap: 40px;
+        }
+
+        /* 两列 */
+        .columns {
+            display: flex; gap: 100px;
+            align-items: flex-start;
+        }
+        /* 左列固定宽，右列占剩余空间 */
+        .col { display: flex; flex-direction: column; gap: 0; }
+        .col:first-child { width: 580px; flex-shrink: 0; }
+        .col:last-child  { flex: 1; overflow: visible; }
+
+        .col-title {
+            font-size: 40px; font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 2px; line-height: 1.3;
+            margin-bottom: 12px;
+        }
+        .col-divider {
+            width: 120px; height: 2px;
+            background: rgba(0, 229, 255, 0.30);
+            margin-bottom: 28px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .col-divider::before {
+            content: '';
+            position: absolute; left: 0; top: 0;
+            width: 36px; height: 2px;
+            background: #00e5ff;
+            box-shadow: 0 0 8px #00e5ff;
+        }
+        .col-body {
+            font-size: 28px; font-weight: 300;
+            color: rgba(255, 255, 255, 0.78);
+            line-height: 1.9; letter-spacing: 1px;
+            max-width: 700px;
+            height: 160px;
+            overflow: hidden;
+        }
+
+        /* ── 图片悬浮交互 ── */
+        .style-imgs {
+            display: flex; gap: 20px; margin-top: 16px;
+        }
+        .style-img-item {
+            flex: 1;
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            border: 1.5px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+            transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                        box-shadow 0.4s ease;
+        }
+        .style-img-item::after {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 13px;
+            border: 1.5px solid rgba(0,229,255,0);
+            transition: border-color 0.4s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .style-img-item:hover {
+            transform: translateY(-10px) scale(1.04);
+            box-shadow: 0 20px 56px rgba(0,229,255,0.22), 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .style-img-item:hover::after {
+            border-color: rgba(0,229,255,0.6);
+        }
+        .style-img-item img {
+            width: 100%; height: auto; display: block; object-fit: contain;
+        }
+
+        /* ── 三个色块 ── */
+        .swatches {
+            display: flex; gap: 24px;
+            overflow: visible;
+        }
+        .swatch {
+            width: 255px; height: 172px; flex-shrink: 0;
+            border-radius: 20px;
+            position: relative; overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                        border-color 0.4s ease,
+                        filter 0.4s ease;
+        }
+        .swatch:hover {
+            transform: translateY(-12px) scale(1.05);
+            border-color: rgba(255,255,255,0.40);
+            filter: brightness(1.18) saturate(1.12);
+        }
+        /* 从上到下的光效渐变层 */
+        .swatch::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(255,255,255,0.52) 0%,
+                rgba(255,255,255,0.16) 30%,
+                rgba(255,255,255,0.03) 58%,
+                rgba(0,0,0,0.20) 100%
+            );
+            z-index: 1;
+        }
+        .swatch-info {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 10px 20px 13px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.48) 0%, transparent 100%);
+            z-index: 2;
+            display: flex; align-items: baseline; gap: 12px;
+        }
+        .swatch-name {
+            font-size: 24px; font-weight: 600;
+            color: #fff; letter-spacing: 2px;
+        }
+        .swatch-hex {
+            font-size: 18px; font-weight: 400;
+            color: rgba(255,255,255,0.65); letter-spacing: 1px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="scale-wrapper">
+        <div class="blueprint-grid"></div>
+
+        <!-- 标题（与 02 一致） -->
+        <header class="header">
+            <div style="display:flex;align-items:baseline;">
+                <span class="header-num">0<span style="color:#F5A623;text-shadow:0 0 20px rgba(245,166,35,0.6);">3</span></span>
+                <span class="header-title">风格定义</span>
+            </div>
+            <div class="header-underline"></div>
+        </header>
+
+        <!-- 主内容区（top:220px，与 02 subtitle 起点相同） -->
+        <div class="content-area">
+
+            <!-- 两列文本 -->
+            <div class="columns">
+                <!-- 左列：品牌风格 + 图片 -->
+                <div class="col">
+                    <div class="col-title">根据品牌属性定义风格</div>
+                    <div class="col-divider"></div>
+                    <div class="col-body">采用深色背景与「超玻璃拟物」质感。以极简、严谨的视觉框架，清晰呈现复杂的产销数据，打造高管全局掌控感。</div>
+                    <div class="style-imgs">
+                        <div class="style-img-item">
+                            <img src="../image/工业硬核.webp" alt="工业硬核">
+                        </div>
+                        <div class="style-img-item">
+                            <img src="../image/数字敏捷.webp" alt="数字敏捷">
+                        </div>
+                    </div>
+                </div>
+                <!-- 右列：颜色选用 + 色块 -->
+                <div class="col" style="overflow:visible;">
+                    <div class="col-title">颜色选用</div>
+                    <div class="col-divider"></div>
+                    <div class="col-body">冷峻克制，精准聚焦。以「精密深蓝」为基调，彰显制造业稳重；以「数控青」拉升核心数据；用「工业警示金」聚焦关键转化与异常预警，确保信息高效传达。</div>
+                    <!-- 三个色块，左对齐"颜色选用"文字 -->
+                    <div class="swatches" style="margin-top:16px;">
+                        <div class="swatch" style="background-color:#1B4F93;box-shadow:0 8px 40px rgba(27,79,147,0.55);">
+                            <div class="swatch-info"><span class="swatch-name">精密深蓝</span></div>
+                        </div>
+                        <div class="swatch" style="background-color:#00D1FF;box-shadow:0 8px 40px rgba(0,209,255,0.50);">
+                            <div class="swatch-info"><span class="swatch-name">数控青</span></div>
+                        </div>
+                        <div class="swatch" style="background-color:#F5A623;box-shadow:0 8px 40px rgba(245,166,35,0.50);">
+                            <div class="swatch-info"><span class="swatch-name">工业警示金</span></div>
+                        </div>
+                    </div>
+                    <!-- 色号一行，对齐各色块 -->
+                    <div style="display:flex;gap:24px;margin-top:10px;">
+                        <div style="width:255px;flex-shrink:0;font-size:20px;font-weight:400;color:rgba(255,255,255,0.60);letter-spacing:2px;text-align:center;">#1B4F93</div>
+                        <div style="width:255px;flex-shrink:0;font-size:20px;font-weight:400;color:rgba(255,255,255,0.60);letter-spacing:2px;text-align:center;">#00D1FF</div>
+                        <div style="width:255px;flex-shrink:0;font-size:20px;font-weight:400;color:rgba(255,255,255,0.60);letter-spacing:2px;text-align:center;">#F5A623</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function resizeSlide() {
+            const wrapper = document.getElementById('scale-wrapper');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+        window.addEventListener('resize', resizeSlide);
+        resizeSlide();
+    </script>
+</body>
+</html>

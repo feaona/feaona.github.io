@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节气H5展示</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        body { background-color: #e0f2fe; margin: 0; padding: 0; overflow-x: hidden; }
+
+        .mockup-section {
+            background-color: #e0f2fe;
+            width: 100%; padding-top: 3rem; padding-bottom: 6rem;
+            position: relative;
+            display: flex; flex-direction: column;
+        }
+
+        .phone-mockup {
+            background: rgba(255,255,255,0.95);
+            border: 3px solid #fff;
+            border-radius: 36px;
+            aspect-ratio: 375/812;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05), 0 0 20px rgba(255,255,255,0.8),
+                        inset 0 0 15px rgba(135,206,235,0.2);
+            position: relative; overflow: hidden;
+            transition: all 0.4s ease; cursor: pointer;
+        }
+        .phone-mockup:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1), 0 0 30px #fff,
+                        inset 0 0 20px rgba(135,206,235,0.4);
+        }
+        .notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 40%; height: 20px; background: rgba(255,255,255,0.8);
+            border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.05); z-index: 20;
+        }
+        .phone-grid {
+            display: grid; grid-template-columns: repeat(3,1fr);
+            align-items: start; gap: 1.5rem 2rem;
+        }
+    </style>
+</head>
+<body class="text-gray-800 font-sans">
+
+    <section class="mockup-section" style="align-items:center;">
+
+        <!-- 居中：标题 + 全部6个样机 -->
+        <div style="width:100%;max-width:52rem;padding:0 1.5rem;">
+            <div class="phone-grid">
+                <!-- 标题横跨3列 -->
+                <div style="grid-column:1/4" class="pb-4">
+                    <img src="../image/JQBT.webp" alt="节气标题"
+                         style="width:88%;height:auto;" class="drop-shadow-md" />
+                </div>
+                <!-- 第一行：样机 1-3 -->
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <img src="../image/JQCF01.webp" alt="节气01" class="w-full h-full object-cover">
+                </div>
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <img src="../image/JQLX02.webp" alt="节气02" class="w-full h-full object-cover">
+                </div>
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <img src="../image/JQXS03.webp" alt="节气03" class="w-full h-full object-cover">
+                </div>
+                <!-- 第二行：样机 4-6 -->
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <img src="../image/JQQF04.webp" alt="节气04" class="w-full h-full object-cover">
+                </div>
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <img src="../image/JQSJ05.webp" alt="节气05" class="w-full h-full object-cover">
+                </div>
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <img src="../image/JQDX06.webp" alt="节气06" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        function reportHeight() {
+            var h = document.documentElement.scrollHeight;
+            if (window.parent !== window)
+                window.parent.postMessage({ type: 'iframeHeight', height: h }, '*');
+        }
+        window.addEventListener('load', function() { setTimeout(reportHeight, 300); });
+        setTimeout(reportHeight, 1200);
+    </script>
+</body>
+</html>

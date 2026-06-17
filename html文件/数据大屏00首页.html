@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精密制造数据可视化大屏 - 作品集首页</title>
+    <!-- 引入 Tailwind CSS 用于快速布局 -->
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        /* 确保基础样式重置，并在预览窗格中居中显示 */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        /* 严格限制 1920x1080 尺寸 */
+        .portfolio-canvas {
+            width: 1920px;
+            height: 1080px;
+            position: relative;
+            overflow: hidden;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            transform: translate(-50%, -50%);
+            background: #0f172a url('../image/数据大屏背景00.webp') center center / cover no-repeat;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 自定义文本发光或阴影效果（增加一点质感） */
+        .text-glow {
+            text-shadow: 0 8px 26px rgba(0, 0, 0, 0.52), 0 0 18px rgba(0, 229, 255, 0.18);
+        }
+
+        .font-cn {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .font-din {
+            font-family: "DIN Alternate", "DIN Condensed", "DIN 1451", "Arial Narrow", Arial, sans-serif;
+        }
+
+        .copy-panel {
+            width: 740px;
+            padding: 54px 60px 58px;
+            border: 1px solid rgba(0, 229, 255, 0.18);
+            border-radius: 18px;
+            background:
+                linear-gradient(90deg, rgba(2, 10, 24, 0.82), rgba(2, 10, 24, 0.56) 72%, rgba(2, 10, 24, 0.22)),
+                radial-gradient(circle at 18% 18%, rgba(0, 229, 255, 0.16), transparent 34%);
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+        }
+
+        .copy-title {
+            font-size: 78px;
+            font-weight: 800;
+            line-height: 1.08;
+            letter-spacing: 6px;
+        }
+
+        .copy-subtitle {
+            font-size: 30px;
+            font-weight: 500;
+            line-height: 1.36;
+            letter-spacing: 1px;
+        }
+
+        .copy-body {
+            font-size: 21px;
+            font-weight: 300;
+            line-height: 1.74;
+            letter-spacing: 0.8px;
+            color: rgba(255, 255, 255, 0.74);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="portfolio-canvas">
+        
+        <!-- 左侧文本内容容器 -->
+        <div class="absolute left-[118px] top-[176px] z-10 flex flex-col copy-panel">
+            
+            <!-- 标题组 -->
+            <div class="flex flex-col mb-10 font-cn">
+                <h1 class="copy-title text-white text-glow">
+                    精密制造
+                </h1>
+                <h1 class="copy-title text-[#00e5ff] text-glow mt-2">
+                    数据可视化大屏
+                </h1>
+            </div>
+
+            <!-- 副标题组 -->
+            <div class="flex flex-col mb-12 font-din">
+                <h2 class="copy-subtitle text-white opacity-95">
+                    Precision Electronic Structures
+                </h2>
+                <h2 class="copy-subtitle text-white opacity-95 mt-1">
+                    Manufacturing Digital Dashboard
+                </h2>
+            </div>
+
+            <!-- 正文内容 (严格按照原图换行与字数排列) -->
+            <div class="copy-body font-cn">
+                此大屏系统聚焦于精密制造业务的后台数据可视化。系统打破<br>
+                了数据孤岛，将前端销售（唯一销售漏斗、CPQ智能报价）、<br>
+                中端生产追踪（样品与订单全生命周期）与全球交付网络（地<br>
+                图枢纽） ）进行深度融合。通过动态展示营业额趋势、产能水<br>
+                位对比及智能风险预警，帮助决策者实时掌握客户健康度与项<br>
+                目推进卡点。该系统为企业构建了透明化的运营指挥中心，有<br>
+                效提升了需求响应速度、综合良品率及风险影响能力。
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+<script>
+    function resizeSlide() {
+        const canvas = document.querySelector('.portfolio-canvas');
+        const scaleX = window.innerWidth / 1920;
+        const scaleY = window.innerHeight / 1080;
+        const scale = Math.min(scaleX, scaleY);
+        canvas.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    }
+    window.addEventListener('resize', resizeSlide);
+    resizeSlide();
+</script>
+</html>

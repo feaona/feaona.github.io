@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06. DESIGN - H5页面展示</title>
+    <!-- 引入 Tailwind CSS 进行快速样式构建 -->
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        /* 自定义样式以实现样机效果和倾斜网格布局 */
+        body {
+            background-color: #2c2c2c; /* 外层深色背景，用于凸显展示区 */
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            /* 使用 Flexbox 绝对居中，完美解决偏移问题 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 固定的 1920 * 1080 尺寸画板 */
+        .page-container {
+            width: 1920px;
+            height: 1080px;
+            flex-shrink: 0; /* 防止被 flex 强行压缩宽度 */
+            /* 图二同款渐变绿背景 */
+            background: linear-gradient(135deg, #e4f3c7 0%, #a8d562 100%);
+            position: relative;
+            /* 纯 CSS 等比例缩放，去除会引起冲突的 translate 定位 */
+            transform: scale(min(calc(96vw / 1920), calc(96vh / 1080)));
+            transform-origin: center center;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); /* 增加画板阴影 */
+            border-radius: 16px; /* 增加一点圆角让展板更好看 */
+        }
+
+        /* 倾斜的容器，放大以覆盖整个屏幕 */
+        .mockup-grid-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 3500px;
+            height: 3500px;
+            transform: translate(-50%, -50%) rotate(45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 每一列样机 */
+        .mockup-col {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            pointer-events: auto;
+        }
+
+        /* 奇偶列错落，参考图风格 */
+        .mockup-col:nth-child(even) {
+            transform: translateY(240px);
+        }
+        .mockup-col:nth-child(odd) {
+            transform: translateY(-80px);
+        }
+
+        /* 单个手机样机样式（原 300×622，等比 ×0.75 → 225×467） */
+        .phone-mockup {
+            width: 225px;
+            height: 467px;
+            background: #ffffff;
+            border-radius: 34px;
+            padding: 9px;
+            box-shadow: 19px 23px 38px rgba(0, 0, 0, 0.15),
+                        inset 0 0 0 2px #f0f0f0,
+                        inset 0 0 0 4px #ffffff;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        /* 鼠标悬浮时稍微浮起 */
+        .phone-mockup:hover {
+            transform: translateY(-11px) scale(1.02);
+            box-shadow: 26px 34px 45px rgba(0, 0, 0, 0.2),
+                        inset 0 0 0 2px #f0f0f0,
+                        inset 0 0 0 4px #ffffff;
+        }
+
+        /* 屏幕区域 */
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #f8f9fa;
+            border-radius: 26px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* 刘海屏 (Notch) */
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 105px;
+            height: 21px;
+            background: #ffffff;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        /* 摄像头小圆点 */
+        .camera-dot {
+            width: 9px;
+            height: 9px;
+            background: #111;
+            border-radius: 50%;
+            border: 1px solid #2a2a2a;
+            box-shadow: inset 0px 0px 3px rgba(255,255,255,0.2);
+            margin-right: -30px;
+        }
+
+        /* 占位图自适应 */
+        .mockup-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 左上角标题区域 */
+        .header-section {
+            position: absolute;
+            top: 50px;
+            left: 60px;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1920*1080 核心展示容器 -->
+    <div class="page-container" id="pageContainer">
+        <!-- 倾斜样机网格 -->
+        <div class="mockup-grid-wrapper" id="gridWrapper">
+            <!-- 网格内容将通过 JS 动态生成填充，保持 HTML 整洁 -->
+        </div>
+    </div>
+
+    <script>
+        // 当本地图片 (ZW01.webp 等) 找不到时，触发此函数生成漂亮的带名字 SVG 占位图
+        function handleImageError(img, filename) {
+            const svg = `
+                <svg xmlns='http://www.w3.org/2000/svg' width='375' height='812' viewBox='0 0 375 812'>
+                    <rect width='375' height='812' fill='#f1f5f9'/>
+                    <circle cx='187.5' cy='360' r='60' fill='#e2e8f0'/>
+                    <path d='M187.5 330 L187.5 390 M157.5 360 L217.5 360' stroke='#cbd5e1' stroke-width='6' stroke-linecap='round'/>
+                    <text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='32' font-weight='bold' fill='#64748b'>${filename}</text>
+                    <text x='50%' y='64%' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='24' fill='#94a3b8'>375 x 812</text>
+                </svg>
+            `;
+            img.src = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+            // 移除 onerror 以免死循环
+            img.onerror = null; 
+        }
+
+        // 20 项独立数组，与 5列×4行 一一对应，无需循环取余
+        const imageFiles = [
+            // col 0（旋转后视觉偏左下）
+            "../image/H5SCBN01.webp",   // col0 j=0
+            "../image/H502.jpg",         // col0 j=1
+            "../image/H504.jpg",        // col0 j=2
+            "../image/H501.jpg",        // col0 j=3
+            // col 1
+            "../image/H504.jpg",        // col1 j=0
+            "../image/H5CRHD.webp",     // col1 j=1
+            "../image/H5YJ.webp",       // col1 j=2
+            "../image/H5SCBN01.webp",   // col1 j=3
+            // col 2（中间列）
+            "../image/H504.jpg",        // col2 j=0
+            "../image/H5CT1.webp",      // col2 j=1
+            "../image/H501.jpg",        // col2 j=2
+            "../image/H504.jpg",        // col2 j=3
+            // col 3
+            "../image/H5CT02.webp",     // col3 j=0
+            "__OVERLAY__",              // col3 j=1 ← 原有获奖弹框位置
+            "../image/H5TC.jpg",        // col3 j=2
+            "../image/H5YJ.webp",       // col3 j=3
+            // col 4（旋转后视觉偏右上）
+            "../image/H502.jpg",        // col4 j=0
+            "../image/H502.jpg",        // col4 j=1
+            "../image/H501.jpg",        // col4 j=2
+            "../image/H5CT1.webp",      // col4 j=3
+        ];
+
+        const gridWrapper = document.getElementById('gridWrapper');
+        const totalColumns = 5;
+        const phonesPerCol = 4;
+
+        let fileIndex = 0;
+
+        for (let i = 0; i < totalColumns; i++) {
+            const colDiv = document.createElement('div');
+            colDiv.className = 'mockup-col';
+
+            for (let j = 0; j < phonesPerCol; j++) {
+                const currentFileName = imageFiles[fileIndex];
+                fileIndex++;
+
+                let screenContent;
+                if (currentFileName === '__OVERLAY__') {
+                    screenContent = `
+                        <div style="position:absolute;inset:0;z-index:1;
+                                    background-image:url('../image/H5YJ01.webp');
+                                    background-size:auto 112%;
+                                    background-position:top center;
+                                    background-repeat:no-repeat;"></div>
+                        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.80);z-index:10;"></div>
+                        <div style="position:absolute;inset:0;z-index:20;
+                                    display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                            <img src="../image/H5STHJ.webp"
+                                 style="width:80%;height:auto;display:block;border-radius:8px;">
+                            <div style="margin-top:10px;width:30px;height:30px;border-radius:50%;
+                                        border:2px solid rgba(255,255,255,0.85);
+                                        display:flex;align-items:center;justify-content:center;">
+                                <svg width="11" height="11" viewBox="0 0 15 15" fill="none">
+                                    <line x1="3" y1="3" x2="12" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    <line x1="12" y1="3" x2="3" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>`;
+                } else {
+                    screenContent = `
+                        <img src="${currentFileName}"
+                             alt="${currentFileName}"
+                             class="mockup-image"
+                             onerror="handleImageError(this, '${currentFileName}')">`;
+                }
+
+                colDiv.innerHTML += `
+                    <div class="phone-mockup">
+                        <div class="phone-notch"><div class="camera-dot"></div></div>
+                        <div class="phone-screen" style="position:relative;">${screenContent}</div>
+                    </div>`;
+            }
+            gridWrapper.appendChild(colDiv);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设计方法-排期 (1920x1080)</title>
+    <script src="../lib/tailwind.cdn.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'DIN Alternate', 'DIN Condensed', 'PingFang SC', 'Helvetica Neue', sans-serif;
+            font-weight: 400;
+        }
+
+        *, *::before, *::after {
+            font-weight: 400;
+        }
+
+        /* ── 字体层级（直接在 style 块定义，优先级高于 * 重置和 Tailwind 层级） ── */
+        .canvas-1920 h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .canvas-1920 h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1f2937;
+            letter-spacing: 0.1em;
+            line-height: 1.3;
+        }
+        .canvas-1920 p {
+            font-size: 28px;
+            font-weight: 400;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+
+        /* 核心画布区域，严格限制 1920x1080 */
+        .canvas-1920 {
+            width: 1920px;
+            height: 1080px;
+            background-color: #fcfdfa;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transform-origin: center center;
+        }
+
+        /* 排期矩形块的基础样式 */
+        .schedule-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+            border-radius: 4px; /* 极简微圆角，保留模版的方正感 */
+            transition: transform 0.3s ease;
+        }
+
+        .schedule-box:hover {
+            transform: translateY(-3px);
+        }
+
+        /* 箭头动画 */
+        @keyframes bounceDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+        .arrow-down {
+            animation: bounceDown 2s infinite ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <!-- 1920*1080 固定画布 -->
+    <div class="canvas-1920" id="main-canvas">
+        
+        <!-- ================= 左侧区域 ================= -->
+        
+        <!-- 水印文字：严格对齐第 01/05 页标准，顺延为 06 -->
+        <div class="absolute top-[100px] left-[100px] flex items-baseline pointer-events-none select-none z-10 opacity-70">
+            <span class="text-[100px] font-black text-[#ABCC58] tracking-tighter leading-none">05<span style="color:#F8D560">.</span></span>
+            <span class="text-[80px] font-black text-[#dce2c6] tracking-widest ml-4 uppercase leading-none mix-blend-multiply">Design</span>
+        </div>
+
+        <!-- 主标题 (位置字号完全一致) -->
+        <div class="absolute top-[240px] left-[120px] z-20">
+            <h1 class="text-[48px] font-bold text-gray-900">
+                设-计-方-法
+            </h1>
+        </div>
+
+        <!-- 左侧文本描述区块 -->
+        <div class="absolute top-[400px] left-[120px] w-[560px] z-20">
+            
+            <!-- 优化流程 -->
+            <div>
+                <div class="flex items-center mb-5">
+                    <span class="w-4 h-4 rounded-full bg-[#F8D560] mr-4 shadow-sm"></span>
+                    <h2 class=”text-[36px] font-bold text-gray-800 tracking-widest”>优化流程</h2>
+                </div>
+                <p class=”text-[28px] text-gray-600 leading-[1.8] tracking-wide”>
+                    针对”踏春出游季”多达12个页面的庞大设计量，我们改变了常规的串行设计流程。在活动前期的运营策划阶段，设计便提前介入，同步筹备3D场景与UI组件规范；在给到主页面原型后开始集中发力，大幅提升了整体的产出效率与视觉统一性。
+                </p>
+            </div>
+
+        </div>
+
+        <!-- 底层贯穿的长虚线 -->
+        <div class="absolute top-[960px] left-[100px] flex items-center w-[1720px] z-10">
+            <div class="w-full border-b-[3px] border-dashed border-[#F8D560] opacity-70"></div>
+        </div>
+
+
+        <!-- ================= 右侧视觉图形区域 (流程排期图) ================= -->
+        
+        <div class="absolute top-[320px] left-[780px] w-[980px] z-20 flex flex-col items-center">
+            
+            <!-- 第一排：常规排期 -->
+            <div class="flex justify-between w-full mb-[20px]">
+                <!-- 运营 -->
+                <div class="schedule-box w-[280px] h-[100px] bg-[#ABCC58] text-white">
+                    运营【3天】
+                </div>
+                <!-- 设计 -->
+                <div class="schedule-box w-[280px] h-[100px] bg-[#F8D560] text-white">
+                    设计【3天】
+                </div>
+                <!-- 产品经理 -->
+                <div class="schedule-box w-[280px] h-[100px] bg-[#ABCC58] text-white">
+                    产品经理【3天】
+                </div>
+            </div>
+            
+            <!-- 常规活动排期 标签 -->
+            <div class="text-[22px] text-gray-700 font-bold tracking-widest mb-[60px]">
+                常规活动排期
+            </div>
+
+
+            <!-- 第二排：此次活动排期 (前半部分) -->
+            <div class="flex justify-between w-full mb-[30px]">
+                <!-- 运营 -->
+                <div class="schedule-box w-[280px] h-[100px] bg-[#ABCC58] text-white">
+                    运营【3天】
+                </div>
+                <!-- 灰色前置设计 -->
+                <div class="schedule-box w-[280px] h-[100px] bg-[#F3F4F6] text-[#9CA3AF] relative">
+                    设计【2天】
+                    <!-- 指向下方的箭头 -->
+                    <div class="absolute -bottom-[45px] left-1/2 -translate-x-1/2 flex flex-col items-center arrow-down">
+                        <div class="w-[2px] h-[25px] bg-[#F8D560]"></div>
+                        <div class="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-transparent border-t-[#F8D560]"></div>
+                    </div>
+                </div>
+                <!-- 产品经理 -->
+                <div class="schedule-box w-[280px] h-[100px] bg-[#ABCC58] text-white">
+                    产品经理【3天】
+                </div>
+            </div>
+
+            <!-- 第三排：此次活动排期 (设计发力) -->
+            <!-- 这里的 4 天与之前 page5 的内容"设计：1人 4天"保持业务逻辑的一致性 -->
+            <div class="flex justify-center w-full mb-[20px] mt-[15px]">
+                <div class="schedule-box w-[980px] h-[110px] bg-[#F8D560] text-white text-[32px] tracking-[0.15em]">
+                    设计【4天】
+                </div>
+            </div>
+
+            <!-- 此次活动排期 标签 -->
+            <div class="text-[22px] text-gray-700 font-bold tracking-widest">
+                此次活动排期
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 兼容性完美的 JS 动态缩放控制 -->
+    <script>
+        function fitToScreen() {
+            const canvas = document.getElementById('main-canvas');
+            const scaleX = window.innerWidth / 1920;
+            const scaleY = window.innerHeight / 1080;
+            const scale = Math.min(scaleX, scaleY);
+            canvas.style.transform = `scale(${scale})`;
+        }
+        fitToScreen();
+        window.addEventListener('resize', fitToScreen);
+    </script>
+</body>
+</html>

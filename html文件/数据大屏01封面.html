@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01设计流程 - 结构件项目</title>
+    <style>
+        /* 全局基础设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', STHeiti, 'Microsoft Yahei', sans-serif;
+        }
+
+        /* 核心画布容器 1920x1080 */
+        #scale-wrapper {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 1920px;
+            height: 1080px;
+            transform-origin: center center;
+            background: url('../image/数据大屏背景.webp') center center / cover no-repeat;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            /* 初始状态由 JS 接管 */
+            transform: translate(-50%, -50%); 
+        }
+
+        /* 蓝图/工程网格背景 */
+        .blueprint-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 1;
+        }
+
+        /* 背景发光微粒 */
+        .particles {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background-image: radial-gradient(2px 2px at 100px 200px, rgba(0, 229, 255, 0.6), transparent),
+                              radial-gradient(2px 2px at 400px 800px, rgba(0, 229, 255, 0.4), transparent),
+                              radial-gradient(3px 3px at 800px 150px, rgba(0, 229, 255, 0.5), transparent),
+                              radial-gradient(2px 2px at 1600px 900px, rgba(0, 229, 255, 0.8), transparent);
+            opacity: 0.8;
+            animation: floatParticles 20s linear infinite alternate;
+        }
+
+        /* 顶部标题区 */
+        .header {
+            position: absolute;
+            top: 60px;
+            left: 60px;
+            z-index: 10;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            width: 400px;
+        }
+
+        .header-num {
+            font-size: 86px;
+            font-weight: 800;
+            color: #00e5ff;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+            line-height: 1;
+            letter-spacing: 2px;
+        }
+
+        .header-title {
+            font-size: 54px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-left: 15px;
+            letter-spacing: 4px;
+            line-height: 1;
+        }
+
+        .header-underline {
+            width: 320px;
+            height: 6px;
+            background: linear-gradient(90deg, #00e5ff, rgba(0, 229, 255, 0));
+            margin-top: 15px;
+            position: relative;
+            box-shadow: 0 0 10px #00e5ff;
+        }
+
+        .header-underline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -2px;
+            width: 30px;
+            height: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px #00e5ff;
+        }
+
+        /* 流程图 SVG 连线 */
+        .flowchart-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1920px;
+            height: 1080px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* 节点通用样式 */
+        .node {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(145deg, #ffffff, #e0f8ff);
+            border: 4px solid #00e5ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.3), inset 0 0 15px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+        }
+
+        .node::before {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            border: 1px dashed rgba(0, 229, 255, 0.6);
+            border-radius: 50%;
+            animation: spinRotate 10s linear infinite;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .node:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.6), inset 0 0 15px rgba(0,0,0,0.1);
+            border-color: #ffffff;
+        }
+
+        .node:hover::before {
+            opacity: 1;
+            border-color: #00e5ff;
+            animation-duration: 5s;
+        }
+
+        .node-text {
+            color: #021a36;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.4;
+            max-width: 120px;
+            letter-spacing: 1px;
+        }
+
+        /* 各个节点的精确定位，排列在同一水平线上 */
+        .node-1 { left: 150px; top: 560px; }
+        .node-2 { left: 330px; top: 560px; }
+        .node-3 { left: 510px; top: 560px; }
+        .node-4 { left: 690px; top: 560px; }
+        .node-5 { left: 870px; top: 560px; }
+        .node-6 { left: 1050px; top: 560px; }
+
+        /* 右侧结构件图形装饰 */
+        .tech-graphic {
+            position: absolute;
+            right: -160px;
+            top: -130px;
+            width: 1300px;
+            height: 1404px;
+            z-index: 3;
+            pointer-events: none;
+            transform: translateZ(0);
+        }
+
+        .spin-slow   { transform-origin: 800px 540px; }
+        .spin-reverse { transform-origin: 800px 540px; }
+
+        @keyframes floatParticles {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-50px) scale(1.1); }
+        }
+
+        /* ── 电流流光动效 ── */
+        /* 路径总长约 1800px；dasharray = 20% 亮段 + 80% 空隙 */
+        @keyframes flow-light {
+            0%   { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -1800; }
+        }
+        .flow-current {
+            stroke-dasharray: 360 1440;
+            stroke-dashoffset: 0;
+            animation: flow-light 3s linear infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 锁定比例的画布容器 -->
+    <div id="scale-wrapper">
+        <!-- 蓝图底纹与粒子 -->
+        <div class="blueprint-grid"></div>
+        <div class="particles"></div>
+
+        <!-- 标题区域 -->
+        <header class="header">
+            <div style="display: flex; align-items: baseline;">
+                <span class="header-num">0<span style="color:#F5A623;text-shadow:0 0 20px rgba(245,166,35,0.6);">1</span></span>
+                <span class="header-title">设计流程</span>
+            </div>
+            <div class="header-underline"></div>
+        </header>
+
+        <!-- 右侧品牌化结构图形(行星减速机/机械传动主题) -->
+        <svg class="tech-graphic" viewBox="0 0 1000 1080">
+            <!-- 定义图标与滤镜 -->
+            <defs>
+                <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+                
+                <!-- 图标1：轴承 (行星机重要部件) -->
+                <g id="icon-bearing" stroke="#00e5ff" stroke-width="2" fill="none">
+                    <circle cx="0" cy="0" r="18" />
+                    <circle cx="0" cy="0" r="10" />
+                    <circle cx="0" cy="-14" r="2.5" fill="#00e5ff"/>
+                    <circle cx="0" cy="14" r="2.5" fill="#00e5ff"/>
+                    <circle cx="-14" cy="0" r="2.5" fill="#00e5ff"/>
+                    <circle cx="14" cy="0" r="2.5" fill="#00e5ff"/>
+                    <circle cx="-10" cy="-10" r="2.5" fill="#00e5ff"/>
+                    <circle cx="10" cy="10" r="2.5" fill="#00e5ff"/>
+                    <circle cx="-10" cy="10" r="2.5" fill="#00e5ff"/>
+                    <circle cx="10" cy="-10" r="2.5" fill="#00e5ff"/>
+                </g>
+                
+                <!-- 图标2：传动轴/输出轴 (动力输出) -->
+                <g id="icon-shaft" stroke="#00e5ff" stroke-width="2" fill="none" stroke-linejoin="round">
+                    <rect x="-16" y="-8" width="32" height="16" fill="rgba(0, 229, 255, 0.1)"/>
+                    <line x1="-16" y1="0" x2="-24" y2="0" stroke-width="4"/>
+                    <line x1="16" y1="0" x2="24" y2="0" stroke-width="4"/>
+                    <path d="M -8 -8 L -8 8 M 0 -8 L 0 8 M 8 -8 L 8 8" stroke-width="1" stroke-dasharray="2 2"/>
+                </g>
+
+                <!-- 图标3：伺服电机 (动力源) -->
+                <g id="icon-motor" stroke="#00e5ff" stroke-width="2" fill="none" stroke-linejoin="round">
+                    <rect x="-14" y="-12" width="10" height="24" rx="2" fill="rgba(0, 229, 255, 0.1)"/>
+                    <rect x="-4" y="-10" width="18" height="20" rx="1" />
+                    <line x1="-14" y1="0" x2="-22" y2="0" stroke-width="3"/>
+                    <line x1="-4" y1="-5" x2="14" y2="-5" stroke-width="1"/>
+                    <line x1="-4" y1="5" x2="14" y2="5" stroke-width="1"/>
+                </g>
+
+                <!-- 图标4：单齿轮 (传动元素) -->
+                <g id="icon-gear-single" stroke="#00e5ff" stroke-width="2" fill="none" stroke-linejoin="round">
+                    <circle cx="0" cy="0" r="12" fill="rgba(0, 229, 255, 0.1)"/>
+                    <path d="M 0 -12 L 0 -18 M 0 12 L 0 18 M -12 0 L -18 0 M 12 0 L 18 0" stroke-width="4"/>
+                    <path d="M -8.5 -8.5 L -13 -13 M 8.5 8.5 L 13 13 M -8.5 8.5 L -13 13 M 8.5 -8.5 L 13 -13" stroke-width="4"/>
+                    <circle cx="0" cy="0" r="4" fill="#00e5ff"/>
+                </g>
+
+                <!-- 图标5：精密紧固件/五金件 (保留原有) -->
+                <g id="icon-fastener" stroke="#00e5ff" stroke-width="2" fill="none" stroke-linejoin="round">
+                    <polygon points="0,-18 12,-11 12,3 0,10 -12,3 -12,-11" fill="rgba(0, 229, 255, 0.1)"/>
+                    <polygon points="0,-12 6,-8 6,0 0,4 -6,0 -6,-8" />
+                    <path d="M -6 10 L -6 20 M 6 10 L 6 20" />
+                    <path d="M -6 14 L 6 14 M -6 18 L 6 18" />
+                </g>
+
+                <!-- 行星轮复用组件 (Planet Gear) -->
+                <g id="planet-gear-def">
+                    <circle cx="0" cy="0" r="45" fill="#00152b" stroke="#00e5ff" stroke-width="2"/>
+                    <!-- 行星轮齿 -->
+                    <circle cx="0" cy="0" r="38" fill="none" stroke="#00e5ff" stroke-width="10" stroke-dasharray="8 9.9"/>
+                    <!-- 中心轴承 -->
+                    <circle cx="0" cy="0" r="10" fill="#00e5ff"/>
+                    <path d="M -45 0 L 45 0 M 0 -45 L 0 45" stroke="rgba(0, 229, 255, 0.4)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="18" fill="none" stroke="rgba(0, 229, 255, 0.6)" stroke-width="1"/>
+                </g>
+
+                <!-- 通用六边形容器 -->
+                <g id="hex-container">
+                    <polygon points="0,-45 39,-22.5 39,22.5 0,45 -39,22.5 -39,-22.5" 
+                             fill="rgba(0, 229, 255, 0.05)" stroke="#00e5ff" stroke-width="2" filter="url(#cyanGlow)"/>
+                    <polygon points="0,-35 30,-17.5 30,17.5 0,35 -30,17.5 -30,-17.5" 
+                             fill="none" stroke="rgba(0, 229, 255, 0.3)" stroke-width="1"/>
+                </g>
+            </defs>
+
+            <!-- 中心定位坐标: x=800, y=540 -->
+            <!-- 基础环境背景环 -->
+            <circle cx="800" cy="540" r="450" fill="none" stroke="rgba(0, 102, 255, 0.2)" stroke-width="1" />
+            <circle cx="800" cy="540" r="550" fill="none" stroke="rgba(0, 229, 255, 0.1)" stroke-width="2" />
+            
+            <g class="spin-slow">
+                <circle cx="800" cy="540" r="380" fill="none" stroke="#00e5ff" stroke-width="1" stroke-dasharray="10 30" />
+            </g>
+
+            <!-- ================= 核心区域：行星减速机系统 ================= -->
+            
+            <!-- 1. 外齿圈 (Ring Gear) - 缓慢反向自转 -->
+            <g class="spin-reverse">
+                <circle cx="800" cy="540" r="200" fill="rgba(0, 20, 40, 0.6)" stroke="#0066ff" stroke-width="4"/>
+                <!-- 内齿圈的齿 (与行星轮啮合) -->
+                <circle cx="800" cy="540" r="185" fill="none" stroke="#00e5ff" stroke-width="16" stroke-dasharray="14 15.1"/> 
+                <!-- 外壳法兰与装配螺栓孔 -->
+                <circle cx="800" cy="540" r="225" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="30 10"/>
+                <g fill="#00e5ff">
+                    <circle cx="800" cy="315" r="4"/><circle cx="800" cy="765" r="4"/>
+                    <circle cx="575" cy="540" r="4"/><circle cx="1025" cy="540" r="4"/>
+                    <circle cx="641" cy="381" r="4"/><circle cx="959" cy="699" r="4"/>
+                    <circle cx="959" cy="381" r="4"/><circle cx="641" cy="699" r="4"/>
+                </g>
+            </g>
+
+            <!-- 2. 行星架与三个行星轮 (Carrier & Planetary Gears) - 顺时针公转 -->
+            <g class="spin-slow" style="transform-origin: 800px 540px;">
+                <!-- 行星架底盘，承载行星轮 -->
+                <polygon points="800,380 938.6,620 661.4,620" fill="rgba(0, 102, 255, 0.15)" stroke="#00e5ff" stroke-width="3"/>
+                <circle cx="800" cy="540" r="70" fill="rgba(0, 20, 40, 0.8)" stroke="#0066ff" stroke-width="2"/>
+                
+                <!-- 行星轮 1 (顶部) - 逆时针自转 -->
+                <g transform="translate(800, 410)">
+                    <g class="spin-gear-fast-reverse" style="transform-origin: 0px 0px;">
+                        <use href="#planet-gear-def"/>
+                    </g>
+                </g>
+                <!-- 行星轮 2 (右下) - 逆时针自转 -->
+                <g transform="translate(912.6, 605)">
+                    <g class="spin-gear-fast-reverse" style="transform-origin: 0px 0px;">
+                        <use href="#planet-gear-def"/>
+                    </g>
+                </g>
+                <!-- 行星轮 3 (左下) - 逆时针自转 -->
+                <g transform="translate(687.4, 605)">
+                    <g class="spin-gear-fast-reverse" style="transform-origin: 0px 0px;">
+                        <use href="#planet-gear-def"/>
+                    </g>
+                </g>
+                
+                <!-- 行星架中心三角固定盖板 -->
+                <polygon points="800,410 912.6,605 687.4,605" fill="none" stroke="#00e5ff" stroke-width="4" stroke-linejoin="round" opacity="0.5"/>
+            </g>
+
+            <!-- 3. 太阳轮 (Sun Gear) - 中心高速顺时针自转 -->
+            <g class="spin-gear-fast" style="transform-origin: 800px 540px;">
+                <circle cx="800" cy="540" r="85" fill="rgba(0, 40, 80, 0.9)" stroke="#00e5ff" stroke-width="2"/>
+                <!-- 太阳轮外齿 -->
+                <circle cx="800" cy="540" r="76" fill="none" stroke="#00e5ff" stroke-width="12" stroke-dasharray="12 13.5"/>
+                <!-- 中心动力输入轴 -->
+                <circle cx="800" cy="540" r="30" fill="none" stroke="#ffffff" stroke-width="3"/>
+                <circle cx="800" cy="540" r="14" fill="#00e5ff" class="pulse-opacity"/>
+                <!-- 轴键/内花键纹理 -->
+                <path d="M 770 540 L 830 540 M 800 510 L 800 570" stroke="#000" stroke-width="4"/>
+                <path d="M 715 540 L 885 540 M 800 455 L 800 625 M 740 480 L 860 600 M 740 600 L 860 480" stroke="rgba(0, 229, 255, 0.3)" stroke-width="2"/>
+            </g>
+
+            <!-- ================= 环绕六边形图标群 ================= -->
+            
+            <!-- -120度 -->
+            <g transform="translate(625, 237)">
+                <use href="#hex-container" />
+                <use href="#icon-bearing" /> <!-- 轴承 -->
+            </g>
+            <!-- -60度 -->
+            <g transform="translate(975, 237)">
+                <use href="#hex-container" />
+                <use href="#icon-shaft" /> <!-- 传动轴 -->
+            </g>
+            <!-- 0度 (左侧) -->
+            <g transform="translate(450, 540)">
+                <use href="#hex-container" />
+                <use href="#icon-fastener" /> <!-- 紧固件 -->
+            </g>
+            <!-- 120度 -->
+            <g transform="translate(625, 843)">
+                <use href="#hex-container" />
+                <use href="#icon-gear-single" /> <!-- 单齿轮 -->
+            </g>
+            <!-- 60度 -->
+            <g transform="translate(975, 843)">
+                <use href="#hex-container" />
+                <use href="#icon-motor" /> <!-- 伺服电机 -->
+            </g>
+            
+            <!-- 装饰传动连接线 (模拟装配指引) -->
+            <path d="M 500 540 L 575 540 M 660 300 L 710 380 M 660 780 L 710 700 M 940 300 L 890 380 M 940 780 L 890 700" stroke="rgba(0, 229, 255, 0.6)" stroke-width="3" stroke-dasharray="6 4" />
+            <circle cx="500" cy="540" r="4" fill="#00e5ff"/>
+            <circle cx="660" cy="300" r="4" fill="#00e5ff"/>
+            <circle cx="660" cy="780" r="4" fill="#00e5ff"/>
+            <circle cx="940" cy="300" r="4" fill="#00e5ff"/>
+            <circle cx="940" cy="780" r="4" fill="#00e5ff"/>
+        </svg>
+
+        <!-- 串联节点的发光S型曲线 -->
+        <svg class="flowchart-line">
+            <defs>
+                <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+            <!-- 使用紧贴圆形的半圆弧线交替串联 -->
+            <path d="
+                M 20 560
+                L 60 560
+                A 90 90 0 0 1 240 560
+                A 90 90 0 0 0 420 560
+                A 90 90 0 0 1 600 560
+                A 90 90 0 0 0 780 560
+                A 90 90 0 0 1 960 560
+                A 90 90 0 0 0 1140 560
+                L 1180 560"
+                stroke="#00e5ff" stroke-width="4" fill="none" filter="url(#lineGlow)" opacity="0.9"/>
+            <!-- 电流流光层：叠在基线之上，z 轴低于节点 div -->
+            <path class="flow-current" d="
+                M 20 560
+                L 60 560
+                A 90 90 0 0 1 240 560
+                A 90 90 0 0 0 420 560
+                A 90 90 0 0 1 600 560
+                A 90 90 0 0 0 780 560
+                A 90 90 0 0 1 960 560
+                A 90 90 0 0 0 1140 560
+                L 1180 560"
+                stroke="#00D1FF" stroke-width="7" fill="none"
+                filter="url(#lineGlow)" opacity="0.92"/>
+        </svg>
+
+        <!-- 6个流程节点 HTML 内容覆盖 -->
+        <div class="node node-1">
+            <span class="node-text">确定业务</span>
+        </div>
+        <div class="node node-2">
+            <span class="node-text">选择<br>可视化<br>图形</span>
+        </div>
+        <div class="node node-3">
+            <span class="node-text">定义尺寸</span>
+        </div>
+        <div class="node node-4">
+            <span class="node-text">布局</span>
+        </div>
+        <div class="node node-5">
+            <span class="node-text">可视化<br>设计</span>
+        </div>
+        <div class="node node-6">
+            <span class="node-text">切图交付</span>
+        </div>
+
+    </div>
+
+    <!-- 响应式缩放脚本 -->
+    <script>
+        function resizeSlide() {
+            const wrapper = document.getElementById('scale-wrapper');
+            const targetWidth = 1920;
+            const targetHeight = 1080;
+            // 获取浏览器窗口的宽和高
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // 计算缩放比例，以最小的比例为准确保完整显示
+            const scaleX = windowWidth / targetWidth;
+            const scaleY = windowHeight / targetHeight;
+            const scale = Math.min(scaleX, scaleY);
+            
+            // 应用缩放，并保持绝对居中，解决滚动条和错位问题
+            wrapper.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        }
+
+        // 初始化和窗口大小改变时触发
+        window.addEventListener('resize', resizeSlide);
+        resizeSlide();
+    </script>
+</body>
+</html>
