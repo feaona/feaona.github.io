@@ -80,7 +80,7 @@ nav.nav-hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translat
 .intro-section{background:#000;padding:48px 20px 0}
 .reel-wrap{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 8px 48px rgba(0,0,0,0.28)}
 .reel-video{width:100%;height:auto;display:block}
-.reel-cover{position:absolute;bottom:0;right:0;pointer-events:none;width:min(457px,50%);height:auto}
+.reel-cover{position:absolute;bottom:0;right:0;pointer-events:none;width:min(457px,28%);height:auto}
 #reel-sound-btn{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .5s ease;background:rgba(0,0,0,0.18)}
 #reel-sound-btn.visible{opacity:1;pointer-events:auto}
 .sound-ring{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;animation:snd-pulse 2.2s ease-in-out infinite}
@@ -466,9 +466,18 @@ html,body{transition:background-color .38s ease}
 @media(max-width:840px){
   .nav-links{display:none}
   .b-card:nth-child(1),.b-card:nth-child(2),.b-card:nth-child(3),.b-card:nth-child(4){grid-column:span 12;min-height:360px}
-  .pf-item,.pf-item:nth-child(even){grid-template-columns:1fr;gap:24px}
-  .pf-item:nth-child(even) .pf-visual,.pf-item:nth-child(even) .pf-content{order:unset}
-  .proj-flow{gap:52px}
+  /* 项目卡片：单列堆叠，视觉在上 */
+  .pf-item,.pf-item:nth-child(even){display:flex;flex-direction:column;gap:20px}
+  .pf-item .pf-visual,.pf-item:nth-child(even) .pf-visual{order:0;width:100%}
+  .pf-item .pf-content,.pf-item:nth-child(even) .pf-content{order:1;width:100%}
+  .proj-flow{gap:48px}
+  .pf-visual{aspect-ratio:16/9;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.05)}
+  .pf-title{font-size:clamp(26px,6.5vw,36px);letter-spacing:-1.2px;margin-bottom:10px}
+  .pf-insight{font-size:13px;margin-bottom:18px}
+  .pf-points{gap:8px;margin-bottom:18px}
+  .pf-point-text{font-size:12.5px}
+  .pf-tags{margin-bottom:12px}
+  .pf-num{margin-bottom:8px}
   .workflow{grid-template-columns:1fr}
   .stats{grid-template-columns:repeat(2,1fr)}
   .footer-bar{flex-direction:column;gap:14px;text-align:center}
@@ -486,6 +495,111 @@ html,body{transition:background-color .38s ease}
 @media(max-width:768px){
   .reel-section{padding-left:16px;padding-right:16px}
   .intro-section{padding-left:16px;padding-right:16px}
+  /* 作品集板块内边距收窄 */
+  #projects.section-wrap{padding-top:56px;padding-bottom:56px;padding-left:16px;padding-right:16px}
+  .section-title{font-size:clamp(22px,7vw,32px);letter-spacing:-1.2px;margin-bottom:20px}
+  /* 项目卡片小屏细调 */
+  .proj-flow{gap:40px}
+  .pf-item,.pf-item:nth-child(even){gap:16px}
+  .pf-visual{aspect-ratio:16/9;border-radius:12px}
+  .pf-title{font-size:clamp(24px,7.5vw,32px);letter-spacing:-1px}
+  .pf-insight{font-size:12.5px;margin-bottom:14px;padding-left:10px}
+  .pf-points{gap:6px;margin-bottom:14px}
+  .pf-point{gap:8px}
+  .pf-point-icon{width:26px;height:26px;border-radius:6px;flex-shrink:0}
+  .pf-point-label{font-size:9px;letter-spacing:1.5px}
+  .pf-point-text{font-size:12px}
+  .pf-cta{font-size:11px;padding:7px 16px}
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL MOBILE RESPONSIVE  (max-width: 768px)
+   覆盖5个详情页弹窗在手机端的布局与排版
+   ─────────────────────────────────────────────── */
+@media(max-width:768px){
+  /* 1. 弹窗容器：留出顶部关闭按钮空间，收窄两侧 */
+  .proj-modal{padding-top:60px!important;padding-left:12px!important;padding-right:12px!important}
+
+  /* 2. 弹窗内层 */
+  .proj-modal-inner{padding-left:0!important;padding-right:0!important}
+
+  /* 3. 浅色卡片大板块：64px 48px → 28px 16px */
+  .proj-section-m[style*="padding:64px 48px"]{padding:28px 16px 40px!important;border-radius:16px!important}
+
+  /* 4. 所有板块间距缩小 */
+  .proj-section-m{margin-bottom:28px!important}
+
+  /* 5. 主标题字号：防止 clamp 下限太大 */
+  .proj-title-m{font-size:clamp(28px,7.5vw,38px)!important;letter-spacing:-1.5px!important;line-height:1!important}
+  .proj-en-m{font-size:11px!important;letter-spacing:3px!important}
+  .proj-tagline-m{font-size:14px!important;margin-bottom:20px!important}
+  .proj-eyebrow-m{font-size:10px!important;letter-spacing:3px!important}
+
+  /* 6. 章节标签/小标题 */
+  .proj-sec-label-m{font-size:10px!important;letter-spacing:2.5px!important}
+  .proj-sec-title-m{font-size:clamp(18px,5vw,24px)!important;letter-spacing:-0.4px!important;margin-bottom:16px!important}
+
+  /* 7. 数据统计块：完全单列 */
+  .proj-bg-grid{grid-template-columns:1fr!important}
+  .proj-stat-m{border-right:none!important;border-bottom:1px solid rgba(26,159,218,0.16)!important;padding:20px 16px!important}
+  .proj-stat-m:last-child{border-bottom:none!important}
+
+  /* 8. 角色卡片 */
+  .proj-role-card-m{padding:20px 16px!important}
+
+  /* 9. 用户画像：竖排后去掉右侧分割线 */
+  .ins-persona{border-right:none!important;padding-right:0!important}
+
+  /* 10. 架构图 5列 → 3列 */
+  #section-ia [style*="grid-template-columns:repeat(5,1fr)"]{
+    grid-template-columns:repeat(3,1fr)!important;
+    width:100%!important;
+    gap:10px!important
+  }
+  /* IA 标题行：提示标签换行到下方 */
+  #section-ia [style*="justify-content:space-between"]{
+    flex-wrap:wrap!important;gap:10px!important
+  }
+  #section-ia [style*="justify-content:space-between"] > div[style*="border-radius:999px"]{
+    font-size:12px!important;padding:8px 14px!important;white-space:normal!important
+  }
+  /* IA 分叉连线宽度跟随 100% */
+  #section-ia [style*="width:90%"]{width:100%!important}
+
+  /* 11. 板块内 3列 Grid → 1列（架构策略卡、色板、图标组等） */
+  .proj-section-m [style*="grid-template-columns:repeat(3,1fr)"]{
+    grid-template-columns:1fr!important
+  }
+
+  /* 12. 板块内 4列 Grid → 2列（B端 nw-card 等） */
+  .proj-modal [style*="grid-template-columns:repeat(4,1fr)"]{
+    grid-template-columns:repeat(2,1fr)!important
+  }
+
+  /* 13. 竖排后 7fr/5fr 双栏 → 单列 */
+  .proj-section-m [style*="grid-template-columns:7fr 5fr"]{
+    grid-template-columns:1fr!important
+  }
+
+  /* 14. 固定高度 iframe：手机端限高，保持可读性 */
+  .proj-modal iframe[style*="height:860px"]{height:440px!important}
+  .proj-modal iframe[style*="height:900px"]{height:500px!important}
+  .proj-modal iframe[style*="height:600px"]{height:360px!important}
+
+  /* 15. 关闭按钮在小屏文字稍小 */
+  .proj-close{font-size:11px!important;padding:8px 14px!important}
+
+  /* 16. DS 组件库内 iframe 高度适配 */
+  #section-components iframe{height:560px!important}
+
+  /* 17. 防止段落文字过小（覆盖部分 12px 的 inline style） */
+  .proj-modal p,.proj-modal .dso-sol-desc,.proj-modal .arch-desc{font-size:13px!important;line-height:1.7!important}
+  .proj-modal .dso-sol-title,.proj-modal .arch-title{font-size:15px!important}
+
+  /* 18. B端 CRM 数字展示段落宽度解锁 */
+  .proj-modal [style*="max-width:480px"]{max-width:100%!important}
+  .proj-modal [style*="max-width:560px"]{max-width:100%!important}
+  .proj-modal [style*="max-width:640px"]{max-width:100%!important}
 }
 
 /* ── 核心架构策略 Lucide 图标 ── */
@@ -520,14 +634,16 @@ html,body{transition:background-color .38s ease}
 }
 .dso-pill{
   position:absolute;transform:translate(-50%,-50%);
-  display:flex;align-items:center;gap:7px;padding:6px 14px;
-  border-radius:30px;font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:8px;padding:8px 16px;
+  border-radius:30px;font-size:14px;font-weight:600;
   color:rgba(255,255,255,0.82);white-space:nowrap;
   background:rgba(255,255,255,0.055);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:20;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","San Francisco",sans-serif;
 }
 .dso-pill:hover{transform:translate(-50%,-62%) scale(1.06)}
+.dso-pill svg{width:16px;height:16px;flex-shrink:0}
 .dso-pill--blue{border:1px solid rgba(26,159,218,0.32)}
 .dso-pill--blue svg{stroke:rgba(26,159,218,0.9)}
 .dso-pill--red{border:1px solid rgba(239,68,68,0.28)}
@@ -616,6 +732,45 @@ html,body{transition:background-color .38s ease}
         /* Firefox */
         * { scrollbar-width: thin; scrollbar-color: transparent transparent; }
         .is-scrolling { scrollbar-color: rgba(18,18,18,0.22) transparent; }
+
+/* ═══════════════════════════════════════════════════
+   B端 CRM Modal 正文可读性修复
+   仅作用于 #modal-xinlian，不影响其他弹窗与页面
+   策略：从宽泛到精准级联，同优先级后者覆盖前者
+   ─────────────────────────────────────────────── */
+
+/* ── 0. 类选择器（CSS 样式表定义的颜色）── */
+#modal-xinlian .proj-tagline-m            { color:rgba(255,255,255,0.80) !important }
+#modal-xinlian .arch-desc                 { color:rgba(255,255,255,0.72) !important }
+
+/* ── 1. 极低对比度 0.2x：结构标签、分隔辅助文字 ── */
+#modal-xinlian *[style*="color:rgba(255,255,255,0.2)"] { color:rgba(255,255,255,0.38) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.28)"]{ color:rgba(255,255,255,0.45) !important }
+
+/* ── 2. 低对比度 0.3x：元数据标签、图标色 ── */
+#modal-xinlian *[style*="color:rgba(255,255,255,0.3)"] { color:rgba(255,255,255,0.52) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.35)"]{ color:rgba(255,255,255,0.58) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.38)"]{ color:rgba(255,255,255,0.62) !important }
+
+/* ── 3. 中低对比度 0.4x：次级说明文字 ── */
+#modal-xinlian *[style*="color:rgba(255,255,255,0.4)"] { color:rgba(255,255,255,0.65) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.42)"]{ color:rgba(255,255,255,0.68) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.45)"]{ color:rgba(255,255,255,0.70) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.48)"]{ color:rgba(255,255,255,0.74) !important }
+
+/* ── 4. 边界对比度 0.5x：卡片正文、图例标签 ── */
+#modal-xinlian *[style*="color:rgba(255,255,255,0.5)"] { color:rgba(255,255,255,0.74) !important }
+#modal-xinlian *[style*="color:rgba(255,255,255,0.55)"]{ color:rgba(255,255,255,0.78) !important }
+
+/* ── 5. 正文字号兜底：11px 以下段落文字至少 12px ── */
+#modal-xinlian p[style*="font-size:11px"]  { font-size:12px !important; line-height:1.72 !important }
+#modal-xinlian p[style*="font-size:10.5px"]{ font-size:11.5px !important; line-height:1.68 !important }
+
+/* ═══ 需求整理 section 字号放大（#section-xl-req） ═══ */
+#section-xl-req [style*="font-size:10px"]  { font-size:11.5px !important }
+#section-xl-req [style*="font-size:11px"]  { font-size:13px   !important }
+#section-xl-req [style*="font-size:11.5px"]{ font-size:13px   !important; line-height:1.65 !important }
+#section-xl-req [style*="font-size:12px"]  { font-size:14px   !important }
 
 </style>
 <link href="https://fonts.loli.net/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
@@ -950,12 +1105,12 @@ html,body{transition:background-color .38s ease}
       <h2 class="proj-sec-title-m" style="color:#111111">问题定义与<strong style="color:#111111">洞察</strong></h2>
 
       <!-- 用户画像 + 三大痛点：张伟组 -->
-      <div style="background:rgba(255,255,255,0.38);border:1px solid rgba(16,185,129,0.18);border-radius:20px;padding:16px;margin-bottom:14px">
+      <div style="background:rgba(255,255,255,0.90);border:1px solid rgba(0,0,0,0.04);box-shadow:0 12px 32px rgba(0,0,0,0.04);border-radius:20px;padding:16px;margin-bottom:14px">
       <div class="ins-grid" style="display:grid;grid-template-columns:5fr 7fr;gap:14px;align-items:stretch;">
 
         <!-- C 端用户画像 -->
         <div class="ins-persona" style="padding:20px 24px;border-right:1px solid rgba(16,185,129,0.15);display:flex;flex-direction:column;justify-content:center">
-          <div style="font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(16,185,129,0.55);margin-bottom:14px">Target User · C 端</div>
+          <div style="font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#047857;margin-bottom:14px">Target User · C 端</div>
           <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
             <div style="width:54px;height:54px;border-radius:50%;overflow:hidden;border:1.5px solid rgba(16,185,129,0.32);flex-shrink:0"><img class="lazy-img" data-src="image/男头1张伟_副本.webp" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="张伟" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"></div>
             <div>
@@ -964,12 +1119,12 @@ html,body{transition:background-color .38s ease}
             </div>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
-            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(16,185,129,0.07);color:rgba(16,185,129,0.6);border:1px solid rgba(16,185,129,0.14)">碎片化时间</span>
-            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(16,185,129,0.07);color:rgba(16,185,129,0.6);border:1px solid rgba(16,185,129,0.14)">情绪价值</span>
-            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(16,185,129,0.07);color:rgba(16,185,129,0.6);border:1px solid rgba(16,185,129,0.14)">拒垫资</span>
+            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(16,185,129,0.09);color:#047857;border:1px solid rgba(16,185,129,0.28)">碎片化时间</span>
+            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(16,185,129,0.09);color:#047857;border:1px solid rgba(16,185,129,0.28)">情绪价值</span>
+            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(16,185,129,0.09);color:#047857;border:1px solid rgba(16,185,129,0.28)">拒垫资</span>
           </div>
           <div style="padding:10px 0">
-            <div style="font-size:13px;color:#111111;line-height:1.72;font-style:italic">"接了组织部门团建的活，期望在不影响本职工作、<span style="color:#111111;font-style:normal;font-weight:500">且绝不自己垫资</span>的前提下，快速搞定让大家满意的方案。"</div>
+            <div style="font-size:13px;color:#334155;line-height:1.72;font-style:italic">"接了组织部门团建的活，期望在不影响本职工作、<span style="color:#111111;font-style:normal;font-weight:500">且绝不自己垫资</span>的前提下，快速搞定让大家满意的方案。"</div>
           </div>
         </div>
 
@@ -980,9 +1135,9 @@ html,body{transition:background-color .38s ease}
               <svg width="17" height="17" fill="none" stroke="rgba(239,68,68,0.75)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(239,68,68,0.5);margin-bottom:4px">Pain 01</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(220,38,38,0.9);margin-bottom:4px">Pain 01</div>
               <h4 style="font-size:15px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:5px">资金高压：业财断裂与垫资困境</h4>
-              <p style="font-size:12px;color:#111111;line-height:1.6;font-weight:400">活动发起人面临<span style="color:rgba(239,68,68,0.65);font-weight:500">个人垫付大额资金</span>的巨大压力，传统对公流程冗长极易耽误预订，线下履约导致业财数据断裂产生合规盲区。</p>
+              <p style="font-size:12px;color:#475569;line-height:1.6;font-weight:400">活动发起人面临<span style="color:rgba(239,68,68,0.65);font-weight:500">个人垫付大额资金</span>的巨大压力，传统对公流程冗长极易耽误预订，线下履约导致业财数据断裂产生合规盲区。</p>
             </div>
           </div>
           <div style="flex:1;padding:14px 20px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid rgba(0,0,0,0.05)">
@@ -990,9 +1145,9 @@ html,body{transition:background-color .38s ease}
               <svg width="17" height="17" fill="none" stroke="rgba(249,115,22,0.75)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(249,115,22,0.5);margin-bottom:4px">Pain 02</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(249,115,22,0.9);margin-bottom:4px">Pain 02</div>
               <h4 style="font-size:15px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:5px">高昂成本：方案同质化与决策内耗</h4>
-              <p style="font-size:12px;color:#111111;line-height:1.6;font-weight:400">工业化模板难满足 Z 世代，需求填写繁琐，<span style="color:rgba(249,115,22,0.65);font-weight:500">统一全员意见的协调成本极高</span>，决策周期无限拉长，严重消耗发起人精力。</p>
+              <p style="font-size:12px;color:#475569;line-height:1.6;font-weight:400">工业化模板难满足 Z 世代，需求填写繁琐，<span style="color:rgba(249,115,22,0.65);font-weight:500">统一全员意见的协调成本极高</span>，决策周期无限拉长，严重消耗发起人精力。</p>
             </div>
           </div>
           <div style="flex:1;padding:14px 20px;display:flex;align-items:flex-start;gap:14px">
@@ -1000,9 +1155,9 @@ html,body{transition:background-color .38s ease}
               <svg width="17" height="17" fill="none" stroke="rgba(26,159,218,0.8)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(26,159,218,0.65);margin-bottom:4px">Pain 03</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(26,159,218,0.92);margin-bottom:4px">Pain 03</div>
               <h4 style="font-size:15px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:5px">体验割裂：行后发票焦虑与分享受阻</h4>
-              <p style="font-size:12px;color:#111111;line-height:1.6;font-weight:400">活动结束后常因<span style="color:#111111;font-weight:500">丢失纸质发票产生焦虑</span>，优质照片分散难以收集，阻碍员工发朋友圈分享、获取情绪价值的核心诉求。</p>
+              <p style="font-size:12px;color:#475569;line-height:1.6;font-weight:400">活动结束后常因<span style="color:#111111;font-weight:500">丢失纸质发票产生焦虑</span>，优质照片分散难以收集，阻碍员工发朋友圈分享、获取情绪价值的核心诉求。</p>
             </div>
           </div>
         </div>
@@ -1010,12 +1165,12 @@ html,body{transition:background-color .38s ease}
       </div><!-- /张伟组 -->
 
       <!-- 用户画像 陈宇：陈宇组 -->
-      <div style="background:rgba(255,255,255,0.38);border:1px solid rgba(139,92,246,0.18);border-radius:20px;padding:16px;margin-bottom:14px">
+      <div style="background:rgba(255,255,255,0.90);border:1px solid rgba(0,0,0,0.04);box-shadow:0 12px 32px rgba(0,0,0,0.04);border-radius:20px;padding:16px;margin-bottom:14px">
       <div class="ins-grid" style="display:grid;grid-template-columns:5fr 7fr;gap:14px;align-items:stretch;">
 
         <!-- C 端用户画像 陈宇 -->
         <div class="ins-persona" style="padding:20px 24px;border-right:1px solid rgba(139,92,246,0.15);display:flex;flex-direction:column;justify-content:center">
-          <div style="font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:rgba(139,92,246,0.55);margin-bottom:14px">Target User · C 端</div>
+          <div style="font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#6d28d9;margin-bottom:14px">Target User · C 端</div>
           <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
             <div style="width:54px;height:54px;border-radius:50%;overflow:hidden;border:1.5px solid rgba(139,92,246,0.32);flex-shrink:0"><img class="lazy-img" data-src="image/陈宇头像.webp" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="陈宇" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"></div>
             <div>
@@ -1024,12 +1179,12 @@ html,body{transition:background-color .38s ease}
             </div>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
-            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(139,92,246,0.07);color:rgba(167,139,250,0.7);border:1px solid rgba(139,92,246,0.16)">拒绝走马观花</span>
-            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(139,92,246,0.07);color:rgba(167,139,250,0.7);border:1px solid rgba(139,92,246,0.16)">沉浸体验</span>
-            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(139,92,246,0.07);color:rgba(167,139,250,0.7);border:1px solid rgba(139,92,246,0.16)">社交分享</span>
+            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(139,92,246,0.09);color:#6d28d9;border:1px solid rgba(139,92,246,0.28)">拒绝走马观花</span>
+            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(139,92,246,0.09);color:#6d28d9;border:1px solid rgba(139,92,246,0.28)">沉浸体验</span>
+            <span style="font-size:10.5px;padding:4px 10px;border-radius:999px;background:rgba(139,92,246,0.09);color:#6d28d9;border:1px solid rgba(139,92,246,0.28)">社交分享</span>
           </div>
           <div style="padding:10px 0">
-            <div style="font-size:13px;color:#111111;line-height:1.72;font-style:italic">"平时上班已经够累了，出去玩千万别搞得像个换地方军训。我只想要<span style="color:#111111;font-style:normal;font-weight:500">真正的沉浸式体验</span>，最好能让我拍出大片、发朋友圈出圈的惊喜瞬间，这就是「有效团建」。"</div>
+            <div style="font-size:13px;color:#334155;line-height:1.72;font-style:italic">"平时上班已经够累了，出去玩千万别搞得像个换地方军训。我只想要<span style="color:#111111;font-style:normal;font-weight:500">真正的沉浸式体验</span>，最好能让我拍出大片、发朋友圈出圈的惊喜瞬间，这就是「有效团建」。"</div>
           </div>
         </div>
 
@@ -1040,9 +1195,9 @@ html,body{transition:background-color .38s ease}
               <svg width="17" height="17" fill="none" stroke="rgba(239,68,68,0.75)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(239,68,68,0.5);margin-bottom:4px">Pain 01</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(220,38,38,0.9);margin-bottom:4px">Pain 01</div>
               <h4 style="font-size:15px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:5px">团建如军训，沉浸感全无</h4>
-              <p style="font-size:12px;color:#111111;line-height:1.6;font-weight:400">行程千篇一律、<span style="color:rgba(239,68,68,0.65);font-weight:500">形式大于体验</span>，工业化模板无法满足 Z 世代对个性化与深度沉浸的渴望，团建沦为占用周末的负担。</p>
+              <p style="font-size:12px;color:#475569;line-height:1.6;font-weight:400">行程千篇一律、<span style="color:rgba(239,68,68,0.65);font-weight:500">形式大于体验</span>，工业化模板无法满足 Z 世代对个性化与深度沉浸的渴望，团建沦为占用周末的负担。</p>
             </div>
           </div>
           <div style="flex:1;padding:14px 20px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid rgba(0,0,0,0.05)">
@@ -1050,9 +1205,9 @@ html,body{transition:background-color .38s ease}
               <svg width="17" height="17" fill="none" stroke="rgba(249,115,22,0.75)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(249,115,22,0.5);margin-bottom:4px">Pain 02</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(249,115,22,0.9);margin-bottom:4px">Pain 02</div>
               <h4 style="font-size:15px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:5px">精彩瞬间稍纵即逝，难以留存</h4>
-              <p style="font-size:12px;color:#111111;line-height:1.6;font-weight:400">优质照片散落各处、<span style="color:rgba(249,115,22,0.65);font-weight:500">收集整理成本极高</span>，拍不出"大片感"的场景设计让人无从下手，错失制造朋友圈爆款的最佳时机。</p>
+              <p style="font-size:12px;color:#475569;line-height:1.6;font-weight:400">优质照片散落各处、<span style="color:rgba(249,115,22,0.65);font-weight:500">收集整理成本极高</span>，拍不出"大片感"的场景设计让人无从下手，错失制造朋友圈爆款的最佳时机。</p>
             </div>
           </div>
           <div style="flex:1;padding:14px 20px;display:flex;align-items:flex-start;gap:14px">
@@ -1060,9 +1215,9 @@ html,body{transition:background-color .38s ease}
               <svg width="17" height="17" fill="none" stroke="rgba(167,139,250,0.8)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(139,92,246,0.65);margin-bottom:4px">Pain 03</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(124,58,237,0.92);margin-bottom:4px">Pain 03</div>
               <h4 style="font-size:15px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:5px">情绪出口缺失，社交分享受阻</h4>
-              <p style="font-size:12px;color:#111111;line-height:1.6;font-weight:400">没有配套的<span style="color:rgba(167,139,250,0.8);font-weight:500">社区与晒单场景</span>，情绪价值无处释放；缺乏能引发共鸣的内容承载，让参与者失去主动分享与二次传播的动力。</p>
+              <p style="font-size:12px;color:#475569;line-height:1.6;font-weight:400">没有配套的<span style="color:rgba(167,139,250,0.8);font-weight:500">社区与晒单场景</span>，情绪价值无处释放；缺乏能引发共鸣的内容承载，让参与者失去主动分享与二次传播的动力。</p>
             </div>
           </div>
         </div>
@@ -1071,37 +1226,37 @@ html,body{transition:background-color .38s ease}
 
       <!-- 三大设计目标 -->
       <div class="ins-goals" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-        <div style="background:rgba(255,255,255,0.55);border:1px solid rgba(26,159,218,0.15);border-radius:var(--radius-lg);padding:30px 28px;position:relative;overflow:hidden">
+        <div style="background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.05);box-shadow:0 12px 32px rgba(0,0,0,0.04);border-radius:var(--radius-lg);padding:30px 28px;position:relative;overflow:hidden">
           <div style="position:absolute;right:16px;top:4px;font-size:76px;font-weight:900;color:rgba(26,100,180,0.12);line-height:1;user-select:none">01</div>
           <div style="position:relative;z-index:1">
             <div style="width:40px;height:40px;border-radius:11px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.22);display:flex;align-items:center;justify-content:center;margin-bottom:18px">
               <svg width="18" height="18" fill="none" stroke="rgba(96,165,250,0.9)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             </div>
-            <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(26,100,180,0.55);margin-bottom:8px">Design Goals · 01</div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#64748b;margin-bottom:8px">Design Goals · 01</div>
             <h4 style="font-size:16px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:10px">重构交易流：无感核销</h4>
-            <p style="font-size:12.5px;color:#111111;line-height:1.68;font-weight:400">设计<span style="color:rgba(29,78,216,1);font-weight:500;background:rgba(59,130,246,0.12);padding:1px 6px;border-radius:5px">企业账号一键代付</span>，彻底终结员工垫资烦恼，服务验收后一键归集电子发票，打通全线上闭环。</p>
+            <p style="font-size:12.5px;color:#475569;line-height:1.68;font-weight:400">设计<span style="color:rgba(29,78,216,1);font-weight:500;background:rgba(59,130,246,0.12);padding:1px 6px;border-radius:5px">企业账号一键代付</span>，彻底终结员工垫资烦恼，服务验收后一键归集电子发票，打通全线上闭环。</p>
           </div>
         </div>
-        <div style="background:rgba(255,255,255,0.55);border:1px solid rgba(26,159,218,0.15);border-radius:var(--radius-lg);padding:30px 28px;position:relative;overflow:hidden">
+        <div style="background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.05);box-shadow:0 12px 32px rgba(0,0,0,0.04);border-radius:var(--radius-lg);padding:30px 28px;position:relative;overflow:hidden">
           <div style="position:absolute;right:16px;top:4px;font-size:76px;font-weight:900;color:rgba(26,100,180,0.12);line-height:1;user-select:none">02</div>
           <div style="position:relative;z-index:1">
             <div style="width:40px;height:40px;border-radius:11px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.22);display:flex;align-items:center;justify-content:center;margin-bottom:18px">
               <svg width="18" height="18" fill="none" stroke="rgba(167,139,250,0.9)" viewBox="0 0 24 24" stroke-width="1.8"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             </div>
-            <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(26,100,180,0.55);margin-bottom:8px">Design Goals · 02</div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#64748b;margin-bottom:8px">Design Goals · 02</div>
             <h4 style="font-size:16px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:10px">AI 辅助决策：透明增效</h4>
-            <p style="font-size:12.5px;color:#111111;line-height:1.68;font-weight:400">引入<span style="color:rgba(109,40,217,1);font-weight:500;background:rgba(139,92,246,0.12);padding:1px 6px;border-radius:5px">生成式 AI 对话（CUI）</span>瞬间生成专属行程，设计「一键转发投票」组件让全员共创决策，大幅减负发起人。</p>
+            <p style="font-size:12.5px;color:#475569;line-height:1.68;font-weight:400">引入<span style="color:rgba(109,40,217,1);font-weight:500;background:rgba(139,92,246,0.12);padding:1px 6px;border-radius:5px">生成式 AI 对话（CUI）</span>瞬间生成专属行程，设计「一键转发投票」组件让全员共创决策，大幅减负发起人。</p>
           </div>
         </div>
-        <div style="background:rgba(255,255,255,0.55);border:1px solid rgba(26,159,218,0.15);border-radius:var(--radius-lg);padding:30px 28px;position:relative;overflow:hidden">
+        <div style="background:rgba(255,255,255,0.92);border:1px solid rgba(0,0,0,0.05);box-shadow:0 12px 32px rgba(0,0,0,0.04);border-radius:var(--radius-lg);padding:30px 28px;position:relative;overflow:hidden">
           <div style="position:absolute;right:16px;top:4px;font-size:76px;font-weight:900;color:rgba(26,100,180,0.12);line-height:1;user-select:none">03</div>
           <div style="position:relative;z-index:1">
             <div style="width:40px;height:40px;border-radius:11px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.22);display:flex;align-items:center;justify-content:center;margin-bottom:18px">
               <svg width="18" height="18" fill="none" stroke="rgba(52,211,153,0.9)" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-            <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(26,100,180,0.55);margin-bottom:8px">Design Goals · 03</div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#64748b;margin-bottom:8px">Design Goals · 03</div>
             <h4 style="font-size:16px;font-weight:600;color:#111111;letter-spacing:-0.3px;margin-bottom:10px">数字化陪伴：放大情绪</h4>
-            <p style="font-size:12.5px;color:#111111;line-height:1.68;font-weight:400">行中提供服务日历与管家群聊。行后打造<span style="color:rgba(4,120,87,1);font-weight:500;background:rgba(16,185,129,0.12);padding:1px 6px;border-radius:5px">云相册与晒单广场</span>，聚合影像，鼓励社交分享，形成用户自传播闭环。</p>
+            <p style="font-size:12.5px;color:#475569;line-height:1.68;font-weight:400">行中提供服务日历与管家群聊。行后打造<span style="color:rgba(4,120,87,1);font-weight:500;background:rgba(16,185,129,0.12);padding:1px 6px;border-radius:5px">云相册与晒单广场</span>，聚合影像，鼓励社交分享，形成用户自传播闭环。</p>
           </div>
         </div>
       </div>
@@ -1111,7 +1266,7 @@ html,body{transition:background-color .38s ease}
     <div id="section-competitive-analysis" class="proj-section-m" style="margin-bottom:80px">
       <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(26,100,180,0.14);box-shadow:0 8px 32px rgba(26,100,180,0.1);width:100%">
         <iframe
-          data-src="html文件/竞品分析.html"
+          src="html文件/竞品分析.html?v=20260617b"
           style="width:100%;height:600px;border:none;display:block"
           title="03 竞品分析"
           onload="(function(f){try{var h=f.contentDocument.getElementById('scale-wrapper');if(h)f.style.height=h.offsetHeight+'px';}catch(e){};})(this)"
@@ -1148,9 +1303,9 @@ html,body{transition:background-color .38s ease}
           <div style="position:absolute;width:82%;aspect-ratio:1/1;border-radius:50%;border:1px solid rgba(26,100,180,0.1)"></div>
 
           <!-- 中心锚点 -->
-          <div style="position:absolute;width:116px;height:116px;background:radial-gradient(circle at 38% 32%,#5bbceb,#1A9FDA);border-radius:50%;z-index:10;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:12px;animation:dso-pulse 3s ease-in-out infinite alternate">
-            <div style="font-size:14px;font-weight:700;line-height:1.25;margin-bottom:4px;white-space:nowrap">团建&amp;商旅</div>
-            <div style="font-size:10px;opacity:.6;letter-spacing:1px">Core Value</div>
+          <div style="position:absolute;width:138px;height:138px;background:radial-gradient(circle at 38% 32%,#5bbceb,#1A9FDA);border-radius:50%;z-index:10;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:12px;animation:dso-pulse 3s ease-in-out infinite alternate">
+            <div style="font-size:20px;font-weight:600;line-height:1.25;margin-bottom:4px;white-space:nowrap">团建&amp;商旅</div>
+            <div style="font-size:12px;opacity:.7;letter-spacing:1px">Core Value</div>
           </div>
 
           <!-- 轴线说明 -->
@@ -1172,9 +1327,9 @@ html,body{transition:background-color .38s ease}
           <div class="dso-pill dso-pill--red" style="top:50%;left:7%"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>占用个人时间</div>
 
           <!-- 图例 -->
-          <div style="position:absolute;bottom:-36px;left:50%;transform:translateX(-50%);display:flex;gap:22px;font-size:11px;white-space:nowrap">
-            <span style="display:flex;align-items:center;gap:6px;color:rgba(10,25,55,0.55)"><span style="width:7px;height:7px;border-radius:50%;background:rgba(26,159,218,0.8);display:inline-block"></span>企业管理痛点</span>
-            <span style="display:flex;align-items:center;gap:6px;color:rgba(10,25,55,0.55)"><span style="width:7px;height:7px;border-radius:50%;background:rgba(239,68,68,0.75);display:inline-block"></span>员工体验痛点</span>
+          <div style="position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);display:flex;gap:24px;font-size:13px;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','San Francisco',sans-serif">
+            <span style="display:flex;align-items:center;gap:6px;color:rgba(10,25,55,0.55)"><span style="width:8px;height:8px;border-radius:50%;background:rgba(26,159,218,0.8);display:inline-block"></span>企业管理痛点</span>
+            <span style="display:flex;align-items:center;gap:6px;color:rgba(10,25,55,0.55)"><span style="width:8px;height:8px;border-radius:50%;background:rgba(239,68,68,0.75);display:inline-block"></span>员工体验痛点</span>
           </div>
         </div>
 
@@ -2975,29 +3130,29 @@ html,body{transition:background-color .38s ease}
       <h2 class="proj-sec-title-m">为何<strong>重构</strong>？</h2>
       <!-- 引言 -->
       <div style="border-left:3px solid rgba(26,159,218,0.5);padding-left:20px;margin-bottom:40px;max-width:960px">
-        <p style="font-size:14px;color:rgba(255,255,255,0.52);line-height:1.85;font-weight:300;white-space:normal;word-break:break-word">
+        <p style="font-size:14px;color:rgba(255,255,255,0.88);line-height:1.85;font-weight:300;white-space:normal;word-break:break-word;font-family:'PingFang SC','Hiragino Sans GB',sans-serif">
           随着硬件制造向轻薄化、定制化和柔性生产转型，企业订单模式正发生剧变。前期调研发现，原有的通用型 CRM 在业务链路上存在严重的「水土不服」——系统仅停留在「销售人脉流转」，一旦商机进入<em style="color:rgba(255,255,255,0.82);font-style:normal">打样、核价、试产</em>等硬件特有环节，系统便完全失去掌控力。
         </p>
       </div>
       <!-- 三大核心痛点 -->
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
         <!-- 痛点 1 -->
-        <div class="xl-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:28px 24px">
-          <div style="font-size:clamp(36px,4vw,52px);font-weight:200;color:#f87171;letter-spacing:-2px;line-height:1;margin-bottom:12px">3–5<span style="font-size:.45em;opacity:0.7"> 天</span></div>
+        <div class="xl-card" style="background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px">
+          <div style="font-size:clamp(36px,4vw,52px);font-weight:200;color:#00D1FF;letter-spacing:-2px;line-height:1;margin-bottom:12px">3–5<span style="font-size:.45em;opacity:0.7"> 天</span></div>
           <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.88);margin-bottom:10px">非标核价极度黑盒化</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.42);line-height:1.75;font-weight:300">销售依赖微信和 Excel 跨部门沟通图纸与 BOM，极易漏算模具费，非标定制件平均报价周期长达 3–5 天，大量商机因此流失。</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.88);line-height:1.8;font-weight:300;font-family:'PingFang SC','Hiragino Sans GB',sans-serif">销售依赖微信和 Excel 跨部门沟通图纸与 BOM，极易漏算模具费，非标定制件平均报价周期长达 3–5 天，大量商机因此流失。</div>
         </div>
         <!-- 痛点 2 -->
-        <div class="xl-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:28px 24px">
-          <div style="font-size:clamp(36px,4vw,52px);font-weight:200;color:#fb923c;letter-spacing:-2px;line-height:1;margin-bottom:12px">28<span style="font-size:.45em;opacity:0.7"> %</span></div>
+        <div class="xl-card" style="background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px">
+          <div style="font-size:clamp(36px,4vw,52px);font-weight:200;color:#00D1FF;letter-spacing:-2px;line-height:1;margin-bottom:12px">28<span style="font-size:.45em;opacity:0.7"> %</span></div>
           <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.88);margin-bottom:10px">样品流转失控，客诉率高</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.42);line-height:1.75;font-weight:300">样品在车间对前端销售透明度为零，多次打样（V1–V4）导致需求变更与测试报告张冠李戴，样品延期引发的客诉率高达 28%。</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.88);line-height:1.8;font-weight:300;font-family:'PingFang SC','Hiragino Sans GB',sans-serif">样品在车间对前端销售透明度为零，多次打样（V1–V4）导致需求变更与测试报告张冠李戴，样品延期引发的客诉率高达 28%。</div>
         </div>
         <!-- 痛点 3 -->
-        <div class="xl-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:28px 24px">
-          <div style="font-size:clamp(36px,4vw,52px);font-weight:200;color:#facc15;letter-spacing:-2px;line-height:1;margin-bottom:12px">&gt;40<span style="font-size:.45em;opacity:0.7"> %</span></div>
+        <div class="xl-card" style="background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 24px">
+          <div style="font-size:clamp(36px,4vw,52px);font-weight:200;color:#00D1FF;letter-spacing:-2px;line-height:1;margin-bottom:12px">&gt;40<span style="font-size:.45em;opacity:0.7"> %</span></div>
           <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.88);margin-bottom:10px">数据割裂，排产预测失真</div>
-          <div style="font-size:12px;color:rgba(255,255,255,0.42);line-height:1.75;font-weight:300">人工解析客户非标 Forecast 表格并手动录入 ERP，错误率高，供应链备料偏离度超过 40%，前端不知道卖啥，后端盲目备货。</div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.88);line-height:1.8;font-weight:300;font-family:'PingFang SC','Hiragino Sans GB',sans-serif">人工解析客户非标 Forecast 表格并手动录入 ERP，错误率高，供应链备料偏离度超过 40%，前端不知道卖啥，后端盲目备货。</div>
         </div>
       </div>
     </div>
@@ -3044,12 +3199,12 @@ html,body{transition:background-color .38s ease}
           <p style="font-size:13px;color:rgba(255,255,255,0.48);line-height:1.78;font-weight:300">引入「无限画布」与「拖拽式」交互范式。CPQ 报价配置采用<em style="color:rgba(255,255,255,0.78);font-style:normal">左右分屏 + 骨架屏加载</em>的实时联动逻辑，配置改动即时反馈，赋予用户极强的操作控制感与安全感。</p>
         </div>
 
-        <!-- 卡片 4：SaaS 质感 -->
+        <!-- 卡片 4：极简质感 -->
         <div class="xl-card" style="background:rgba(255,255,255,0.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:32px 28px">
           <div style="width:44px;height:44px;border-radius:12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:20px">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           </div>
-          <div style="font-size:17px;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:4px">极简克制的 SaaS 质感</div>
+          <div style="font-size:17px;font-weight:700;color:rgba(255,255,255,0.92);margin-bottom:4px">极简克制的质感</div>
           <div style="font-size:9px;font-weight:700;letter-spacing:3px;color:rgba(16,185,129,0.7);text-transform:uppercase;margin-bottom:14px">Professional Aesthetics</div>
           <p style="font-size:13px;color:rgba(255,255,255,0.48);line-height:1.78;font-weight:300">秉持极简与克制，舍弃多余装饰。大面积留白与清晰的信息层级规范，严格对齐高级别 UI 体系，用合理字阶与品牌高亮色引导焦点，让沉重的 B2B 工业软件也传达出<em style="color:rgba(255,255,255,0.78);font-style:normal">现代智造基因</em>。</p>
         </div>
@@ -3676,28 +3831,10 @@ html,body{transition:background-color .38s ease}
               <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85)">首页工作台</div>
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px">Workbench</div>
             </div>
-            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:8px">
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">待办与审批事项</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">跟进提醒</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">审批任务</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">商机漏斗概览</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">漏斗视图</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">转化指标</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">订单预警通知</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">临期逾期</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">异常状态</span>
-                </div>
-              </div>
+            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">待办与审批事项</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">商机漏斗概览</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">订单预警通知</div>
             </div>
           </div>
         </div>
@@ -3713,21 +3850,9 @@ html,body{transition:background-color .38s ease}
               <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85)">市场与线索</div>
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px">Leads &amp; MKT</div>
             </div>
-            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:8px">
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">企信线索池</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">API接入</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">风险预警标签</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">竞品情报库</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">动态监控</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">优劣势对比</span>
-                </div>
-              </div>
+            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">企信线索池</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">竞品情报库</div>
             </div>
           </div>
         </div>
@@ -3743,28 +3868,10 @@ html,body{transition:background-color .38s ease}
               <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85)">客户经营</div>
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px">Customer</div>
             </div>
-            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:8px">
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">客户管理库</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">公海库</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">划转与分配</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">360°客户画像</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">8维度雷达</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">深度档案</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">MCR大客户工作台</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">组织树</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">拖拽权力地图</span>
-                </div>
-              </div>
+            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">客户管理库</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">360°客户画像</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">MCR大客户工作台</div>
             </div>
           </div>
         </div>
@@ -3780,21 +3887,9 @@ html,body{transition:background-color .38s ease}
               <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85)">商机与报价</div>
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px">Opportunity</div>
             </div>
-            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:8px">
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">硬件专属漏斗</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">阶段看板视图</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">阶段流转管控</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">CPQ报价单管理</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">配置器向导</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">预估毛利测算</span>
-                </div>
-              </div>
+            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">硬件专属漏斗</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">CPQ报价单管理</div>
             </div>
           </div>
         </div>
@@ -3810,21 +3905,9 @@ html,body{transition:background-color .38s ease}
               <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.85)">研发与产品</div>
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px">R&amp;D Product</div>
             </div>
-            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:8px">
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">样品推进器</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">打样/小试/中试</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">产销协同留痕</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">产品库管理</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">标品数据维护</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">BOM结构树关联</span>
-                </div>
-              </div>
+            <div style="padding:12px 10px;display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">样品推进器</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">产品库管理</div>
             </div>
           </div>
         </div>
@@ -3841,20 +3924,8 @@ html,body{transition:background-color .38s ease}
               <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:.12em;text-transform:uppercase;margin-top:3px">Forecast &amp; Orders</div>
             </div>
             <div style="padding:12px 10px;display:flex;flex-direction:column;gap:8px">
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">滚动销售预测</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">自下而上报备</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">汇总审批机制</span>
-                </div>
-              </div>
-              <div style="padding:4px 0 8px">
-                <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:6px">量产订单管理</div>
-                <div style="display:flex;flex-wrap:wrap;gap:4px">
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">履约追踪</span>
-                  <span style="font-size:10px;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:2px 7px">出货回款节点</span>
-                </div>
-              </div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">滚动销售预测</div>
+              <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.7);padding:5px 0;text-align:center">量产订单管理</div>
             </div>
           </div>
         </div>
